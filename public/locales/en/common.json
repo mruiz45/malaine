@@ -1,0 +1,82 @@
+{
+  "welcome": "Welcome to Malaine",
+  "app_description": "Your knitting/crochet assistant",
+  "navigation": {
+    "home": "Home",
+    "login": "Login",
+    "signup": "Sign Up",
+    "dashboard": "Dashboard",
+    "logout": "Logout"
+  },
+  "home": {
+    "welcome_message": "Welcome to Malaine",
+    "subtitle": "Your knitting/crochet assistant",
+    "description": "Malaine helps you create, customize, and complete your knitting and crochet projects with the help of AI.",
+    "login_button": "Sign In",
+    "signup_button": "Create Account",
+    "features": {
+      "adapt_patterns": {
+        "title": "Adapt Patterns",
+        "description": "Customize existing patterns to your desired measurements and yarn type."
+      },
+      "interactive_editor": {
+        "title": "Interactive Editor",
+        "description": "Modify patterns with our visual editor and see changes in real-time."
+      },
+      "ai_assistant": {
+        "title": "AI Assistant",
+        "description": "Get help with techniques, calculations, and troubleshooting from our smart assistant."
+      }
+    }
+  },
+  "login": {
+    "title": "Login",
+    "placeholder": "This page will contain the login form in the future.",
+    "return_home": "Return to home"
+  },
+  "signup": {
+    "title": "Sign Up",
+    "placeholder": "This page will contain the registration form in the future.",
+    "return_home": "Return to home"
+  },
+  "dashboard": {
+    "title": "Your Dashboard",
+    "welcome": "Welcome to your personal dashboard,",
+    "content": "Here you'll find your projects, patterns, and personalized preferences."
+  },
+  "footer": {
+    "copyright": "© {year} Malaine - Your knitting/crochet assistant",
+    "links": {
+      "home": "Home",
+      "about": "About",
+      "contact": "Contact"
+    }
+  },
+  "language_switcher": {
+    "en": "English",
+    "fr": "French"
+  },
+  "auth": {
+    "email": "Email address",
+    "password": "Password",
+    "confirm_password": "Confirm password",
+    "new_password": "New password",
+    "forgot_password": "Forgot password?",
+    "reset_password": "Reset password",
+    "update_password": "Update password",
+    "login": "Login",
+    "signup": "Sign up",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "no_account": "Don't have an account?",
+    "already_have_account": "Already have an account?",
+    "back_to_login": "Back to login",
+    "check_email": "Please check your email to confirm your registration.",
+    "reset_email_sent": "A password reset email has been sent to your address.",
+    "password_reset_success": "Your password has been successfully updated.",
+    "forgot_password_instructions": "Enter your email address and we'll send you a link to reset your password.",
+    "error_password_match": "Passwords do not match.",
+    "error_password_length": "Password must be at least 6 characters long.",
+    "error_generic": "An error occurred. Please try again."
+  }
+} 

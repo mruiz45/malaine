@@ -1,0 +1,82 @@
+{
+  "welcome": "Bienvenue sur Malaine",
+  "app_description": "Votre assistant tricot/crochet",
+  "navigation": {
+    "home": "Accueil",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "dashboard": "Tableau de bord",
+    "logout": "Déconnexion"
+  },
+  "home": {
+    "welcome_message": "Bienvenue sur Malaine",
+    "subtitle": "Votre assistant tricot/crochet",
+    "description": "Malaine vous aide à créer, personnaliser et réaliser vos projets de tricot et de crochet avec l'aide de l'IA.",
+    "login_button": "Se connecter",
+    "signup_button": "Créer un compte",
+    "features": {
+      "adapt_patterns": {
+        "title": "Adaptez des patrons",
+        "description": "Personnalisez les patrons existants selon vos mesures et votre type de fil."
+      },
+      "interactive_editor": {
+        "title": "Éditeur interactif",
+        "description": "Modifiez les patrons avec notre éditeur visuel et voyez les changements en temps réel."
+      },
+      "ai_assistant": {
+        "title": "Assistant IA",
+        "description": "Obtenez de l'aide sur les techniques, les calculs et le dépannage grâce à notre assistant intelligent."
+      }
+    }
+  },
+  "login": {
+    "title": "Connexion",
+    "placeholder": "Cette page contiendra le formulaire de connexion dans le futur.",
+    "return_home": "Retour à l'accueil"
+  },
+  "signup": {
+    "title": "Inscription",
+    "placeholder": "Cette page contiendra le formulaire d'inscription dans le futur.",
+    "return_home": "Retour à l'accueil"
+  },
+  "dashboard": {
+    "title": "Votre tableau de bord",
+    "welcome": "Bienvenue sur votre tableau de bord personnel,",
+    "content": "Ici vous trouverez vos projets, patrons et préférences personnalisées."
+  },
+  "footer": {
+    "copyright": "© {year} Malaine - Votre assistant tricot/crochet",
+    "links": {
+      "home": "Accueil",
+      "about": "À propos",
+      "contact": "Contact"
+    }
+  },
+  "language_switcher": {
+    "en": "Anglais",
+    "fr": "Français"
+  },
+  "auth": {
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "new_password": "Nouveau mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "reset_password": "Réinitialiser le mot de passe",
+    "update_password": "Mettre à jour le mot de passe",
+    "login": "Se connecter",
+    "signup": "S'inscrire",
+    "logout": "Déconnexion",
+    "loading": "Chargement...",
+    "no_account": "Vous n'avez pas de compte ?",
+    "already_have_account": "Vous avez déjà un compte ?",
+    "back_to_login": "Retour à la connexion",
+    "check_email": "Veuillez vérifier votre e-mail pour confirmer votre inscription.",
+    "reset_email_sent": "Un e-mail de réinitialisation a été envoyé à votre adresse.",
+    "password_reset_success": "Votre mot de passe a été mis à jour avec succès.",
+    "forgot_password_instructions": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "error_password_match": "Les mots de passe ne correspondent pas.",
+    "error_password_length": "Le mot de passe doit comporter au moins 6 caractères.",
+    "error_generic": "Une erreur s'est produite. Veuillez réessayer."
+  }
+} 
