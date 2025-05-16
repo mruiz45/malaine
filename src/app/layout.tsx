@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import I18nProvider from "@/components/I18nProvider";
 import "./globals.css";
 import { AuthProvider } from "@/utils/AuthContext";
+import AuthProfileHandler from "@/components/AuthProfileHandler";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            <AuthProfileHandler />
           </AuthProvider>
         </I18nProvider>
       </body>

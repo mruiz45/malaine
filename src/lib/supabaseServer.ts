@@ -4,9 +4,15 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 if (!supabaseUrl || !supabaseServiceRoleKey) {
-  console.error('Missing Supabase server environment variables');
+  console.error('CRITICAL: Missing Supabase server environment variables. Application may not work as expected.');
 }
 
-export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey);
+export const supabaseServer = createClient(supabaseUrl, supabaseServiceRoleKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false
+  }
+});
 
 export default supabaseServer; 
