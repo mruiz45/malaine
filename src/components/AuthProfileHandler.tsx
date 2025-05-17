@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { createClient, Session, AuthChangeEvent } from '@supabase/supabase-js';
-import { ensureUserProfileService } from '@/services/authService'; // Import the service
+// import { ensureUserProfileService } from '@/services/authService'; // Removed import
 
 // Supabase client for auth operations ONLY (onAuthStateChange)
 const supabaseAuthClient = createClient(
@@ -16,26 +16,37 @@ const supabaseAuthClient = createClient(
  */
 export default function AuthProfileHandler() {
   useEffect(() => {
-    const handleAuthenticationStateChange = async () => {
-      // The ensureUserProfileService will get the current session and user internally.
-      console.log("AuthProfileHandler: Auth state change detected, ensuring user profile via service.");
-      const profileEnsured = await ensureUserProfileService();
-      if (profileEnsured) {
-        console.log("AuthProfileHandler: Profile successfully ensured via service.");
-      } else {
-        console.warn("AuthProfileHandler: Profile ensuring via service failed or indicated no action needed/possible (e.g., no session).");
+    const handleAuthenticationStateChange = async (event: AuthChangeEvent, session: Session | null) => {
+      console.log(`AuthProfileHandler: Auth state change detected. Event: ${event}, Session: ${session ? 'present' : 'absent'}`);
+      
+      // Only attempt to ensure profile if the user has just signed in and a session is available.
+      if (event === 'SIGNED_IN' && session) {
+        console.log("AuthProfileHandler: SIGNED_IN event with session. Profile ensuring is now handled by sign-in/sign-up API."); // Updated log
+        // try { // <-- Start of deletion
+        //   await ensureUserProfileService();
+        //   console.log("AuthProfileHandler: Profile successfully ensured or already exists via service.");
+        // } catch (error) {
+        //   console.error("AuthProfileHandler: Error calling ensureUserProfileService:", error);
+        // } // <-- End of deletion
+      } else if (event === 'SIGNED_OUT') {
+        console.log("AuthProfileHandler: SIGNED_OUT event, no profile action needed.");
+      } else if (event === 'INITIAL_SESSION' && session) {
+        console.log("AuthProfileHandler: INITIAL_SESSION event with session. Profile ensuring is now handled by sign-in/sign-up API."); // Updated log
+        // try { // <-- Start of deletion
+        //   await ensureUserProfileService(); // Also check on initial session if user is already logged in
+        //   console.log("AuthProfileHandler: Profile successfully ensured or already exists via service on initial session.");
+        // } catch (error) {
+        //   console.error("AuthProfileHandler: Error calling ensureUserProfileService on initial session:", error);
+        // } // <-- End of deletion
       }
     };
-    
-    // Handle on initial load
-    handleAuthenticationStateChange();
     
     // Listen to auth state changes
     const { data: authListener } = supabaseAuthClient.auth.onAuthStateChange(
       (event: AuthChangeEvent, session: Session | null) => {
-      console.log(`AuthProfileHandler: Auth state changed (event: ${event}), re-triggering profile ensure.`);
-      handleAuthenticationStateChange(); 
-    });
+        handleAuthenticationStateChange(event, session);
+      }
+    );
     
     return () => {
       authListener.subscription.unsubscribe();

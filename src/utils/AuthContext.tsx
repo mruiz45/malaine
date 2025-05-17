@@ -2,9 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { auth } from './api';
+import { api, auth } from './api';
 import { supabase } from './supabase';
-import * as authHelpers from '@/auth/helpers';
 
 type AuthContextType = {
   user: User | null;
@@ -15,7 +14,6 @@ type AuthContextType = {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any; data: any }>;
   updatePassword: (password: string) => Promise<{ error: any; data: any }>;
-  ensureUserProfile: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,17 +30,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Utiliser notre API pour récupérer la session
         const response = await auth.getSession();
         if (response.user) {
-          setUser(response.user as unknown as User);
+          setUser(response.user as User);
           // Nous n'avons pas besoin de la session complète côté client
           // car les tokens sont gérés par les cookies HttpOnly
           setSession({} as Session);
-          
-          // Ensure user has a profile
-          try {
-            await authHelpers.ensureUserProfile();
-          } catch (profileError) {
-            console.error('Error ensuring user profile:', profileError);
-          }
         } else {
           setUser(null);
           setSession(null);
@@ -61,15 +52,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user) {
-        setUser(session.user);
-        setSession(session);
-        
-        // Ensure user has a profile
-        try {
-          await authHelpers.ensureUserProfile();
-        } catch (profileError) {
-          console.error('Error ensuring user profile:', profileError);
-        }
+        setUser(session.user as User);
+        setSession(session as Session);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setSession(null);
@@ -85,9 +69,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign up with email and password
   const signUp = async (email: string, password: string) => {
     try {
-      // Use our improved auth helper for signup
-      const result = await authHelpers.signUp(email, password);
-      return result;
+      // Call the /api/auth/signup endpoint
+      const response = await api.post<{ user: User; session: Session } | { error: string }>('/auth/signup', { email, password });
+      if ('error' in response) {
+        return { data: null, error: response.error };
+      }
+      // Assuming signup API returns user and session directly or within a data object
+      // Adjust if the actual API response structure is different
+      setUser(response.user as User);
+      setSession(response.session as Session);
+      return { data: response, error: null };
     } catch (error) {
       console.error('Error during sign up:', error);
       return { 
@@ -100,13 +91,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign in with email and password
   const signIn = async (email: string, password: string) => {
     try {
-      // Use our improved auth helper for signin
-      const result = await authHelpers.signIn(email, password);
-      if (result.data?.user) {
-        setUser(result.data.user);
-        setSession(result.data.session);
-      }
-      return result;
+      const response = await auth.signIn(email, password);
+      // auth.signIn from api.ts returns { user, session } on success
+      setUser(response.user as User);
+      setSession(response.session as Session);
+      return { data: response, error: null };
     } catch (error) {
       console.error('Error during sign in:', error);
       return { 
@@ -119,16 +108,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Sign out
   const signOut = async () => {
     try {
-      // Use our improved auth helper for signout
-      const { error } = await authHelpers.signOut();
-      if (!error) {
-        setUser(null);
-        setSession(null);
-      } else {
-        console.error('Error during sign out:', error);
-      }
+      await auth.signOut();
+      setUser(null);
+      setSession(null);
+      // No explicit return value needed as per AuthContextType (Promise<void>)
     } catch (error) {
       console.error('Error during sign out:', error);
+      // Even if there's an error, try to clear local state
+      setUser(null);
+      setSession(null);
     }
   };
 
@@ -162,11 +150,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Ensure user has a profile
-  const ensureUserProfile = async () => {
-    return await authHelpers.ensureUserProfile();
-  };
-
   const value = {
     user,
     session,
@@ -176,7 +159,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signOut,
     resetPassword,
     updatePassword,
-    ensureUserProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

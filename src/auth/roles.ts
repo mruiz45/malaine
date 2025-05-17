@@ -1,46 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
-
-export type UserRole = 'guest' | 'user' | 'admin';
-
-export interface UserProfile {
-  id: number;
-  auth_id: string;
-  is_admin: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-// Create Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { UserRole, UserProfile } from '../types/auth';
+import { 
+  getCurrentUserRole as fetchUserRole, 
+  hasRole as checkHasRole, 
+  promoteToAdmin as doPromoteToAdmin, 
+  demoteFromAdmin as doDemoteFromAdmin, 
+  getCurrentUserProfile as fetchUserProfile 
+} from '../services/roleService';
 
 /**
  * Get the current user's role
  * @returns Promise resolving to the user role ('guest', 'user', or 'admin')
  */
 export const getCurrentUserRole = async (): Promise<UserRole> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return 'guest';
-  }
-  
-  // Check if the user is an admin
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('is_admin')
-    .eq('auth_id', user.id)
-    .single();
-    
-  if (error || !data) {
-    // If there's an error or no data, assume 'user' role as default for authenticated users
-    // This shouldn't normally happen if our DB triggers are working correctly
-    console.error('Error fetching user profile:', error);
-    return 'user';
-  }
-  
-  return data.is_admin ? 'admin' : 'user';
+  return fetchUserRole();
 };
 
 /**
@@ -48,13 +20,7 @@ export const getCurrentUserRole = async (): Promise<UserRole> => {
  * Role hierarchy: guest < user < admin
  */
 export const hasRole = async (role: UserRole): Promise<boolean> => {
-  const currentRole = await getCurrentUserRole();
-  
-  if (role === 'guest') return true; // Everyone has at least guest privileges
-  if (role === 'user') return currentRole === 'user' || currentRole === 'admin';
-  if (role === 'admin') return currentRole === 'admin';
-  
-  return false;
+  return checkHasRole(role);
 };
 
 /**
@@ -63,18 +29,11 @@ export const hasRole = async (role: UserRole): Promise<boolean> => {
  * @returns Promise resolving to success status
  */
 export const promoteToAdmin = async (userId: string): Promise<boolean> => {
-  // Check if current user is admin
-  const currentUserRole = await getCurrentUserRole();
-  if (currentUserRole !== 'admin') {
-    throw new Error('Only admins can promote users');
+  try {
+    return await doPromoteToAdmin(userId);
+  } catch (error) {
+    throw error;
   }
-  
-  const { error } = await supabase
-    .from('user_profiles')
-    .update({ is_admin: true })
-    .eq('auth_id', userId);
-  
-  return !error;
 };
 
 /**
@@ -83,18 +42,11 @@ export const promoteToAdmin = async (userId: string): Promise<boolean> => {
  * @returns Promise resolving to success status
  */
 export const demoteFromAdmin = async (userId: string): Promise<boolean> => {
-  // Check if current user is admin
-  const currentUserRole = await getCurrentUserRole();
-  if (currentUserRole !== 'admin') {
-    throw new Error('Only admins can demote users');
+  try {
+    return await doDemoteFromAdmin(userId);
+  } catch (error) {
+    throw error;
   }
-  
-  const { error } = await supabase
-    .from('user_profiles')
-    .update({ is_admin: false })
-    .eq('auth_id', userId);
-  
-  return !error;
 };
 
 /**
@@ -102,22 +54,5 @@ export const demoteFromAdmin = async (userId: string): Promise<boolean> => {
  * @returns Promise resolving to the user profile or null if not found
  */
 export const getCurrentUserProfile = async (): Promise<UserProfile | null> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) {
-    return null;
-  }
-  
-  const { data, error } = await supabase
-    .from('user_profiles')
-    .select('*')
-    .eq('auth_id', user.id)
-    .single();
-  
-  if (error || !data) {
-    console.error('Error fetching user profile:', error);
-    return null;
-  }
-  
-  return data as UserProfile;
+  return fetchUserProfile();
 }; 
