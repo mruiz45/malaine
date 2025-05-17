@@ -30,15 +30,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Sign-in failed, please try again.' });
   }
 
-  try {
-    await ensureProfileExistsApi(data.user.id, data.user.email);
-  } catch (profileError: any) {
-    console.error('Profile ensuring step failed after sign-in:', profileError.message);
-    // Decide if this is a fatal error for the sign-in process
-  }
-
+  // Sign-in was successful, set cookies first
   const { access_token, refresh_token, expires_in } = data.session;
-
   const accessTokenCookie = serialize('access_token', access_token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
@@ -56,5 +49,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
-  return res.status(200).json({ user: data.user /* session: data.session */ }); // Return user, client can get full session via /api/auth/session if needed
+
+  // Now, try to ensure the profile exists
+  let userProfile = null; // Initialize userProfile to null
+  try {
+    userProfile = await ensureProfileExistsApi(data.user.id, data.user.email);
+    if (!userProfile) {
+      console.error('API: Non-critical error - user profile could not be ensured for user:', data.user.id, '(Login proceeds)');
+    }
+  } catch (profileError: any) {
+    // This catch is for unexpected errors from ensureProfileExistsApi itself, 
+    // though it's designed to return null for common DB issues.
+    console.error('Profile ensuring step had an unexpected error after sign-in:', profileError.message, '(Login proceeds)');
+  }
+
+  // Return user and profile (which might be null if ensuring failed)
+  return res.status(200).json({ user: data.user, profile: userProfile });
 } 

@@ -26,23 +26,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Regardless of session, if user object exists, ensure profile.
+  let userProfile = null; // Initialize userProfile
   if (data.user) {
     try {
-      await ensureProfileExistsApi(data.user.id, data.user.email);
+      // await ensureProfileExistsApi(data.user.id, data.user.email);
+      userProfile = await ensureProfileExistsApi(data.user.id, data.user.email); // Capture profile
+      if (!userProfile) {
+          console.error('API: Non-critical error during signup - user profile could not be ensured for user:', data.user.id, '(Signup process continues)');
+      }
     } catch (profileError: any) {
-      console.error('Profile creation/ensuring failed after signup:', profileError.message);
+      console.error('Profile creation/ensuring failed after signup with an unexpected error:', profileError.message);
       // If profile creation is critical even before email verification, handle error appropriately.
       // For now, we log it. If signup doesn't return a session (email verification pending),
       // we still return a success message for signup itself.
       if (!data.session) {
-        return res.status(500).json({ 
-          error: 'Signup succeeded but profile creation failed. Please contact support.', 
-          user: { id: data.user.id, email: data.user.email } 
+        // Even if profile creation had an issue, we inform about signup success + email verification
+        return res.status(201).json({ 
+          message: 'Signup successful, please verify your email. Profile processing issue.', 
+          user: { id: data.user.id, email: data.user.email },
+          profile: null // Indicate profile was not retrieved/created
         });
       }
-      // If there IS a session, but profile failed, this is more problematic. 
-      // Consider not setting cookies or returning a specific error.
-      // For now, just logging as per previous behaviour for sign-in.
+      // If there IS a session, but profile failed unexpectedly, this is more problematic.
+      // Logged, and will proceed to return user with null profile.
     }
   }
 
@@ -51,7 +57,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (data.user) {
       return res.status(201).json({ 
         message: 'Signup successful, please verify your email.', 
-        user: { id: data.user.id, email: data.user.email } // Return non-sensitive user info
+        user: { id: data.user.id, email: data.user.email }, // Return non-sensitive user info
+        profile: userProfile // Return profile (could be null if creation failed)
       });
     } else {
       // Should not happen if signUpError was not thrown, but as a safeguard:
@@ -80,5 +87,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie]);
-  return res.status(200).json({ user: data.user });
+  return res.status(200).json({ user: data.user, profile: userProfile }); // Include profile
 } 
