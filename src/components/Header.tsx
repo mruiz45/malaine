@@ -13,9 +13,9 @@ const Header: React.FC = () => {
   const { user, loading } = useAuth();
 
   return (
-    <header className="bg-indigo-600 text-white fixed w-full z-10 top-0">
+    <header className="bg-stone-50 text-neutral-800 fixed w-full z-10 top-0 shadow-md">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="text-2xl font-bold">
+        <div className="font-serif text-2xl font-bold">
           <Link href="/">
             Malaine
           </Link>
@@ -65,7 +65,7 @@ const Header: React.FC = () => {
 
       {/* Mobile navigation menu */}
       {menuOpen && (
-        <nav className="md:hidden bg-indigo-700">
+        <nav className="md:hidden bg-stone-100 text-neutral-800">
           <ul className="flex flex-col items-center py-4">
             <li className="py-2"><Link href="/" className="hover:underline">{t('navigation.home')}</Link></li>
             {!loading && (

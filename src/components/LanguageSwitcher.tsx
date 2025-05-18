@@ -14,7 +14,7 @@ const LanguageSwitcher: React.FC = () => {
     <div className="flex items-center space-x-2">
       <button
         className={`px-2 py-1 text-sm rounded ${
-          i18n.language === 'en' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'
+          i18n.language === 'en' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700'
         }`}
         onClick={() => changeLanguage('en')}
       >
@@ -22,7 +22,7 @@ const LanguageSwitcher: React.FC = () => {
       </button>
       <button
         className={`px-2 py-1 text-sm rounded ${
-          i18n.language === 'fr' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'
+          i18n.language === 'fr' ? 'bg-gray-800 text-white' : 'bg-gray-200 text-gray-700'
         }`}
         onClick={() => changeLanguage('fr')}
       >

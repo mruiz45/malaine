@@ -1,0 +1,26 @@
+{
+  "common": {
+    "home": {
+      "welcome_message": "Bienvenue sur Malaine",
+      "features": {
+        "adapt_patterns": {
+          "title": "Adaptez des patrons",
+          "description": "Personnalisez les patrons existants selon vos mesures et votre type de fil.",
+          "footer_title": "Assistant de Patron"
+        },
+        "interactive_editor": {
+          "title": "Éditeur interactif",
+          "description": "Modifiez les patrons avec notre éditeur visuel et voyez les changements en temps réel.",
+          "footer_title": "ADAPTEZ VOS PATRONS"
+        },
+        "ai_assistant": {
+          "title": "Assistant IA",
+          "description": "Obtenez de l'aide sur les techniques, les calculs et le dépannage grâce à notre assistant intelligent.",
+          "footer_title": "VOTRE ASSISTANT AI"
+        }
+      }
+    }
+  }
+  // You can add a French version of "greeting" here if needed, e.g.:
+  // ,"greeting": "Bonjour, {{name}}!"
+} 

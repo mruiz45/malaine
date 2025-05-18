@@ -1,4 +1,25 @@
 {
-  "welcome_message": "Welcome to our application!",
+  "common": {
+    "home": {
+      "welcome_message": "Welcome to Malaine",
+      "features": {
+        "adapt_patterns": {
+          "title": "Adapt Patterns",
+          "description": "Personalize existing patterns according to your measurements and yarn type.",
+          "footer_title": "Pattern Wizard"
+        },
+        "interactive_editor": {
+          "title": "Interactive Editor",
+          "description": "Modify patterns with our visual editor and see changes in real time.",
+          "footer_title": "Adapt Your Patterns"
+        },
+        "ai_assistant": {
+          "title": "AI Assistant",
+          "description": "Get help with techniques, calculations, and troubleshooting with our intelligent assistant.",
+          "footer_title": "Your AI Assistant"
+        }
+      }
+    }
+  },
   "greeting": "Hello, {{name}}!"
 } 
