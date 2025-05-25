@@ -3,6 +3,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Image from "next/image";
+import Link from 'next/link';
 
 export default function Home() {
   const { t } = useTranslation();
@@ -69,12 +70,21 @@ export default function Home() {
         {/* First row of three additional boxes */}
         <div className="grid md:grid-cols-3 gap-6 mt-10">
           {/* New Box 1 */}
-          <div className="bg-white border border-gray-300 rounded-lg p-6 h-48 flex items-center justify-center">
-            <p className="text-gray-500 text-center">{t('home.new_section.box1_placeholder', 'Link to Page 1')}</p>
-          </div>
+          <Link href="/type-of-yarns" className="bg-white border border-gray-300 rounded-lg p-6 h-48 flex flex-col items-center justify-center transition-shadow hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-yellow-700" tabIndex={0} aria-label="Types of Yarns: where the magic starts">
+            {/* Placeholder for image */}
+            <div className="w-20 h-20 bg-gray-200 rounded mb-2 flex items-center justify-center">
+              <span className="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 text-center">Types of Yarns</h3>
+            <p className="text-sm text-gray-500 text-center mt-1">where the magic starts</p>
+          </Link>
           {/* New Box 2 */}
-          <div className="bg-white border border-gray-300 rounded-lg p-6 h-48 flex items-center justify-center">
-            <p className="text-gray-500 text-center">{t('home.new_section.box2_placeholder', 'Link to Page 2')}</p>
+          <div className="bg-white border border-gray-300 rounded-lg p-6 h-48 flex flex-col items-center justify-center">
+            {/* Placeholder for image */}
+            <div className="w-20 h-20 bg-gray-200 rounded mb-2 flex items-center justify-center">
+              <span className="text-gray-400 text-xs">Photo</span>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-800 text-center">Needles & Crochet hooks and more...</h3>
           </div>
           {/* New Box 3 */}
           <div className="bg-white border border-gray-300 rounded-lg p-6 h-48 flex items-center justify-center">
