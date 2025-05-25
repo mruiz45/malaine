@@ -1,0 +1,21 @@
+Dans le cadre d'un développement d'une application web centrée sur le tricot et le crochet, je désirerais pouvoir fournir les données d'un échantillon, le type d'aiguille, le type de laine ainsi que les "mensurations" pour par exemple un pull.
+
+Parmi ces données je vois l'encolure, le type de manches, le tour de hanches, la hauteur, etc
+
+Voici un screenshot qui illustre le concept des dimensions.
+
+Sur un autre plan, il faudrait que les utilisateurs aient la possibilité d'effectuer des choix, par exemple: pull en V, pull top down, pull à col roulé, etc, mais également de choisir le type de manches (ballon, courtes, etc), le type de col, la longueur du pull, etc.
+
+Ensuite, il faudrait que le système propose un modèle et le rende visible via une grille où une case = une maille d'un rang.
+
+Sur base de ce modèle, l'utilisateur pourrait décider d'effectuer des modifications (longueur, cyntrage, type de manche, etc).
+
+Pour arriver à la définition d'un modèle final.
+
+Pour le moment, on ne prend pas encore en considération les complexités telles que torsades, points spéciaux, motifs, ce sera pour plus tard.
+
+Pourrais-tu effectuer une analyse de tout ceci, complémenter les types de données, types de cols, types de ... tout ce qui peut varier. Je te laisse carte blanche, car tu t'y connais plus que moi.
+
+Le but est que tu viennes avec un document décrivant l'ensemble à développer en termes de requirements. Sois le plus précis et complet possible.
+
+Effectue des recherches si nécessaire.

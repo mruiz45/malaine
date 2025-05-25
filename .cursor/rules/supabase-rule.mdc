@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+When you need to interface with Supabase in order to do anything related to Supabase (create, update, delete a function, a table, a RLS), you may use MCP and do it yourself.
+The Supabase project is: sakaqpcbnruzkxbfrrui
+
+Its name is: "malaine"

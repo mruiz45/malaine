@@ -1,0 +1,136 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Règles de Développement Cursor AI pour le Projet "Malaine - Assistant Tricot/Crochet"
+# Version: 2.0
+# Date: Janvier 2025
+
+## 1. Principe Fondamental : Adhérence aux Spécifications Fonctionnelles
+
+1.1. **Adhérence Stricte aux FS**: Vous DEVEZ strictement adhérer aux exigences, à la portée et aux détails d'implémentation décrits dans le **document de Spécification Fonctionnelle ACTUEL** fourni pour la tâche en cours. Ne pas dévier.
+1.2. **Pas de Portée Future**: N'implémentez PAS de fonctionnalités ou considérations architecturales mentionnées dans des documents futurs sauf instruction explicite contraire. Concentrez-vous uniquement sur la spécification active.
+1.3. **Clarification Avant Action**: Si une partie de la spécification active est ambiguë, peu claire, semble contradictoire ou manque de détails nécessaires, vous DEVEZ demander des clarifications AVANT de procéder à la génération ou implémentation de code.
+1.4. **Nommage et Structure des Fichiers**:
+    * Suivez les noms de fichiers, composants, hooks, modules et structure de projet établis dans le projet Malaine.
+    * Si de nouveaux fichiers sont nécessaires, proposez un nommage logique (ex: `useYarnData.ts`, `PatternCard.tsx`) et un placement dans la structure établie (ex: `components/knitting/`, `hooks/`) et demandez confirmation.
+    * Adhérez aux conventions Next.js App Router (`page.tsx`, `layout.tsx`, `loading.tsx`, `error.tsx`, groupes de routes `(group)`).
+
+## 2. Qualité du Code, Standards et Meilleures Pratiques
+
+2.1. **Versions des Langages et Frameworks**:
+    * Tout le code DOIT être écrit en **TypeScript 5.0.0** (ou supérieur selon les mises à jour du projet).
+    * Le projet DOIT utiliser **Next.js 15.3.2** (ou supérieur selon les mises à jour du projet) avec l'**App Router**.
+    * **React 19.0.0** (ou supérieur selon les mises à jour du projet) est la bibliothèque de rendu principale.
+2.2. **Guide de Style et Formatage**:
+    * Suivez strictement les règles **ESLint** configurées dans le projet (étendant les règles Next.js avec support TypeScript).
+    * Suivez strictement les règles de formatage **Prettier** configurées dans le projet.
+    * Adhérez aux meilleures pratiques TypeScript générales (ex: éviter `any` quand possible, utiliser les types utilitaires).
+2.3. **Lisibilité et Maintenabilité**:
+    * Écrivez du code clair, concis et auto-documenté.
+    * Fournissez des commentaires JSDoc pour tous les composants (props), hooks, fonctions publiques et types/interfaces complexes.
+    * Ajoutez des commentaires inline pour les sections de logique complexe ou les décisions non-évidentes.
+2.4. **Modularité et Conception des Composants**:
+    * Concevez et implémentez le code de manière modulaire. Décomposez l'UI et la logique complexes en composants, hooks ou fonctions utilitaires plus petits et bien définis.
+    * Suivez la structure de composants établie (ex: `components/ui/`, `components/knitting/`, `components/auth/`).
+    * Utilisez appropriément les composants serveur et client Next.js selon les besoins d'interactivité et de récupération de données.
+2.5. **Gestion d'Erreurs**: Implémentez une gestion d'erreurs robuste, spécialement pour :
+    * Appels API externes (problèmes réseau, erreurs API, limites de taux).
+    * Opérations client Supabase (requêtes, auth, subscriptions).
+    * Parsing de données, validation et mises à jour d'état.
+    * Utilisez une gestion d'erreurs spécifique et communiquez clairement les erreurs à l'utilisateur. Considérez les fichiers `error.tsx` Next.js pour les limites d'erreur de segments de route.
+2.6. **Typage Fort avec TypeScript**:
+    * Utilisez extensivement les interfaces ou types TypeScript pour les props, état, réponses API, arguments de fonction et valeurs de retour.
+    * Définissez les types dans les fichiers du répertoire `types/` (ex: `types/knitting.ts`, `types/api.ts`) ou colocalisés avec les composants/modules si très spécifiques.
+    * Visez une couverture de type complète et exploitez les fonctionnalités du mode strict de TypeScript.
+2.7. **Constantes et Configuration**:
+    * Évitez le codage en dur des valeurs (ex: endpoints API, nombres magiques, chaînes par défaut, noms de tables Supabase).
+    * Utilisez les variables d'environnement (`.env.local`) pour la configuration. Référencez `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` selon la configuration du projet.
+    * Stockez les constantes dans des fichiers dédiés (ex: `utils/constants.ts`).
+2.8. **Dépendances**:
+    * Utilisez uniquement les bibliothèques spécifiées dans le projet Malaine : Next.js, React, TypeScript, Tailwind CSS, Supabase, i18next, @heroicons/react.
+    * Quand une nouvelle bibliothèque externe est requise, vous DEVEZ indiquer qu'elle doit être ajoutée à `package.json` en utilisant `npm install <library>@<version>`.
+2.9. **Stylisation**:
+    * Toute la stylisation DOIT utiliser **Tailwind CSS 4** (ou supérieur selon les mises à jour du projet).
+    * Adhérez aux tokens de design personnalisés et à la configuration définie dans `tailwind.config.js`.
+    * Utilisez l'utilitaire `cn` pour les noms de classe conditionnels si disponible.
+
+## 3. Architecture et Interaction Supabase Spécifique à Malaine
+
+3.1. **Architecture en Couches Stricte**: Adhérez strictement au pattern architectural `Page -> Service -> API -> Supabase` pour la récupération de données et les mutations nécessitant une authentification ou logique côté serveur.
+
+3.2. **Gestion de Session API (Supabase)**:
+    * Toutes les routes API Next.js (`src/app/api/...`) nécessitant une authentification utilisateur pour interagir avec Supabase DOIVENT utiliser la fonction helper `getSupabaseSessionApi(req, res)` (située dans `src/lib/getSupabaseSession.ts`).
+    * Cette fonction est responsable de :
+        * Extraire `access_token` et `refresh_token` des cookies HttpOnly.
+        * Initialiser le client Supabase côté serveur avec la session utilisateur.
+    * La route API DOIT vérifier la valeur de retour de `getSupabaseSessionApi`. Si elle est `null`, la route doit retourner une réponse d'erreur appropriée (ex: 401 Unauthorized).
+
+3.3. **Couches d'Application**:
+    * **Page/Composant (Côté client)** :
+        * Interagit avec les Services (ex: méthodes de `AuthContext` dans `src/contexts/AuthContext.tsx`).
+        * Ne doit PAS appeler directement `fetch` vers les endpoints API pour les opérations auth ou données principales si une méthode de service est disponible.
+        * Ne doit PAS interagir directement avec Supabase.
+    * **Service (Côté client)** :
+        * Encapsule la logique métier côté client liée à un domaine spécifique.
+        * Effectue des appels `fetch` vers les routes API Next.js pertinentes.
+        * Gère l'état côté client associé.
+        * Ne doit PAS interagir directement avec Supabase.
+    * **API (Côté serveur - `src/app/api/*`)** :
+        * Gère les requêtes des Services.
+        * Utilise `getSupabaseSessionApi` pour obtenir un client `supabaseServer` authentifié si l'opération nécessite une authentification.
+        * Effectue les opérations contre Supabase en utilisant le client `supabaseServer`.
+        * C'est la SEULE couche qui interagit directement avec Supabase pour les opérations de données authentifiées.
+
+3.4. **Client Supabase Côté Client**:
+    * Le client Supabase côté client ne doit être utilisé que pour :
+        * S'abonner aux événements temps réel Supabase (ex: `onAuthStateChange` dans `AuthContext`).
+        * Effectuer des requêtes pour des données publiques ne nécessitant pas d'authentification.
+        * Il ne doit PAS être utilisé pour les opérations nécessitant une session utilisateur.
+
+## 4. Internationalisation (i18next)
+
+4.1. **Support Multilingue**: Le projet supporte l'anglais (en) et le français (fr) via i18next.
+4.2. **Fichiers de Traduction**: Les traductions sont situées dans `/public/locales/{language}/common.json`.
+4.3. **Utilisation**: Utilisez les hooks `useTranslation` de react-i18next pour accéder aux traductions dans les composants.
+4.4. **Nouvelles Traductions**: Toute nouvelle chaîne de texte doit être ajoutée aux fichiers de traduction appropriés et référencée via les clés de traduction.
+
+## 5. Domaine Métier : Tricot et Crochet
+
+5.1. **Contexte Métier**: Le projet Malaine est un assistant pour les tricoteurs et crocheteurs. Familiarisez-vous avec la terminologie du tricot/crochet.
+5.2. **Entités Principales**:
+    * Projets (projects) - Projets de tricot/crochet
+    * Modèles (patterns) - Données et versions de modèles
+    * Matériaux (materials) - Laines, crochets, aiguilles et accessoires
+    * Profils utilisateur (user_profiles)
+5.3. **Nommage**: Utilisez une terminologie appropriée au domaine dans les noms de variables, fonctions et composants.
+
+## 6. Gestion d'État
+
+6.1. **État Local React**: Privilégiez l'état local des composants (`useState`, `useReducer`) pour les préoccupations spécifiques aux composants.
+6.2. **React Context**: Utilisez React Context pour l'authentification (`AuthContext`) et le partage d'état entre composants profondément imbriqués.
+6.3. **État Serveur**: Gérez l'état serveur via les appels API et les patterns de récupération de données établis.
+
+## 7. Sécurité
+
+7.1. **Cookies HttpOnly**: Les tokens d'authentification sont stockés dans des cookies HttpOnly, inaccessibles par JavaScript.
+7.2. **Clés API**: N'intégrez pas de clés sensibles directement dans le code côté client autre que `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+7.3. **Validation**: Validez toujours les données côté serveur dans les routes API.
+
+## 8. Format d'Interaction et de Sortie
+
+8.1. **Blocs de Code**: Utilisez des blocs de code Markdown appropriés avec identificateurs de langage (ex: ` ```typescript ... ``` `).
+8.2. **Contexte de Fichier**: Indiquez clairement à quel fichier appartient le code et s'il s'agit d'un nouveau fichier ou d'une modification.
+8.3. **Explications Concises**: Fournissez de brèves explications pour votre code si la logique est complexe.
+
+## 9. Conduite Générale
+
+9.1. **Rester Concentré**: Concentrez-vous uniquement sur l'implémentation de la spécification active. Ne vous laissez pas distraire par des optimisations ou fonctionnalités non liées.
+9.2. **Indication Proactive de Problèmes**: Si vous identifiez un problème potentiel ou un conflit avec un pattern établi, signalez-le pour clarification.
+9.3. **Contexte Fourni**: Assumez que le contexte de codebase existant a été implémenté selon les spécifications et forme le contexte de codebase existant.
+
+---
+
+En suivant strictement ces règles, vous aiderez à assurer que le développement du projet "Malaine - Assistant Tricot/Crochet" soit systématique, de haute qualité et précisément aligné avec ses spécifications fonctionnelles définies.
+

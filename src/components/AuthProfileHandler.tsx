@@ -1,14 +1,9 @@
 'use client';
 
 import { useEffect } from 'react';
-import { createClient, Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { supabase } from '@/utils/supabase';
 // import { ensureUserProfileService } from '@/services/authService'; // Removed import
-
-// Supabase client for auth operations ONLY (onAuthStateChange)
-const supabaseAuthClient = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string
-);
 
 /**
  * This component ensures a user profile exists for authenticated users
@@ -42,7 +37,7 @@ export default function AuthProfileHandler() {
     };
     
     // Listen to auth state changes
-    const { data: authListener } = supabaseAuthClient.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       (event: AuthChangeEvent, session: Session | null) => {
         handleAuthenticationStateChange(event, session);
       }

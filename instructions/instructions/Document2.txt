@@ -1,0 +1,42 @@
+Pourrais-tu considérer le document PDF en pièce jointe ?
+
+Ce document décrit un projet que je compte développer en collaborant avec une AI générative via Cursor/W
+
+indSurf.
+
+Je désire que le développement se fasse de manière très progressive, step-by-step, afin de s'assurer que tout fonctionne parfaitement avant de continuer avec de nouvelles fonctionalités.
+
+Une partie du projet existe déjà.  L'objectif est de complémenter le projet existant en incluant des outils d'aide à la définition de patrons.  Réfères-toi au document pour en savoir plus.
+
+Comme le projet existe déjà, il serait opportun qu'une première analyse d'intégration soit effectuée préalablement afin de ne pas "casser" l'existant.
+Dès lors, une première User Story consisterait à apprendre la structure du projet existant et d'en découler la manière la plus opportune d'intégration.
+
+Ton objectif:
+
+* pourrais-tu m'écrire un document qui découpe le développement des parties décrites dans le document (pdf)  dans son entièreté (phase 1, phase 2, ...) et pour chaque phase, fournisse une description ultra précise de ce qu'il faut développer et comment faire afin qu'une IA générative comprenne parfaitement le scope, objectifs et comment faire.
+
+* Je ne te demande pas d'écrire le code du projet mais d'écrire un document (sorte de "requirements", "business analysis", "functional analysis") qui segmente le développement du projet en phases distinctes et progressive.  Pour chaque phase, que tu décrives avec précision ce qui doit être développé et comment (mais SANS que tu écrives le code toi-même).
+
+* l'ensemble du document résultant doit être écrit en Anglais.
+
+ 
+
+Je répète: le but est que, sur base du document PDF fourni en pièce jointe, tu analyses le projet et à la manière d'un SCRUM master, tu définisses avec précision une séquence de User Story.
+
+Chaque User Story sera écrite en anglais et :
+
+- comportera un numéro de séquence 
+
+- contiendra une description minutieuse de ce qui doit être effectué et comment (guides)
+
+- contiendra une description technique minutieuse de ce qui est mis en action et comment le faire
+
+- contiendra une description précise de la manière de tester et de valider
+
+- NE contiendra PAS de code source mais pourra faire référence à des noms de fonction, classes, fichiers
+
+- pourra contenir des définitions de tables PostgreSQL si nécessaire.
+
+Un exemple de contenu de User Story t'a été fourni pour information
+
+Si tu as des questions afin de clarifier certains points, surtout n'hésite pas à me poser ces question, avant de commencer.
