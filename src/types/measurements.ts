@@ -34,6 +34,15 @@ export interface CustomMeasurements {
 }
 
 /**
+ * Individual measurement details with optional notes (US 3.1)
+ */
+export interface MeasurementDetails {
+  [measurementKey: string]: {
+    note?: string;
+  };
+}
+
+/**
  * Complete measurement set as stored in the database
  */
 export interface MeasurementSet extends StandardMeasurements {
@@ -43,6 +52,7 @@ export interface MeasurementSet extends StandardMeasurements {
   measurement_unit: MeasurementUnit;
   custom_measurements?: CustomMeasurements;
   notes?: string;
+  measurement_details?: MeasurementDetails; // US 3.1: Individual notes for each measurement
   created_at: string;
   updated_at: string;
 }
@@ -55,6 +65,7 @@ export interface CreateMeasurementSet extends StandardMeasurements {
   measurement_unit: MeasurementUnit;
   custom_measurements?: CustomMeasurements;
   notes?: string;
+  measurement_details?: MeasurementDetails; // US 3.1: Individual notes for each measurement
 }
 
 /**
@@ -65,6 +76,7 @@ export interface UpdateMeasurementSet extends Partial<StandardMeasurements> {
   measurement_unit?: MeasurementUnit;
   custom_measurements?: CustomMeasurements;
   notes?: string;
+  measurement_details?: MeasurementDetails; // US 3.1: Individual notes for each measurement
 }
 
 /**
@@ -105,6 +117,7 @@ export interface MeasurementSetFormErrors {
   foot_length?: string;
   custom_measurements?: string;
   notes?: string;
+  measurement_details?: string; // US 3.1: Validation errors for individual notes
 }
 
 /**
@@ -207,4 +220,68 @@ export const STANDARD_MEASUREMENT_FIELDS: MeasurementField[] = [
     min: 10,
     max: 50
   }
-]; 
+];
+
+// ============================================================================
+// US 3.1: Measurement Guides Types
+// ============================================================================
+
+/**
+ * Measurement guide content from the database
+ */
+export interface MeasurementGuide {
+  id: number;
+  measurement_key: string;
+  title: string;
+  description: string;
+  image_url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/**
+ * API response for measurement guides
+ */
+export interface MeasurementGuidesResponse {
+  success: boolean;
+  data?: MeasurementGuide[];
+  error?: string;
+}
+
+/**
+ * API response for a single measurement guide
+ */
+export interface MeasurementGuideResponse {
+  success: boolean;
+  data?: MeasurementGuide;
+  error?: string;
+}
+
+/**
+ * Props for measurement guide modal component
+ */
+export interface MeasurementGuideModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  measurementKey: keyof StandardMeasurements;
+  guide?: MeasurementGuide;
+}
+
+/**
+ * Props for measurement guide button component
+ */
+export interface MeasurementGuideButtonProps {
+  measurementKey: keyof StandardMeasurements;
+  className?: string;
+}
+
+/**
+ * Props for measurement note input component
+ */
+export interface MeasurementNoteInputProps {
+  measurementKey: keyof StandardMeasurements;
+  value?: string;
+  onChange: (note: string) => void;
+  placeholder?: string;
+  className?: string;
+} 

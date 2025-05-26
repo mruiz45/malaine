@@ -11,7 +11,10 @@ import type {
   MeasurementSetResponse, 
   MeasurementSetsResponse,
   MeasurementSetFormErrors,
-  StandardMeasurements
+  StandardMeasurements,
+  MeasurementGuide,
+  MeasurementGuidesResponse,
+  MeasurementGuideResponse
 } from '@/types/measurements';
 import { STANDARD_MEASUREMENT_FIELDS } from '@/types/measurements';
 
@@ -315,4 +318,96 @@ export function convertMeasurementSetUnit(measurementSet: MeasurementSet, target
 export function formatMeasurement(value: number, unit: 'cm' | 'inch'): string {
   const unitDisplay = unit === 'cm' ? 'cm' : 'in';
   return `${value.toFixed(1)} ${unitDisplay}`;
+}
+
+// ============================================================================
+// US 3.1: Measurement Guides Service Functions
+// ============================================================================
+
+/**
+ * Fetches all measurement guides for authenticated users
+ * @returns Promise<MeasurementGuide[]> Array of measurement guides
+ * @throws Error if the request fails or user is not authenticated
+ */
+export async function getMeasurementGuides(): Promise<MeasurementGuide[]> {
+  try {
+    const response = await fetch('/api/measurement-guides', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data: MeasurementGuidesResponse = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    if (!data.success || !data.data) {
+      throw new Error(data.error || 'Failed to fetch measurement guides');
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error('Error in getMeasurementGuides:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetches a specific measurement guide by measurement key
+ * @param measurementKey - The measurement key (e.g., 'chest_circumference')
+ * @returns Promise<MeasurementGuide> The measurement guide
+ * @throws Error if the request fails, guide not found, or user is not authenticated
+ */
+export async function getMeasurementGuide(measurementKey: string): Promise<MeasurementGuide> {
+  try {
+    const response = await fetch(`/api/measurement-guides/${measurementKey}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data: MeasurementGuideResponse = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    if (!data.success || !data.data) {
+      throw new Error(data.error || 'Failed to fetch measurement guide');
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error('Error in getMeasurementGuide:', error);
+    throw error;
+  }
+}
+
+/**
+ * Creates a map of measurement guides indexed by measurement key for quick lookup
+ * @param guides - Array of measurement guides
+ * @returns Record<string, MeasurementGuide> - Map of guides by measurement key
+ */
+export function createMeasurementGuidesMap(guides: MeasurementGuide[]): Record<string, MeasurementGuide> {
+  return guides.reduce((map, guide) => {
+    map[guide.measurement_key] = guide;
+    return map;
+  }, {} as Record<string, MeasurementGuide>);
+}
+
+/**
+ * Gets the guide for a specific measurement key from a guides map
+ * @param guidesMap - Map of guides by measurement key
+ * @param measurementKey - The measurement key to look up
+ * @returns MeasurementGuide | undefined - The guide if found, undefined otherwise
+ */
+export function getGuideForMeasurement(
+  guidesMap: Record<string, MeasurementGuide>, 
+  measurementKey: string
+): MeasurementGuide | undefined {
+  return guidesMap[measurementKey];
 } 

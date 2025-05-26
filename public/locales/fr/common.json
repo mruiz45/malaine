@@ -28,9 +28,67 @@
       "ai_assistant": {
         "title": "Assistant IA",
         "description": "Obtenez de l'aide sur les techniques, les calculs et le dépannage grâce à notre assistant intelligent."
-      }
-    }
+          }
   },
+  "ease_advisor": {
+    "tool_title": "Conseiller de Sélection d'Aisance",
+    "tool_description": "Obtenez des recommandations personnalisées d'aisance basées sur le type de vêtement, l'ajustement désiré et le poids de la laine pour obtenir le style et le confort voulus.",
+    "configuration_title": "Configuration",
+    "garment_category": "Catégorie de Vêtement",
+    "fit_preference": "Préférence d'Ajustement",
+    "yarn_weight_category": "Catégorie de Poids de Laine",
+    "optional": "optionnel",
+    "display_unit": "Unité d'Affichage",
+    "centimeters": "Centimètres (cm)",
+    "inches": "Pouces (in)",
+    "select_garment_category": "Sélectionnez une catégorie de vêtement",
+    "select_fit_preference": "Sélectionnez une préférence d'ajustement",
+    "select_yarn_weight": "Sélectionnez un poids de laine",
+    "get_advice_button": "Obtenir des Conseils d'Aisance",
+    "getting_advice": "Obtention des conseils...",
+    "advice_title": "Conseils d'Aisance Recommandés",
+    "explanation_title": "Explication",
+    "suggested_ease_values": "Valeurs d'Aisance Suggérées",
+    "recommended_value": "Recommandé",
+    "no_specific_measurements": "Aucune mesure d'aisance spécifique requise pour ce type de vêtement.",
+    "apply_suggestion_title": "Appliquer la Suggestion",
+    "apply_suggestion_description": "Utilisez ces valeurs recommandées dans vos préférences d'aisance",
+    "apply_suggestion_button": "Appliquer la Suggestion",
+    "measurements_in_unit": "Toutes les mesures sont en {{unit}}",
+    "fallback_notice": "Conseil général utilisé - aucune règle spécifique trouvée pour cette combinaison",
+    "error_title": "Erreur",
+    "error_getting_advice": "Erreur lors de l'obtention des conseils d'aisance",
+    "garment_categories": {
+      "sweater": "Pull",
+      "cardigan": "Cardigan",
+      "hat": "Bonnet",
+      "socks": "Chaussettes",
+      "shawl": "Châle"
+    },
+    "fit_preferences": {
+      "very_close_fitting": "Très Ajusté/Aisance Négative",
+      "close_fitting": "Ajusté/Aisance Zéro",
+      "classic": "Classique/Aisance Légèrement Positive",
+      "relaxed": "Décontracté",
+      "oversized": "Surdimensionné"
+    },
+    "yarn_weights": {
+      "fingering": "Fingering",
+      "sport": "Sport",
+      "dk": "DK",
+      "worsted": "Worsted",
+      "bulky": "Bulky"
+    },
+    "measurements": {
+      "bust_ease": "Aisance Buste",
+      "waist_ease": "Aisance Taille",
+      "hip_ease": "Aisance Hanches",
+      "sleeve_ease": "Aisance Manches",
+      "head_circumference": "Tour de Tête",
+      "foot_circumference": "Tour de Pied"
+    }
+  }
+},
   "login": {
     "title": "Connexion",
     "placeholder": "Cette page contiendra le formulaire de connexion dans le futur.",
@@ -176,6 +234,18 @@
       "created": "Créé",
       "updated": "Mis à jour",
       "back_to_list": "Retour à la Liste"
+    },
+    "guide": {
+      "instructions_title": "Comment Mesurer",
+      "tips_title": "Conseils pour une Mesure Précise",
+      "tip_1": "Utilisez un mètre ruban flexible",
+      "tip_2": "Gardez le ruban ajusté mais pas serré",
+      "tip_3": "Tenez-vous dans une position naturelle et détendue",
+      "tip_4": "Prenez les mesures par-dessus des vêtements ajustés ou des sous-vêtements"
+    },
+    "note": {
+      "placeholder": "Ajoutez une note sur cette mesure...",
+      "length_warning": "La note devient longue"
     }
   },
   "gauge": {

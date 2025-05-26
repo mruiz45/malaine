@@ -6,7 +6,8 @@ import {
   WrenchScrewdriverIcon,
   BeakerIcon,
   ChartBarIcon,
-  ScaleIcon
+  ScaleIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline';
 
 export const metadata: Metadata = {
@@ -95,6 +96,33 @@ export default function ToolsPage() {
             </div>
           </Link>
 
+          {/* Ease Selection Advisor */}
+          <Link 
+            href="/tools/ease-advisor"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center mb-4">
+              <div className="p-2 bg-indigo-100 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                <SparklesIcon className="h-6 w-6 text-indigo-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 ml-3">
+                Conseiller de Sélection d'Aisance
+              </h3>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Obtenez des recommandations personnalisées d'aisance basées sur le type de vêtement, 
+              l'ajustement désiré et le poids de la laine.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded-full">
+                US_3.2
+              </span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                ✅ Implémenté
+              </span>
+            </div>
+          </Link>
+
           {/* Placeholder for future tools */}
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 opacity-50">
             <div className="flex items-center mb-4">
@@ -166,6 +194,7 @@ export default function ToolsPage() {
               <ul className="space-y-1 text-sm text-gray-600">
                 <li>✅ Calculateur d'Échantillon Inversé (US_2.1)</li>
                 <li>✅ Estimateur de Quantité de Laine (US_2.2)</li>
+                <li>✅ Conseiller de Sélection d'Aisance (US_3.2)</li>
                 <li className="text-gray-400">⏳ Prochain outil selon spécifications</li>
               </ul>
             </div>

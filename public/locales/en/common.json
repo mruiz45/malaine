@@ -176,6 +176,18 @@
       "created": "Created",
       "updated": "Updated",
       "back_to_list": "Back to List"
+    },
+    "guide": {
+      "instructions_title": "How to Measure",
+      "tips_title": "Tips for Accurate Measurement",
+      "tip_1": "Use a flexible measuring tape",
+      "tip_2": "Keep the tape snug but not tight",
+      "tip_3": "Stand in a natural, relaxed position",
+      "tip_4": "Take measurements over fitted clothing or undergarments"
+    },
+    "note": {
+      "placeholder": "Add a note about this measurement...",
+      "length_warning": "Note is getting long"
     }
   },
   "gauge": {
@@ -659,6 +671,64 @@
         "loading_profiles": "Loading profiles...",
         "no_estimation": "No estimation available"
       }
+    }
+  },
+  "ease_advisor": {
+    "tool_title": "Ease Selection Advisor",
+    "tool_description": "Get personalized ease recommendations based on garment type, desired fit, and yarn weight to achieve your intended style and comfort.",
+    "configuration_title": "Configuration",
+    "garment_category": "Garment Category",
+    "fit_preference": "Fit Preference",
+    "yarn_weight_category": "Yarn Weight Category",
+    "optional": "optional",
+    "display_unit": "Display Unit",
+    "centimeters": "Centimeters (cm)",
+    "inches": "Inches (in)",
+    "select_garment_category": "Select a garment category",
+    "select_fit_preference": "Select a fit preference",
+    "select_yarn_weight": "Select a yarn weight",
+    "get_advice_button": "Get Ease Advice",
+    "getting_advice": "Getting advice...",
+    "advice_title": "Recommended Ease Advice",
+    "explanation_title": "Explanation",
+    "suggested_ease_values": "Suggested Ease Values",
+    "recommended_value": "Recommended",
+    "no_specific_measurements": "No specific ease measurements required for this garment type.",
+    "apply_suggestion_title": "Apply Suggestion",
+    "apply_suggestion_description": "Use these recommended values in your ease preferences",
+    "apply_suggestion_button": "Apply Suggestion",
+    "measurements_in_unit": "All measurements are in {{unit}}",
+    "fallback_notice": "General advice used - no specific rule found for this combination",
+    "error_title": "Error",
+    "error_getting_advice": "Error getting ease advice",
+    "garment_categories": {
+      "sweater": "Sweater",
+      "cardigan": "Cardigan",
+      "hat": "Hat",
+      "socks": "Socks",
+      "shawl": "Shawl"
+    },
+    "fit_preferences": {
+      "very_close_fitting": "Very Close-fitting/Negative Ease",
+      "close_fitting": "Close-fitting/Zero Ease",
+      "classic": "Classic/Slightly Positive Ease",
+      "relaxed": "Relaxed Fit",
+      "oversized": "Oversized"
+    },
+    "yarn_weights": {
+      "fingering": "Fingering Weight",
+      "sport": "Sport Weight",
+      "dk": "DK Weight",
+      "worsted": "Worsted Weight",
+      "bulky": "Bulky Weight"
+    },
+    "measurements": {
+      "bust_ease": "Bust Ease",
+      "waist_ease": "Waist Ease",
+      "hip_ease": "Hip Ease",
+      "sleeve_ease": "Sleeve Ease",
+      "head_circumference": "Head Circumference",
+      "foot_circumference": "Foot Circumference"
     }
   },
   "common": {

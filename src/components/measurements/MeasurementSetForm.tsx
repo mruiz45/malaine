@@ -7,14 +7,22 @@ import type {
   CreateMeasurementSet, 
   UpdateMeasurementSet, 
   MeasurementSetFormErrors,
-  MeasurementUnit 
+  MeasurementUnit,
+  MeasurementDetails,
+  MeasurementGuide,
+  StandardMeasurements
 } from '@/types/measurements';
 import { STANDARD_MEASUREMENT_FIELDS } from '@/types/measurements';
 import { 
   createMeasurementSet, 
   updateMeasurementSet, 
-  validateMeasurementSetData 
+  validateMeasurementSetData,
+  getMeasurementGuides,
+  createMeasurementGuidesMap
 } from '@/services/measurementService';
+import MeasurementGuideButton from './MeasurementGuideButton';
+import MeasurementGuideModal from './MeasurementGuideModal';
+import MeasurementNoteInput from './MeasurementNoteInput';
 
 interface MeasurementSetFormProps {
   measurementSet?: MeasurementSet; // If provided, form is in edit mode
@@ -39,7 +47,8 @@ export default function MeasurementSetForm({
     set_name: measurementSet?.set_name || '',
     measurement_unit: measurementSet?.measurement_unit || 'cm',
     notes: measurementSet?.notes || '',
-    custom_measurements: measurementSet?.custom_measurements || {}
+    custom_measurements: measurementSet?.custom_measurements || {},
+    measurement_details: measurementSet?.measurement_details || {}
   });
 
   // Initialize standard measurements
@@ -49,7 +58,8 @@ export default function MeasurementSetForm({
         set_name: measurementSet.set_name,
         measurement_unit: measurementSet.measurement_unit,
         notes: measurementSet.notes || '',
-        custom_measurements: measurementSet.custom_measurements || {}
+        custom_measurements: measurementSet.custom_measurements || {},
+        measurement_details: measurementSet.measurement_details || {}
       };
 
       // Add standard measurements
@@ -64,10 +74,37 @@ export default function MeasurementSetForm({
     }
   }, [measurementSet]);
 
+  // US 3.1: Load measurement guides
+  useEffect(() => {
+    const loadGuides = async () => {
+      try {
+        setGuidesLoading(true);
+        const guidesData = await getMeasurementGuides();
+        const guidesMap = createMeasurementGuidesMap(guidesData);
+        setGuides(guidesMap);
+      } catch (error) {
+        console.error('Failed to load measurement guides:', error);
+        // Continue without guides - they're not critical for form functionality
+      } finally {
+        setGuidesLoading(false);
+      }
+    };
+
+    loadGuides();
+  }, []);
+
   const [errors, setErrors] = useState<MeasurementSetFormErrors>({});
   const [loading, setLoading] = useState(false);
   const [customMeasurementKey, setCustomMeasurementKey] = useState('');
   const [customMeasurementValue, setCustomMeasurementValue] = useState('');
+
+  // US 3.1: Measurement guides state
+  const [guides, setGuides] = useState<Record<string, MeasurementGuide>>({});
+  const [guidesLoading, setGuidesLoading] = useState(true);
+  const [selectedGuide, setSelectedGuide] = useState<{
+    measurementKey: keyof StandardMeasurements;
+    guide?: MeasurementGuide;
+  } | null>(null);
 
   // Handle standard field changes
   const handleFieldChange = (field: string, value: string) => {
@@ -127,6 +164,31 @@ export default function MeasurementSetForm({
         custom_measurements: newCustom
       };
     });
+  };
+
+  // US 3.1: Handle measurement note changes
+  const handleMeasurementNoteChange = (measurementKey: keyof StandardMeasurements, note: string) => {
+    setFormData(prev => ({
+      ...prev,
+      measurement_details: {
+        ...prev.measurement_details,
+        [measurementKey]: {
+          ...prev.measurement_details?.[measurementKey],
+          note: note.trim() || undefined
+        }
+      }
+    }));
+  };
+
+  // US 3.1: Handle guide button click
+  const handleGuideButtonClick = (measurementKey: keyof StandardMeasurements) => {
+    const guide = guides[measurementKey];
+    setSelectedGuide({ measurementKey, guide });
+  };
+
+  // US 3.1: Close guide modal
+  const closeGuideModal = () => {
+    setSelectedGuide(null);
   };
 
   // Handle form submission
@@ -241,16 +303,30 @@ export default function MeasurementSetForm({
         {/* Standard Measurements */}
         <div>
           <h3 className="text-lg font-medium text-gray-900 mb-4">{t('measurements.form.standard_measurements')}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {STANDARD_MEASUREMENT_FIELDS.map((field) => (
-              <div key={field.key}>
-                <label htmlFor={field.key} className="block text-sm font-medium text-gray-700 mb-1">
-                  {t(`measurements.fields.${field.key}`)}
-                  {field.required && ' *'}
-                </label>
+              <div key={field.key} className="space-y-2">
+                {/* Label with help button */}
+                <div className="flex items-center">
+                  <label htmlFor={field.key} className="block text-sm font-medium text-gray-700">
+                    {t(`measurements.fields.${field.key}`)}
+                    {field.required && ' *'}
+                  </label>
+                  {/* US 3.1: Guide button */}
+                  {!guidesLoading && (
+                    <MeasurementGuideButton
+                      measurementKey={field.key}
+                      onClick={() => handleGuideButtonClick(field.key)}
+                    />
+                  )}
+                </div>
+                
+                {/* Description */}
                 {field.description && (
-                  <p className="text-xs text-gray-500 mb-1">{t(`measurements.fields.${field.key}_description`)}</p>
+                  <p className="text-xs text-gray-500">{t(`measurements.fields.${field.key}_description`)}</p>
                 )}
+                
+                {/* Input field */}
                 <div className="relative">
                   <input
                     type="number"
@@ -269,9 +345,18 @@ export default function MeasurementSetForm({
                     {formData.measurement_unit === 'cm' ? 'cm' : 'in'}
                   </span>
                 </div>
+                
+                {/* Error message */}
                 {errors[field.key] && (
-                  <p className="mt-1 text-sm text-red-600">{errors[field.key]}</p>
+                  <p className="text-sm text-red-600">{errors[field.key]}</p>
                 )}
+                
+                {/* US 3.1: Individual measurement note */}
+                <MeasurementNoteInput
+                  measurementKey={field.key}
+                  value={formData.measurement_details?.[field.key]?.note || ''}
+                  onChange={(note) => handleMeasurementNoteChange(field.key, note)}
+                />
               </div>
             ))}
           </div>
@@ -392,6 +477,16 @@ export default function MeasurementSetForm({
           </button>
         </div>
       </form>
+
+      {/* US 3.1: Measurement Guide Modal */}
+      {selectedGuide && (
+        <MeasurementGuideModal
+          isOpen={!!selectedGuide}
+          onClose={closeGuideModal}
+          measurementKey={selectedGuide.measurementKey}
+          guide={selectedGuide.guide}
+        />
+      )}
     </div>
   );
 } 
