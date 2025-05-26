@@ -7,6 +7,7 @@
     "signup": "Inscription",
     "dashboard": "Tableau de bord",
     "measurements": "Mensurations",
+    "tools": "Outils",
     "logout": "Déconnexion"
   },
   "home": {
@@ -466,6 +467,199 @@
     "noPatterns": "Aucun motif de point disponible",
     "patternCount": "{{count}} motif disponible",
     "patternCount_plural": "{{count}} motifs disponibles"
+  },
+  "tools": {
+    "reverse_gauge_calculator": {
+      "title": "Calculateur d'Échantillon Inversé",
+      "description": "Calculez les mailles/rangs nécessaires pour des dimensions cibles, les dimensions résultantes à partir de comptes de mailles, ou comparez l'échantillon du patron avec votre échantillon",
+      "scenario_selection": "Choisissez votre Scénario de Calcul",
+      "calculate": "Calculer",
+      "calculating": "Calcul en cours...",
+      "reset": "Réinitialiser",
+      "scenarios": {
+        "target_to_stitches": {
+          "title": "Dimension Cible → Mailles/Rangs",
+          "description": "Calculez combien de mailles ou rangs vous avez besoin pour une dimension spécifique avec votre échantillon"
+        },
+        "stitches_to_dimension": {
+          "title": "Mailles/Rangs → Dimension",
+          "description": "Calculez la dimension résultante en utilisant un nombre spécifique de mailles ou rangs avec votre échantillon"
+        },
+        "gauge_comparison": {
+          "title": "Comparaison Échantillon Patron vs Utilisateur",
+          "description": "Comparez l'échantillon du patron avec votre échantillon et obtenez les ajustements nécessaires"
+        }
+      },
+      "form": {
+        "your_gauge": "Votre Échantillon",
+        "pattern_gauge": "Échantillon du Patron",
+        "stitches": "Mailles",
+        "rows": "Rangs",
+        "unit_dimension": "Dimension de l'Unité",
+        "unit": "Unité",
+        "target_dimension": "Dimension Cible",
+        "dimension_unit": "Unité de Dimension",
+        "calculate_for": "Calculer pour",
+        "stitch_or_row_count": "Nombre de Mailles/Rangs",
+        "calculate_dimension_for": "Calculer la dimension pour",
+        "pattern_stitch_row_count": "Nombre de Mailles/Rangs du Patron",
+        "calculate_component_for": "Calculer le composant pour",
+        "width": "Largeur",
+        "height": "Hauteur"
+      },
+      "results": {
+        "title": "Résultats du Calcul",
+        "scenario_a": {
+          "title": "Dimension Cible → Mailles/Rangs Nécessaires"
+        },
+        "scenario_b": {
+          "title": "Mailles/Rangs → Dimension Résultante"
+        },
+        "scenario_c": {
+          "title": "Comparaison d'Échantillons"
+        },
+        "target_dimension": "Dimension Cible",
+        "calculating_for": "Calcul pour",
+        "required_count": "Nombre Requis",
+        "stitches_needed": "mailles nécessaires",
+        "rows_needed": "rangs nécessaires",
+        "stitches_used": "Mailles Utilisées",
+        "rows_used": "Rangs Utilisés",
+        "resulting_dimension": "Dimension Résultante",
+        "final_width": "largeur finale",
+        "final_height": "hauteur finale",
+        "pattern_count": "Nombre du Patron",
+        "original_pattern_dimension": "Dimension Originale du Patron",
+        "with_pattern_gauge": "Avec l'échantillon du patron",
+        "with_your_gauge": "Avec Votre Échantillon",
+        "with_your_gauge_detail": "Avec votre échantillon",
+        "difference": "de différence",
+        "adjustment_needed": "Ajustement Nécessaire",
+        "to_achieve_original_dimension": "pour obtenir la dimension originale",
+        "gauges_match": "Les échantillons correspondent !",
+        "no_adjustment_needed": "Aucun ajustement nécessaire",
+        "gauge_used": "Échantillon utilisé"
+      }
+    },
+    "yarn_quantity_estimator": {
+      "title": "Estimateur de Quantité de Laine",
+      "description": "Estimez la quantité de laine nécessaire pour votre projet basée sur l'échantillon, les spécifications de laine et le type de projet",
+      "subtitle": "Obtenez une estimation approximative des besoins en laine pour planifier votre projet",
+      "gauge_section": "Informations d'Échantillon",
+      "yarn_section": "Informations de Laine",
+      "project_section": "Spécifications du Projet",
+      "results_section": "Résultats de l'Estimation",
+      "estimate": "Estimer la Quantité de Laine",
+      "estimating": "Calcul en cours...",
+      "reset": "Réinitialiser",
+      "gauge_selection": {
+        "title": "Sélectionner l'Échantillon",
+        "use_saved_profile": "Utiliser un Profil d'Échantillon Sauvegardé",
+        "enter_manually": "Saisir l'Échantillon Manuellement",
+        "select_profile": "Sélectionner un profil d'échantillon",
+        "no_profiles": "Aucun profil d'échantillon trouvé",
+        "create_profile_link": "Créer d'abord un profil d'échantillon",
+        "manual_entry": "Saisie Manuelle d'Échantillon"
+      },
+      "yarn_selection": {
+        "title": "Sélectionner la Laine",
+        "use_saved_profile": "Utiliser un Profil de Laine Sauvegardé",
+        "enter_manually": "Saisir les Détails de Laine Manuellement",
+        "select_profile": "Sélectionner un profil de laine",
+        "no_profiles": "Aucun profil de laine trouvé",
+        "create_profile_link": "Créer d'abord un profil de laine",
+        "manual_entry": "Saisie Manuelle de Laine"
+      },
+      "project_types": {
+        "title": "Type de Projet",
+        "scarf": "Écharpe",
+        "baby_blanket": "Couverture Bébé",
+        "simple_hat": "Bonnet Simple",
+        "adult_sweater": "Pull Adulte"
+      },
+      "garment_sizes": {
+        "title": "Taille du Vêtement",
+        "S": "Petit",
+        "M": "Moyen",
+        "L": "Grand",
+        "XL": "Très Grand"
+      },
+      "dimensions": {
+        "title": "Dimensions du Projet",
+        "width": "Largeur",
+        "length": "Longueur",
+        "unit": "Unité",
+        "cm": "Centimètres",
+        "inch": "Pouces"
+      },
+      "manual_gauge": {
+        "stitch_count": "Mailles par échantillon",
+        "row_count": "Rangs par échantillon",
+        "swatch_width": "Largeur de l'échantillon",
+        "swatch_height": "Hauteur de l'échantillon",
+        "measurement_unit": "Unité de mesure"
+      },
+      "manual_yarn": {
+        "yarn_weight_category": "Catégorie de poids de laine",
+        "skein_meterage": "Métrage par écheveau (mètres)",
+        "skein_weight_grams": "Poids par écheveau (grammes)",
+        "optional": "Optionnel - aide avec les calculs"
+      },
+      "results": {
+        "title": "Estimation de Quantité de Laine",
+        "total_length": "Longueur Totale Nécessaire",
+        "total_weight": "Poids Total Nécessaire",
+        "number_of_skeins": "Nombre d'Écheveaux",
+        "calculation_details": "Détails du Calcul",
+        "surface_area": "Surface du Projet",
+        "yarn_factor": "Facteur de Consommation de Laine",
+        "buffer_included": "Marge Incluse",
+        "calculation_method": "Méthode de Calcul",
+        "yarn_weight_used": "Catégorie de Poids de Laine Utilisée",
+        "meters": "mètres",
+        "yards": "yards",
+        "grams": "grammes",
+        "ounces": "onces",
+        "skeins": "écheveaux",
+        "square_meters": "m²",
+        "meters_per_square_meter": "m/m²",
+        "area_based": "Calcul basé sur la surface",
+        "fixed_yardage": "Estimation de métrage fixe"
+      },
+      "disclaimer": {
+        "title": "Avertissement Important",
+        "content": "Ceci est une estimation approximative et l'usage réel de laine peut varier selon :",
+        "factors": [
+          "Complexité du motif de point",
+          "Tension individuelle de tricot/crochet",
+          "Dimensionnement exact du projet",
+          "Caractéristiques de la laine",
+          "Modifications du patron"
+        ],
+        "recommendation": "Achetez toujours un peu de laine supplémentaire pour tenir compte des variations et erreurs potentielles."
+      },
+      "validation": {
+        "project_type_required": "Le type de projet est requis",
+        "gauge_required": "Les informations d'échantillon sont requises",
+        "yarn_required": "Les informations de laine sont requises",
+        "dimensions_required": "Les dimensions sont requises pour ce type de projet",
+        "size_required": "La taille est requise pour ce type de projet",
+        "width_positive": "La largeur doit être un nombre positif",
+        "length_positive": "La longueur doit être un nombre positif",
+        "stitch_count_positive": "Le nombre de mailles doit être un nombre positif",
+        "row_count_positive": "Le nombre de rangs doit être un nombre positif",
+        "swatch_width_positive": "La largeur de l'échantillon doit être un nombre positif",
+        "swatch_height_positive": "La hauteur de l'échantillon doit être un nombre positif",
+        "skein_meterage_positive": "Le métrage de l'écheveau doit être un nombre positif",
+        "skein_weight_positive": "Le poids de l'écheveau doit être un nombre positif"
+      },
+      "messages": {
+        "estimation_success": "Quantité de laine estimée avec succès !",
+        "estimation_error": "Échec de l'estimation de la quantité de laine",
+        "loading_profiles": "Chargement des profils...",
+        "no_estimation": "Aucune estimation disponible"
+      }
+    }
   },
   "common": {
     "search": "Rechercher",

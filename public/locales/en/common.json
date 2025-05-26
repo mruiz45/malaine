@@ -7,6 +7,7 @@
     "signup": "Sign Up",
     "dashboard": "Dashboard",
     "measurements": "Measurements",
+    "tools": "Tools",
     "logout": "Logout"
   },
   "home": {
@@ -466,6 +467,199 @@
     "noPatterns": "No stitch patterns available",
     "patternCount": "{{count}} pattern available",
     "patternCount_plural": "{{count}} patterns available"
+  },
+  "tools": {
+    "reverse_gauge_calculator": {
+      "title": "Reverse Gauge Calculator",
+      "description": "Calculate required stitches/rows for target dimensions, resulting dimensions from stitch counts, or compare pattern gauge vs user gauge",
+      "scenario_selection": "Choose Your Calculation Scenario",
+      "calculate": "Calculate",
+      "calculating": "Calculating...",
+      "reset": "Reset",
+      "scenarios": {
+        "target_to_stitches": {
+          "title": "Target Dimension → Stitches/Rows",
+          "description": "Calculate how many stitches or rows you need for a specific dimension with your gauge"
+        },
+        "stitches_to_dimension": {
+          "title": "Stitches/Rows → Dimension",
+          "description": "Calculate the resulting dimension when using a specific number of stitches or rows with your gauge"
+        },
+        "gauge_comparison": {
+          "title": "Pattern vs User Gauge Comparison",
+          "description": "Compare pattern gauge with your gauge and get adjustments needed"
+        }
+      },
+      "form": {
+        "your_gauge": "Your Gauge",
+        "pattern_gauge": "Pattern Gauge",
+        "stitches": "Stitches",
+        "rows": "Rows",
+        "unit_dimension": "Unit Dimension",
+        "unit": "Unit",
+        "target_dimension": "Target Dimension",
+        "dimension_unit": "Dimension Unit",
+        "calculate_for": "Calculate for",
+        "stitch_or_row_count": "Stitch or Row Count",
+        "calculate_dimension_for": "Calculate dimension for",
+        "pattern_stitch_row_count": "Pattern Stitch/Row Count",
+        "calculate_component_for": "Calculate component for",
+        "width": "Width",
+        "height": "Height"
+      },
+      "results": {
+        "title": "Calculation Results",
+        "scenario_a": {
+          "title": "Target Dimension → Required Stitches/Rows"
+        },
+        "scenario_b": {
+          "title": "Stitches/Rows → Resulting Dimension"
+        },
+        "scenario_c": {
+          "title": "Gauge Comparison"
+        },
+        "target_dimension": "Target Dimension",
+        "calculating_for": "Calculating for",
+        "required_count": "Required Count",
+        "stitches_needed": "stitches needed",
+        "rows_needed": "rows needed",
+        "stitches_used": "Stitches Used",
+        "rows_used": "Rows Used",
+        "resulting_dimension": "Resulting Dimension",
+        "final_width": "final width",
+        "final_height": "final height",
+        "pattern_count": "Pattern Count",
+        "original_pattern_dimension": "Original Pattern Dimension",
+        "with_pattern_gauge": "With pattern gauge",
+        "with_your_gauge": "With Your Gauge",
+        "with_your_gauge_detail": "With your gauge",
+        "difference": "difference",
+        "adjustment_needed": "Adjustment Needed",
+        "to_achieve_original_dimension": "to achieve original dimension",
+        "gauges_match": "Gauges match!",
+        "no_adjustment_needed": "No adjustment needed",
+        "gauge_used": "Gauge used"
+      }
+    },
+    "yarn_quantity_estimator": {
+      "title": "Yarn Quantity Estimator",
+      "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type",
+      "subtitle": "Get a rough estimate of yarn requirements for planning your project",
+      "gauge_section": "Gauge Information",
+      "yarn_section": "Yarn Information",
+      "project_section": "Project Specifications",
+      "results_section": "Estimation Results",
+      "estimate": "Estimate Yarn Quantity",
+      "estimating": "Calculating...",
+      "reset": "Reset",
+      "gauge_selection": {
+        "title": "Select Gauge",
+        "use_saved_profile": "Use Saved Gauge Profile",
+        "enter_manually": "Enter Gauge Manually",
+        "select_profile": "Select a gauge profile",
+        "no_profiles": "No gauge profiles found",
+        "create_profile_link": "Create a gauge profile first",
+        "manual_entry": "Manual Gauge Entry"
+      },
+      "yarn_selection": {
+        "title": "Select Yarn",
+        "use_saved_profile": "Use Saved Yarn Profile",
+        "enter_manually": "Enter Yarn Details Manually",
+        "select_profile": "Select a yarn profile",
+        "no_profiles": "No yarn profiles found",
+        "create_profile_link": "Create a yarn profile first",
+        "manual_entry": "Manual Yarn Entry"
+      },
+      "project_types": {
+        "title": "Project Type",
+        "scarf": "Scarf",
+        "baby_blanket": "Baby Blanket",
+        "simple_hat": "Simple Hat",
+        "adult_sweater": "Adult Sweater"
+      },
+      "garment_sizes": {
+        "title": "Garment Size",
+        "S": "Small",
+        "M": "Medium",
+        "L": "Large",
+        "XL": "Extra Large"
+      },
+      "dimensions": {
+        "title": "Project Dimensions",
+        "width": "Width",
+        "length": "Length",
+        "unit": "Unit",
+        "cm": "Centimeters",
+        "inch": "Inches"
+      },
+      "manual_gauge": {
+        "stitch_count": "Stitches per swatch",
+        "row_count": "Rows per swatch",
+        "swatch_width": "Swatch width",
+        "swatch_height": "Swatch height",
+        "measurement_unit": "Measurement unit"
+      },
+      "manual_yarn": {
+        "yarn_weight_category": "Yarn weight category",
+        "skein_meterage": "Meterage per skein (meters)",
+        "skein_weight_grams": "Weight per skein (grams)",
+        "optional": "Optional - helps with calculations"
+      },
+      "results": {
+        "title": "Yarn Quantity Estimation",
+        "total_length": "Total Length Needed",
+        "total_weight": "Total Weight Needed",
+        "number_of_skeins": "Number of Skeins",
+        "calculation_details": "Calculation Details",
+        "surface_area": "Project Surface Area",
+        "yarn_factor": "Yarn Consumption Factor",
+        "buffer_included": "Buffer Included",
+        "calculation_method": "Calculation Method",
+        "yarn_weight_used": "Yarn Weight Category Used",
+        "meters": "meters",
+        "yards": "yards",
+        "grams": "grams",
+        "ounces": "ounces",
+        "skeins": "skeins",
+        "square_meters": "m²",
+        "meters_per_square_meter": "m/m²",
+        "area_based": "Area-based calculation",
+        "fixed_yardage": "Fixed yardage estimation"
+      },
+      "disclaimer": {
+        "title": "Important Disclaimer",
+        "content": "This is a rough estimate and actual yarn usage may vary based on:",
+        "factors": [
+          "Stitch pattern complexity",
+          "Individual knitting/crochet tension",
+          "Exact project sizing",
+          "Yarn characteristics",
+          "Pattern modifications"
+        ],
+        "recommendation": "Always purchase a little extra yarn to account for variations and potential mistakes."
+      },
+      "validation": {
+        "project_type_required": "Project type is required",
+        "gauge_required": "Gauge information is required",
+        "yarn_required": "Yarn information is required",
+        "dimensions_required": "Dimensions are required for this project type",
+        "size_required": "Size is required for this project type",
+        "width_positive": "Width must be a positive number",
+        "length_positive": "Length must be a positive number",
+        "stitch_count_positive": "Stitch count must be a positive number",
+        "row_count_positive": "Row count must be a positive number",
+        "swatch_width_positive": "Swatch width must be a positive number",
+        "swatch_height_positive": "Swatch height must be a positive number",
+        "skein_meterage_positive": "Skein meterage must be a positive number",
+        "skein_weight_positive": "Skein weight must be a positive number"
+      },
+      "messages": {
+        "estimation_success": "Yarn quantity estimated successfully!",
+        "estimation_error": "Failed to estimate yarn quantity",
+        "loading_profiles": "Loading profiles...",
+        "no_estimation": "No estimation available"
+      }
+    }
   },
   "common": {
     "search": "Search",
