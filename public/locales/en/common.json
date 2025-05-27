@@ -748,5 +748,33 @@
     "hideSearch": "Hide Search",
     "searching": "Searching...",
     "clear": "Clear"
+  },
+  "garmentType": {
+    "selectType": "Select Garment Type",
+    "selectTypeDescription": "Choose the type of garment you want to create. This will determine the available options and tools for your pattern.",
+    "noTypesAvailable": "No garment types available",
+    "components": "Components",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate", 
+      "advanced": "Advanced"
+    }
+  },
+  "patternDefinition": {
+    "title": "Pattern Definition",
+    "getStarted": "Get Started",
+    "description": "Create a new pattern definition session or continue working on an existing one.",
+    "createNew": "Create New Pattern",
+    "existingSessions": "Your Pattern Definitions",
+    "untitledSession": "Untitled Session",
+    "lastUpdated": "Last updated",
+    "noSession": "No Active Session",
+    "noSessionDescription": "Please create or select a pattern definition session to continue.",
+    "status": {
+      "draft": "Draft",
+      "ready_for_calculation": "Ready for Calculation",
+      "completed": "Completed",
+      "archived": "Archived"
+    }
   }
 } 

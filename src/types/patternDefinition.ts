@@ -8,6 +8,7 @@ import { MeasurementSet } from './measurements';
 import { EasePreference } from './ease';
 import { YarnProfile } from './yarn';
 import { StitchPattern } from './stitchPattern';
+import { PatternDefinitionComponentWithTemplate, GarmentType } from './garment';
 
 /**
  * Status of a pattern definition session
@@ -17,7 +18,7 @@ export type SessionStatus = 'draft' | 'ready_for_calculation' | 'completed' | 'a
 /**
  * Steps in the pattern definition process
  */
-export type DefinitionStep = 'gauge' | 'measurements' | 'ease' | 'yarn' | 'stitch-pattern' | 'summary';
+export type DefinitionStep = 'garment-type' | 'gauge' | 'measurements' | 'ease' | 'yarn' | 'stitch-pattern' | 'garment-structure' | 'summary';
 
 /**
  * Base pattern definition session interface matching the database schema
@@ -43,6 +44,8 @@ export interface PatternDefinitionSession {
   selected_yarn_profile_id?: string;
   /** Selected stitch pattern ID */
   selected_stitch_pattern_id?: string;
+  /** Selected garment type ID (US 4.2) */
+  selected_garment_type_id?: string;
   /** Current status of the session */
   status: SessionStatus;
   /** Creation timestamp */
@@ -73,6 +76,10 @@ export interface PatternDefinitionSessionWithData extends PatternDefinitionSessi
   yarn_profile?: YarnProfile;
   /** Populated stitch pattern data */
   stitch_pattern?: StitchPattern;
+  /** Populated garment type data (US 4.2) */
+  garment_type?: GarmentType;
+  /** Pattern definition components for this session */
+  components?: PatternDefinitionComponentWithTemplate[];
 }
 
 /**
@@ -105,6 +112,8 @@ export interface UpdatePatternDefinitionSessionData {
   selected_yarn_profile_id?: string;
   /** Selected stitch pattern ID */
   selected_stitch_pattern_id?: string;
+  /** Selected garment type ID (US 4.2) */
+  selected_garment_type_id?: string;
   /** Session status */
   status?: SessionStatus;
   /** Cached gauge values */

@@ -748,5 +748,33 @@
     "hideSearch": "Masquer la Recherche",
     "searching": "Recherche...",
     "clear": "Effacer"
+  },
+  "garmentType": {
+    "selectType": "Sélectionner le Type de Vêtement",
+    "selectTypeDescription": "Choisissez le type de vêtement que vous voulez créer. Cela déterminera les options et outils disponibles pour votre patron.",
+    "noTypesAvailable": "Aucun type de vêtement disponible",
+    "components": "Composants",
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire", 
+      "advanced": "Avancé"
+    }
+  },
+  "patternDefinition": {
+    "title": "Définition de Patron",
+    "getStarted": "Commencer",
+    "description": "Créez une nouvelle session de définition de patron ou continuez à travailler sur une session existante.",
+    "createNew": "Créer un Nouveau Patron",
+    "existingSessions": "Vos Définitions de Patron",
+    "untitledSession": "Session Sans Titre",
+    "lastUpdated": "Dernière mise à jour",
+    "noSession": "Aucune Session Active",
+    "noSessionDescription": "Veuillez créer ou sélectionner une session de définition de patron pour continuer.",
+    "status": {
+      "draft": "Brouillon",
+      "ready_for_calculation": "Prêt pour le Calcul",
+      "completed": "Terminé",
+      "archived": "Archivé"
+    }
   }
 } 

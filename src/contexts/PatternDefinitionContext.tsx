@@ -18,6 +18,7 @@ import { patternDefinitionService } from '@/services/patternDefinitionService';
  * Available steps in the pattern definition process
  */
 const DEFINITION_STEPS: DefinitionStep[] = [
+  'garment-type',
   'gauge',
   'measurements', 
   'ease',
@@ -30,7 +31,7 @@ const DEFINITION_STEPS: DefinitionStep[] = [
  * Initial navigation state
  */
 const initialNavigation: DefinitionNavigation = {
-  currentStep: 'gauge',
+  currentStep: 'garment-type',
   availableSteps: DEFINITION_STEPS,
   completedSteps: [],
   canProceed: false
@@ -160,7 +161,7 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
       const fullSession = await patternDefinitionService.getSession(newSession.id);
       
       dispatch({ type: 'SET_SESSION', payload: fullSession });
-      dispatch({ type: 'SET_CURRENT_STEP', payload: 'gauge' });
+      dispatch({ type: 'SET_CURRENT_STEP', payload: 'garment-type' });
       dispatch({ type: 'SET_COMPLETED_STEPS', payload: [] });
 
       return newSession;
@@ -369,6 +370,10 @@ export function usePatternDefinition(): IPatternDefinitionContext {
 function calculateCompletedSteps(session: PatternDefinitionSessionWithData): DefinitionStep[] {
   const completed: DefinitionStep[] = [];
 
+  if (session.selected_garment_type_id) {
+    completed.push('garment-type');
+  }
+
   if (session.selected_gauge_profile_id) {
     completed.push('gauge');
   }
@@ -397,6 +402,11 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
  */
 function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionWithData): string | undefined {
   switch (step) {
+    case 'garment-type':
+      return session.selected_garment_type_id ? 
+        `Garment Type Selected${session.garment_type ? ` (${session.garment_type.display_name})` : ''}` : 
+        undefined;
+    
     case 'gauge':
       return session.selected_gauge_profile_id ? 
         `Gauge Profile Selected${session.gauge_stitch_count ? ` (${session.gauge_stitch_count} sts, ${session.gauge_row_count} rows)` : ''}` : 
@@ -429,6 +439,13 @@ function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionW
  */
 function getStepData(step: DefinitionStep, session: PatternDefinitionSessionWithData): Record<string, any> | undefined {
   switch (step) {
+    case 'garment-type':
+      return session.selected_garment_type_id ? { 
+        id: session.selected_garment_type_id,
+        type_key: session.garment_type?.type_key,
+        display_name: session.garment_type?.display_name
+      } : undefined;
+    
     case 'gauge':
       return session.selected_gauge_profile_id ? { 
         id: session.selected_gauge_profile_id,

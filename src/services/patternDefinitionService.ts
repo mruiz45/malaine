@@ -11,6 +11,13 @@ import {
   PatternDefinitionSessionResponse,
   PatternDefinitionSessionsResponse
 } from '@/types/patternDefinition';
+import {
+  PatternDefinitionComponentWithTemplate,
+  CreatePatternDefinitionComponentData,
+  UpdatePatternDefinitionComponentData,
+  PatternDefinitionComponentsResponse,
+  PatternDefinitionComponentResponse
+} from '@/types/garment';
 
 /**
  * Service class for pattern definition session operations
@@ -231,12 +238,192 @@ export class PatternDefinitionService {
       stitch_pattern: sessionData.selected_stitch_pattern_id ? {
         id: sessionData.selected_stitch_pattern_id
       } : null,
+      components: sessionData.components ? sessionData.components.map(comp => ({
+        id: comp.id,
+        template_id: comp.component_template_id,
+        label: comp.component_label,
+        attributes: comp.selected_attributes
+      })) : [],
       timestamp: new Date().toISOString()
     };
 
     return this.updateSession(sessionId, {
       parameter_snapshot: snapshot
     });
+  }
+
+  // ===== GARMENT COMPONENT METHODS (US_4.1) =====
+
+  /**
+   * Get all components for a pattern definition session
+   */
+  async getSessionComponents(sessionId: string): Promise<PatternDefinitionComponentWithTemplate[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/components`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: PatternDefinitionComponentsResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to fetch session components');
+      }
+
+      return result.data || [];
+    } catch (error) {
+      console.error('Error fetching session components:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new component for a session
+   */
+  async createSessionComponent(
+    sessionId: string,
+    componentData: Omit<CreatePatternDefinitionComponentData, 'pattern_definition_session_id'>
+  ): Promise<PatternDefinitionComponentWithTemplate> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/components`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...componentData,
+          pattern_definition_session_id: sessionId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: PatternDefinitionComponentResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create session component');
+      }
+
+      if (!result.data) {
+        throw new Error('No component data received');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error creating session component:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update a session component
+   */
+  async updateSessionComponent(
+    sessionId: string,
+    componentId: string,
+    updateData: UpdatePatternDefinitionComponentData
+  ): Promise<PatternDefinitionComponentWithTemplate> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/components/${componentId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: PatternDefinitionComponentResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to update session component');
+      }
+
+      if (!result.data) {
+        throw new Error('No component data received');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error updating session component:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete a session component
+   */
+  async deleteSessionComponent(sessionId: string, componentId: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/components/${componentId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to delete session component');
+      }
+    } catch (error) {
+      console.error('Error deleting session component:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Create components from a garment type template
+   */
+  async createComponentsFromGarmentType(
+    sessionId: string,
+    garmentTypeKey: string
+  ): Promise<PatternDefinitionComponentWithTemplate[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/components/from-garment-type`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ garment_type_key: garmentTypeKey }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: PatternDefinitionComponentsResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create components from garment type');
+      }
+
+      return result.data || [];
+    } catch (error) {
+      console.error('Error creating components from garment type:', error);
+      throw error;
+    }
   }
 }
 

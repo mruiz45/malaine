@@ -6,6 +6,8 @@ import { usePatternDefinition } from '@/contexts/PatternDefinitionContext';
 import DefinitionStepper from './DefinitionStepper';
 import DefinitionSummary from './DefinitionSummary';
 import SessionHeader from './SessionHeader';
+import GarmentTypeSelector from './GarmentTypeSelector';
+import { GarmentType } from '@/types/garment';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -154,7 +156,22 @@ function StepContent({ currentStep }: { currentStep: string }) {
     });
   };
 
+  const handleGarmentTypeSelect = async (garmentType: GarmentType) => {
+    await updateSession({
+      selected_garment_type_id: garmentType.id
+    });
+  };
+
   switch (currentStep) {
+    case 'garment-type':
+      return (
+        <div>
+          <GarmentTypeSelector
+            selectedGarmentTypeId={currentSession?.selected_garment_type_id}
+            onGarmentTypeSelect={handleGarmentTypeSelect}
+          />
+        </div>
+      );
     case 'gauge':
       return (
         <div>

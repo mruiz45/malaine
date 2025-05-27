@@ -9,7 +9,9 @@ import {
   ArrowsRightLeftIcon,
   SparklesIcon,
   Square3Stack3DIcon,
-  DocumentTextIcon
+  DocumentTextIcon,
+  SwatchIcon,
+  CubeIcon
 } from '@heroicons/react/24/outline';
 import {
   BeakerIcon as BeakerIconSolid,
@@ -17,14 +19,27 @@ import {
   ArrowsRightLeftIcon as ArrowsRightLeftIconSolid,
   SparklesIcon as SparklesIconSolid,
   Square3Stack3DIcon as Square3Stack3DIconSolid,
-  DocumentTextIcon as DocumentTextIconSolid
+  DocumentTextIcon as DocumentTextIconSolid,
+  SwatchIcon as SwatchIconSolid,
+  CubeIcon as CubeIconSolid
 } from '@heroicons/react/24/solid';
 import { DefinitionStep } from '@/types/patternDefinition';
 
 /**
  * Step configuration with icons and labels
  */
-const STEP_CONFIG = {
+const STEP_CONFIG: Record<DefinitionStep, {
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  iconSolid: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  label: string;
+  color: string;
+}> = {
+  'garment-type': {
+    icon: SwatchIcon,
+    iconSolid: SwatchIconSolid,
+    label: 'Garment Type',
+    color: 'teal'
+  },
   gauge: {
     icon: BeakerIcon,
     iconSolid: BeakerIconSolid,
@@ -54,6 +69,12 @@ const STEP_CONFIG = {
     iconSolid: Square3Stack3DIconSolid,
     label: 'Stitch Pattern',
     color: 'indigo'
+  },
+  'garment-structure': {
+    icon: CubeIcon,
+    iconSolid: CubeIconSolid,
+    label: 'Garment Structure',
+    color: 'emerald'
   },
   summary: {
     icon: DocumentTextIcon,
