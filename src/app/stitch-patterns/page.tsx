@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
 import StitchPatternSelector from '@/components/knitting/StitchPatternSelector';
+import StitchPreviewDisplay from '@/components/knitting/StitchPreviewDisplay';
 import type { StitchPattern } from '@/types/stitchPattern';
 
 export default function StitchPatternsPage() {
@@ -75,45 +76,57 @@ export default function StitchPatternsPage() {
                 {t('stitchPattern.selectedDetails', 'Selected Pattern Details')}
               </h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    {selectedPattern.stitch_name}
-                  </h3>
-                  {selectedPattern.description && (
-                    <p className="text-gray-600 mb-4">
-                      {selectedPattern.description}
-                    </p>
-                  )}
-                  
-                  {(selectedPattern.stitch_repeat_width || selectedPattern.stitch_repeat_height) && (
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-gray-900">
-                        {t('stitchPattern.repeatInfo', 'Repeat Information')}
-                      </h4>
-                      {selectedPattern.stitch_repeat_width && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Width:</span> {selectedPattern.stitch_repeat_width} stitches
-                        </p>
-                      )}
-                      {selectedPattern.stitch_repeat_height && (
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">Height:</span> {selectedPattern.stitch_repeat_height} rows
-                        </p>
-                      )}
-                    </div>
-                  )}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Pattern Details */}
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      {selectedPattern.stitch_name}
+                    </h3>
+                    {selectedPattern.description && (
+                      <p className="text-gray-600 mb-4">
+                        {selectedPattern.description}
+                      </p>
+                    )}
+                    
+                    {(selectedPattern.stitch_repeat_width || selectedPattern.stitch_repeat_height) && (
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-gray-900">
+                          {t('stitchPattern.repeatInfo', 'Repeat Information')}
+                        </h4>
+                        {selectedPattern.stitch_repeat_width && (
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Width:</span> {selectedPattern.stitch_repeat_width} stitches
+                          </p>
+                        )}
+                        {selectedPattern.stitch_repeat_height && (
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Height:</span> {selectedPattern.stitch_repeat_height} rows
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Next Steps */}
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-2">
+                      {t('stitchPattern.nextSteps', 'Next Steps')}
+                    </h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• {t('stitchPattern.step1', 'Create a gauge swatch in this stitch pattern')}</li>
+                      <li>• {t('stitchPattern.step2', 'Measure your gauge accurately')}</li>
+                      <li>• {t('stitchPattern.step3', 'Use this information for pattern calculations')}</li>
+                    </ul>
+                  </div>
                 </div>
-                
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">
-                    {t('stitchPattern.nextSteps', 'Next Steps')}
-                  </h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• {t('stitchPattern.step1', 'Create a gauge swatch in this stitch pattern')}</li>
-                    <li>• {t('stitchPattern.step2', 'Measure your gauge accurately')}</li>
-                    <li>• {t('stitchPattern.step3', 'Use this information for pattern calculations')}</li>
-                  </ul>
+
+                {/* Pattern Preview (US_3.3) */}
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+                  <StitchPreviewDisplay 
+                    pattern={selectedPattern}
+                    compact={false}
+                  />
                 </div>
               </div>
             </div>

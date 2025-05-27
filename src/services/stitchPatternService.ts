@@ -2,13 +2,15 @@
  * Stitch Pattern Service - Handles all stitch pattern related API calls
  * Follows the established service pattern for the Malaine project
  * Implements US_1.5 requirements for stitch pattern selection and definition
+ * Enhanced with US_3.3 preview functionality
  */
 
 import type { 
   StitchPattern, 
   StitchPatternFilters,
   StitchPatternsResponse,
-  StitchPatternResponse
+  StitchPatternResponse,
+  StitchPatternProperties
 } from '@/types/stitchPattern';
 
 /**
@@ -161,6 +163,87 @@ export function getStitchPatternDisplayInfo(pattern: StitchPattern) {
       ? `${pattern.stitch_repeat_width} sts × ${pattern.stitch_repeat_height} rows`
       : 'Repeat information not available',
     isBasic: pattern.is_basic,
-    hasRepeatData: !!(pattern.stitch_repeat_width && pattern.stitch_repeat_height)
+    hasRepeatData: !!(pattern.stitch_repeat_width && pattern.stitch_repeat_height),
+    hasPreviewData: !!(pattern.swatch_image_url || pattern.properties)
   };
+}
+
+/**
+ * Checks if a stitch pattern has preview data (US_3.3)
+ * @param pattern - The stitch pattern to check
+ * @returns Boolean indicating if preview data is available
+ */
+export function hasStitchPatternPreview(pattern: StitchPattern): boolean {
+  return !!(pattern.swatch_image_url || (pattern.properties && Object.keys(pattern.properties).length > 0));
+}
+
+/**
+ * Gets formatted properties for display (US_3.3)
+ * @param properties - The stitch pattern properties
+ * @returns Array of formatted property objects for display
+ */
+export function formatStitchPatternProperties(properties: StitchPatternProperties | undefined): Array<{key: string, label: string, value: string}> {
+  if (!properties) {
+    return [];
+  }
+
+  const formatted: Array<{key: string, label: string, value: string}> = [];
+
+  if (properties.fabric_behavior) {
+    formatted.push({
+      key: 'fabric_behavior',
+      label: 'Fabric Behavior',
+      value: properties.fabric_behavior
+    });
+  }
+
+  if (properties.texture_description) {
+    formatted.push({
+      key: 'texture_description',
+      label: 'Texture',
+      value: properties.texture_description
+    });
+  }
+
+  if (properties.reversibility) {
+    formatted.push({
+      key: 'reversibility',
+      label: 'Reversible',
+      value: properties.reversibility
+    });
+  }
+
+  if (properties.stretch_horizontal) {
+    formatted.push({
+      key: 'stretch_horizontal',
+      label: 'Horizontal Stretch',
+      value: properties.stretch_horizontal
+    });
+  }
+
+  if (properties.stretch_vertical) {
+    formatted.push({
+      key: 'stretch_vertical',
+      label: 'Vertical Stretch',
+      value: properties.stretch_vertical
+    });
+  }
+
+  if (properties.relative_yarn_consumption) {
+    formatted.push({
+      key: 'relative_yarn_consumption',
+      label: 'Yarn Consumption',
+      value: properties.relative_yarn_consumption
+    });
+  }
+
+  if (properties.notes) {
+    formatted.push({
+      key: 'notes',
+      label: 'Notes',
+      value: properties.notes
+    });
+  }
+
+  return formatted;
 } 

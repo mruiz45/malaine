@@ -478,7 +478,19 @@
     "noSearchResults": "No stitch patterns found matching your search",
     "noPatterns": "No stitch patterns available",
     "patternCount": "{{count}} pattern available",
-    "patternCount_plural": "{{count}} patterns available"
+    "patternCount_plural": "{{count}} patterns available",
+    "preview": {
+      "swatchTitle": "Stitch Preview",
+      "swatchAlt": "Swatch preview of {{name}}",
+      "propertiesTitle": "Characteristics",
+      "fabricBehavior": "Fabric Behavior",
+      "texture": "Texture",
+      "reversible": "Reversible",
+      "stretchHorizontal": "Horizontal Stretch",
+      "stretchVertical": "Vertical Stretch",
+      "yarnConsumption": "Yarn Consumption",
+      "notes": "Notes"
+    }
   },
   "tools": {
     "reverse_gauge_calculator": {

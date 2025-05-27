@@ -2,6 +2,7 @@
  * StitchPatternCard Component
  * Displays a single stitch pattern with its details
  * Part of US_1.5 implementation for stitch pattern selection
+ * Enhanced with US_3.3 preview functionality
  */
 
 'use client';
@@ -9,6 +10,7 @@
 import React from 'react';
 import type { StitchPattern } from '@/types/stitchPattern';
 import { getStitchPatternDisplayInfo } from '@/services/stitchPatternService';
+import StitchPreviewDisplay from './StitchPreviewDisplay';
 
 interface StitchPatternCardProps {
   /** The stitch pattern to display */
@@ -85,10 +87,17 @@ export default function StitchPatternCard({
 
       {/* Repeat Information */}
       {displayInfo.hasRepeatData && (
-        <div className={`text-sm ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
+        <div className={`text-sm mb-3 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
           <span className="font-medium">Repeat:</span> {displayInfo.repeatInfo}
         </div>
       )}
+
+      {/* Stitch Preview (US_3.3) */}
+      <StitchPreviewDisplay 
+        pattern={pattern} 
+        compact={true}
+        className="mb-3"
+      />
 
       {/* Selection Indicator */}
       {isSelected && (

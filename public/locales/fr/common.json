@@ -536,7 +536,19 @@
     "noSearchResults": "Aucun motif de point trouvé correspondant à votre recherche",
     "noPatterns": "Aucun motif de point disponible",
     "patternCount": "{{count}} motif disponible",
-    "patternCount_plural": "{{count}} motifs disponibles"
+    "patternCount_plural": "{{count}} motifs disponibles",
+    "preview": {
+      "swatchTitle": "Aperçu du Point",
+      "swatchAlt": "Aperçu d'échantillon de {{name}}",
+      "propertiesTitle": "Caractéristiques",
+      "fabricBehavior": "Comportement du Tissu",
+      "texture": "Texture",
+      "reversible": "Réversible",
+      "stretchHorizontal": "Élasticité Horizontale",
+      "stretchVertical": "Élasticité Verticale",
+      "yarnConsumption": "Consommation de Laine",
+      "notes": "Notes"
+    }
   },
   "tools": {
     "reverse_gauge_calculator": {

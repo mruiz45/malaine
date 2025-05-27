@@ -1,7 +1,27 @@
 /**
- * Types for Stitch Patterns (US_1.5)
- * Defines interfaces for stitch pattern selection and definition
+ * Types for Stitch Patterns (US_1.5 & US_3.3)
+ * Defines interfaces for stitch pattern selection, definition, and preview
  */
+
+/**
+ * Properties describing stitch pattern characteristics for preview (US_3.3)
+ */
+export interface StitchPatternProperties {
+  /** How the fabric behaves (e.g., "Curls at edges", "Lies flat") */
+  fabric_behavior?: string;
+  /** Texture description (e.g., "Smooth with V's", "Bumpy rows") */
+  texture_description?: string;
+  /** Whether the pattern is reversible */
+  reversibility?: string;
+  /** Horizontal stretch characteristics */
+  stretch_horizontal?: string;
+  /** Vertical stretch characteristics */
+  stretch_vertical?: string;
+  /** Relative yarn consumption compared to stockinette */
+  relative_yarn_consumption?: string;
+  /** Additional notes about the stitch pattern */
+  notes?: string;
+}
 
 /**
  * Base stitch pattern interface matching the database schema
@@ -19,6 +39,10 @@ export interface StitchPattern {
   stitch_repeat_height?: number;
   /** Whether this is a basic/predefined stitch pattern */
   is_basic: boolean;
+  /** URL path to swatch image for visual preview (US_3.3) */
+  swatch_image_url?: string;
+  /** Stitch pattern characteristics and properties (US_3.3) */
+  properties?: StitchPatternProperties;
   /** Creation timestamp */
   created_at: string;
   /** Last update timestamp */
@@ -34,6 +58,8 @@ export interface CreateStitchPattern {
   stitch_repeat_width?: number;
   stitch_repeat_height?: number;
   is_basic?: boolean;
+  swatch_image_url?: string;
+  properties?: StitchPatternProperties;
 }
 
 /**
@@ -45,6 +71,8 @@ export interface UpdateStitchPattern {
   stitch_repeat_width?: number;
   stitch_repeat_height?: number;
   is_basic?: boolean;
+  swatch_image_url?: string;
+  properties?: StitchPatternProperties;
 }
 
 /**
