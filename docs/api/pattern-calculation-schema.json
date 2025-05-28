@@ -1,0 +1,388 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://malaine.app/schemas/pattern-calculation-input.json",
+  "title": "Pattern Calculation Input Schema",
+  "description": "Schema for input data to the Core Pattern Calculation Engine (US_6.1)",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "version",
+    "sessionId",
+    "units",
+    "gauge",
+    "yarn",
+    "stitchPattern",
+    "garment",
+    "requestedAt"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Schema version for backward compatibility",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "example": "1.0.0"
+    },
+    "sessionId": {
+      "type": "string",
+      "description": "Unique identifier for the pattern definition session",
+      "minLength": 1,
+      "example": "session_123456789"
+    },
+    "units": {
+      "type": "object",
+      "description": "Unit preferences for calculations",
+      "required": ["dimensionUnit", "gaugeUnit"],
+      "properties": {
+        "dimensionUnit": {
+          "type": "string",
+          "enum": ["cm", "inches"],
+          "description": "Unit for dimensional measurements"
+        },
+        "gaugeUnit": {
+          "type": "string",
+          "enum": ["cm", "inches"],
+          "description": "Unit for gauge measurements"
+        }
+      }
+    },
+    "gauge": {
+      "type": "object",
+      "description": "Gauge data for pattern calculations",
+      "required": ["stitchesPer10cm", "rowsPer10cm", "unit"],
+      "properties": {
+        "stitchesPer10cm": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of stitches per 10cm/4 inches"
+        },
+        "rowsPer10cm": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Number of rows per 10cm/4 inches"
+        },
+        "unit": {
+          "type": "string",
+          "enum": ["cm", "inches"],
+          "description": "Unit for gauge measurements"
+        },
+        "profileName": {
+          "type": "string",
+          "description": "Name of the gauge profile used"
+        }
+      }
+    },
+    "yarn": {
+      "type": "object",
+      "description": "Yarn profile information",
+      "required": ["name", "weightCategory"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of the yarn"
+        },
+        "weightCategory": {
+          "type": "string",
+          "enum": ["Lace", "Fingering", "DK", "Worsted", "Bulky", "Super Bulky", "Jumbo"],
+          "description": "Yarn weight category"
+        },
+        "fiber": {
+          "type": "string",
+          "description": "Fiber content description"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional yarn information",
+          "properties": {
+            "brand": {
+              "type": "string",
+              "description": "Yarn brand name"
+            },
+            "colorway": {
+              "type": "string",
+              "description": "Color name or code"
+            },
+            "yardage": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Yardage per skein"
+            },
+            "unitWeight": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Weight per skein in grams"
+            },
+            "dyeLot": {
+              "type": "string",
+              "description": "Dye lot number"
+            },
+            "ravelryId": {
+              "type": "string",
+              "description": "Ravelry yarn ID"
+            }
+          }
+        }
+      }
+    },
+    "stitchPattern": {
+      "type": "object",
+      "description": "Stitch pattern information",
+      "required": ["name", "horizontalRepeat", "verticalRepeat", "patternType"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of the stitch pattern"
+        },
+        "horizontalRepeat": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of stitches in horizontal repeat"
+        },
+        "verticalRepeat": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Number of rows in vertical repeat"
+        },
+        "patternType": {
+          "type": "string",
+          "enum": ["basic", "custom", "textured", "colorwork", "lace"],
+          "description": "Type of stitch pattern"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional pattern information",
+          "properties": {
+            "description": {
+              "type": "string",
+              "description": "Pattern description"
+            },
+            "properties": {
+              "type": "object",
+              "description": "Pattern characteristics"
+            },
+            "swatchImageUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "URL to swatch image"
+            }
+          }
+        }
+      }
+    },
+    "garment": {
+      "type": "object",
+      "description": "Garment definition with measurements and components",
+      "required": ["typeKey", "displayName", "constructionMethod", "bodyShape", "measurements", "components"],
+      "properties": {
+        "typeKey": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Unique key for garment type"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable garment name"
+        },
+        "constructionMethod": {
+          "type": "string",
+          "enum": ["drop_shoulder", "set_in_sleeve", "raglan", "seamless", "top_down", "bottom_up"],
+          "description": "Construction method for the garment"
+        },
+        "bodyShape": {
+          "type": "string",
+          "enum": ["straight", "fitted", "a_line", "oversized"],
+          "description": "Overall body shape of the garment"
+        },
+        "measurements": {
+          "type": "object",
+          "description": "Finished garment measurements with ease applied",
+          "required": ["finishedChestCircumference", "finishedLength"],
+          "properties": {
+            "finishedChestCircumference": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 300,
+              "description": "Finished chest/bust circumference in specified units"
+            },
+            "finishedLength": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 200,
+              "description": "Finished garment length in specified units"
+            },
+            "finishedWaistCircumference": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 300,
+              "description": "Finished waist circumference in specified units"
+            },
+            "finishedHipCircumference": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 300,
+              "description": "Finished hip circumference in specified units"
+            },
+            "finishedShoulderWidth": {
+              "type": "number",
+              "minimum": 5,
+              "maximum": 100,
+              "description": "Finished shoulder width in specified units"
+            },
+            "finishedArmLength": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 150,
+              "description": "Finished arm length in specified units"
+            },
+            "finishedUpperArmCircumference": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 100,
+              "description": "Finished upper arm circumference in specified units"
+            },
+            "finishedNeckCircumference": {
+              "type": "number",
+              "minimum": 10,
+              "maximum": 80,
+              "description": "Finished neck circumference in specified units"
+            },
+            "additionalMeasurements": {
+              "type": "object",
+              "description": "Additional custom measurements",
+              "patternProperties": {
+                "^finished_": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "type": "array",
+          "description": "List of garment components to calculate",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["componentKey", "displayName"],
+            "properties": {
+              "componentKey": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Unique key for component type"
+              },
+              "displayName": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Human-readable component name"
+              },
+              "targetWidth": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Target width for flat components"
+              },
+              "targetLength": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Target length for components"
+              },
+              "targetCircumference": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Target circumference for circular components"
+              },
+              "attributes": {
+                "type": "object",
+                "description": "Component-specific attributes and overrides"
+              }
+            }
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "description": "Additional garment attributes"
+        }
+      }
+    },
+    "requestedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when calculation was requested"
+    }
+  },
+  "examples": [
+    {
+      "version": "1.0.0",
+      "sessionId": "session_abc123",
+      "units": {
+        "dimensionUnit": "cm",
+        "gaugeUnit": "cm"
+      },
+      "gauge": {
+        "stitchesPer10cm": 22,
+        "rowsPer10cm": 30,
+        "unit": "cm",
+        "profileName": "DK Cotton Gauge"
+      },
+      "yarn": {
+        "name": "Cotton Classic",
+        "weightCategory": "DK",
+        "fiber": "Cotton 100%",
+        "metadata": {
+          "brand": "Cascade Yarns",
+          "colorway": "Natural",
+          "yardage": 220,
+          "unitWeight": 100
+        }
+      },
+      "stitchPattern": {
+        "name": "Stockinette Stitch",
+        "horizontalRepeat": 1,
+        "verticalRepeat": 1,
+        "patternType": "basic"
+      },
+      "garment": {
+        "typeKey": "basic_sweater",
+        "displayName": "Basic Pullover Sweater",
+        "constructionMethod": "drop_shoulder",
+        "bodyShape": "straight",
+        "measurements": {
+          "finishedChestCircumference": 100,
+          "finishedLength": 60,
+          "finishedArmLength": 55
+        },
+        "components": [
+          {
+            "componentKey": "front_body_panel",
+            "displayName": "Front Body Panel",
+            "targetWidth": 50,
+            "targetLength": 60,
+            "attributes": {}
+          },
+          {
+            "componentKey": "back_body_panel",
+            "displayName": "Back Body Panel",
+            "targetWidth": 50,
+            "targetLength": 60,
+            "attributes": {}
+          },
+          {
+            "componentKey": "sleeve",
+            "displayName": "Sleeve",
+            "targetLength": 55,
+            "targetCircumference": 35,
+            "attributes": {
+              "quantity": 2
+            }
+          }
+        ],
+        "attributes": {}
+      },
+      "requestedAt": "2025-01-27T10:30:00Z"
+    }
+  ]
+} 
