@@ -9,14 +9,17 @@ import {
   CreatePatternDefinitionSessionData,
   UpdatePatternDefinitionSessionData,
   PatternDefinitionSessionResponse,
-  PatternDefinitionSessionsResponse
+  PatternDefinitionSessionsResponse,
+  PatternOutline,
+  PatternOutlineResponse
 } from '@/types/patternDefinition';
 import {
+  PatternDefinitionComponent,
   PatternDefinitionComponentWithTemplate,
   CreatePatternDefinitionComponentData,
   UpdatePatternDefinitionComponentData,
-  PatternDefinitionComponentsResponse,
-  PatternDefinitionComponentResponse
+  PatternDefinitionComponentResponse,
+  PatternDefinitionComponentsResponse
 } from '@/types/garment';
 import { ColorScheme, SaveColorSchemeResponse } from '@/types/colorScheme';
 
@@ -466,7 +469,7 @@ export class PatternDefinitionService {
   }
 
   /**
-   * Get the saved color scheme for a pattern definition session (US_5.1)
+   * Get a color scheme for a pattern definition session (US_5.1)
    */
   async getColorScheme(sessionId: string): Promise<ColorScheme | null> {
     try {
@@ -485,15 +488,54 @@ export class PatternDefinitionService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: SaveColorSchemeResponse = await response.json();
+      const result = await response.json();
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to get color scheme');
+        throw new Error(result.error || 'Failed to fetch color scheme');
       }
 
-      return result.data || null;
+      return result.data;
     } catch (error) {
-      console.error('Error getting color scheme:', error);
+      console.error('Error fetching color scheme:', error);
+      throw error;
+    }
+  }
+
+  // ===== PATTERN OUTLINE METHODS (US_5.3) =====
+
+  /**
+   * Generate a structured pattern outline for a session
+   */
+  async generateOutline(sessionId: string): Promise<PatternOutline> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/outline`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Session not found');
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: PatternOutlineResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to generate pattern outline');
+      }
+
+      if (!result.data) {
+        throw new Error('No outline data received');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error generating pattern outline:', error);
       throw error;
     }
   }

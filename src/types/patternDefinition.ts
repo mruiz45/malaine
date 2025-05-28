@@ -233,4 +233,138 @@ export interface PatternDefinitionSessionsResponse {
   data?: PatternDefinitionSession[];
   /** Error message if any */
   error?: string;
+}
+
+/**
+ * Pattern Outline interfaces for US_5.3
+ */
+
+/**
+ * Foundation section of the pattern outline
+ */
+export interface PatternFoundations {
+  /** Gauge information */
+  gauge?: {
+    stitch_count: number;
+    row_count: number;
+    unit: string;
+    profile_name?: string;
+  };
+  /** Measurement set information */
+  measurements?: {
+    set_name?: string;
+    key_measurements?: string[];
+  };
+  /** Ease preferences */
+  ease?: {
+    type: string;
+    value_bust?: number;
+    unit?: string;
+  };
+  /** Yarn information */
+  yarn?: {
+    name?: string;
+    weight?: string;
+    fiber?: string;
+  };
+  /** Stitch pattern information */
+  stitch_pattern?: {
+    name?: string;
+    repeat_info?: string;
+  };
+}
+
+/**
+ * Garment overview section
+ */
+export interface GarmentOverview {
+  /** Selected garment type */
+  type?: {
+    name: string;
+    description?: string;
+    difficulty?: string;
+  };
+  /** Construction method if applicable */
+  construction_method?: string;
+}
+
+/**
+ * Component breakdown item
+ */
+export interface ComponentBreakdown {
+  /** Component label */
+  label: string;
+  /** Component type */
+  type: string;
+  /** Selected style/shape */
+  style?: string;
+  /** Key parameters */
+  parameters?: Record<string, any>;
+  /** Additional notes */
+  notes?: string;
+}
+
+/**
+ * Color scheme summary (optional)
+ */
+export interface ColorSchemeSummary {
+  /** Scheme name */
+  name?: string;
+  /** Number of colors */
+  color_count?: number;
+  /** Color distribution */
+  distribution?: string;
+}
+
+/**
+ * Morphology notes summary (optional)
+ */
+export interface MorphologyNotes {
+  /** Characteristics reviewed */
+  characteristics?: string[];
+  /** Key advice points */
+  advice_summary?: string;
+}
+
+/**
+ * Complete pattern outline structure
+ */
+export interface PatternOutline {
+  /** Session basic information */
+  session_info: {
+    id: string;
+    name?: string;
+    status: SessionStatus;
+    last_updated: string;
+  };
+  /** Pattern foundations */
+  foundations: PatternFoundations;
+  /** Garment overview */
+  garment_overview: GarmentOverview;
+  /** Component breakdown */
+  components: ComponentBreakdown[];
+  /** Color scheme (optional) */
+  color_scheme?: ColorSchemeSummary;
+  /** Morphology notes (optional) */
+  morphology_notes?: MorphologyNotes;
+  /** Generation timestamp */
+  generated_at: string;
+  /** Completion status */
+  completion_status: {
+    total_sections: number;
+    completed_sections: number;
+    missing_sections: string[];
+  };
+}
+
+/**
+ * API response for pattern outline generation
+ */
+export interface PatternOutlineResponse {
+  /** Success status */
+  success: boolean;
+  /** Outline data */
+  data?: PatternOutline;
+  /** Error message if any */
+  error?: string;
 } 

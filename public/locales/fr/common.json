@@ -759,6 +759,76 @@
       "ready_for_calculation": "Prêt pour le Calcul",
       "completed": "Terminé",
       "archived": "Archivé"
+    },
+    "outline": {
+      "title": "Aperçu du Patron",
+      "subtitle": "Vue d'ensemble structurée de votre définition de patron",
+      "generateButton": "Générer l'Aperçu",
+      "generating": "Génération de l'aperçu...",
+      "viewButton": "Voir l'Aperçu",
+      "closeButton": "Fermer l'Aperçu",
+      "printButton": "Imprimer l'Aperçu",
+      "sections": {
+        "foundations": "Fondations du Patron",
+        "garmentOverview": "Aperçu du Vêtement",
+        "components": "Détail des Composants",
+        "colorScheme": "Schéma de Couleurs",
+        "morphologyNotes": "Notes Morphologiques"
+      },
+      "foundations": {
+        "gauge": "Échantillon",
+        "measurements": "Mesures",
+        "ease": "Préférences d'Aisance",
+        "yarn": "Laine",
+        "stitchPattern": "Motif de Point",
+        "gaugeDetails": "{{stitches}} m, {{rows}} rgs par {{unit}}",
+        "easeDetails": "{{type}} ({{value}}{{unit}})",
+        "yarnDetails": "{{name}} - {{weight}}, {{fiber}}",
+        "measurementSet": "Jeu de mesures : {{name}}",
+        "keyMeasurements": "Mesures clés : {{measurements}}"
+      },
+      "garmentOverview": {
+        "type": "Type de Vêtement",
+        "construction": "Méthode de Construction",
+        "difficulty": "Niveau de Difficulté"
+      },
+      "components": {
+        "component": "Composant",
+        "type": "Type",
+        "style": "Style",
+        "parameters": "Paramètres",
+        "notes": "Notes",
+        "noComponents": "Aucun composant défini pour le moment"
+      },
+      "colorScheme": {
+        "name": "Nom du Schéma",
+        "colors": "Couleurs",
+        "distribution": "Distribution",
+        "colorCount": "{{count}} couleur",
+        "colorCount_plural": "{{count}} couleurs"
+      },
+      "morphologyNotes": {
+        "characteristics": "Caractéristiques Corporelles",
+        "advice": "Points de Conseil Clés"
+      },
+      "completion": {
+        "status": "État d'Avancement",
+        "sectionsCompleted": "{{completed}} sur {{total}} sections complétées",
+        "missingSections": "Sections manquantes : {{sections}}",
+        "allComplete": "Toutes les sections sont complétées !"
+      },
+      "notDefined": "Pas encore défini",
+      "generatedAt": "Généré le {{date}} à {{time}}",
+      "sessionInfo": {
+        "name": "Nom de la Session",
+        "status": "État",
+        "lastUpdated": "Dernière Mise à Jour"
+      },
+      "errors": {
+        "generateFailed": "Échec de la génération de l'aperçu du patron",
+        "sessionNotFound": "Session non trouvée",
+        "tryAgain": "Veuillez réessayer"
+      }
     }
   },
   "sleeve": {

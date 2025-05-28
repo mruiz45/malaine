@@ -11,13 +11,15 @@ import SweaterStructureSelector from './SweaterStructureSelector';
 import NecklineSelector from './NecklineSelector';
 import SleeveSelector from './SleeveSelector';
 import ColorSchemeSimulator from '../tools/ColorSchemeSimulator';
+import PatternOutlineViewer from './PatternOutlineViewer';
 import { GarmentType } from '@/types/garment';
 import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
 import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
 import { SleeveStyle, SleeveLength, CuffStyle, SleeveAttributes, CuffParameters } from '@/types/sleeve';
 import { ColorScheme } from '@/types/colorScheme';
+import { PatternOutline } from '@/types/patternDefinition';
 import { patternDefinitionService } from '@/services/patternDefinitionService';
-import { SwatchIcon } from '@heroicons/react/24/outline';
+import { SwatchIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -121,6 +123,11 @@ function StepContent({ currentStep }: { currentStep: string }) {
   
   // State for color scheme simulator
   const [showColorSimulator, setShowColorSimulator] = useState(false);
+
+  // State for pattern outline viewer (US_5.3)
+  const [showOutlineViewer, setShowOutlineViewer] = useState(false);
+  const [currentOutline, setCurrentOutline] = useState<PatternOutline | null>(null);
+  const [isGeneratingOutline, setIsGeneratingOutline] = useState(false);
 
   const handleGaugeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -299,15 +306,18 @@ function StepContent({ currentStep }: { currentStep: string }) {
    * Handle color scheme save (US_5.1)
    */
   const handleColorSchemeSave = async (colorScheme: ColorScheme) => {
-    if (!currentSession) return;
-
     try {
+      if (!currentSession?.id) {
+        throw new Error('No active session');
+      }
+
       await patternDefinitionService.saveColorScheme(currentSession.id, colorScheme);
       
-      // Update the session to reflect the saved color scheme
+      // Update the session's parameter_snapshot to include the color scheme
+      const currentSnapshot = currentSession.parameter_snapshot || {};
       await updateSession({
         parameter_snapshot: {
-          ...currentSession.parameter_snapshot,
+          ...currentSnapshot,
           color_scheme: colorScheme
         }
       });
@@ -315,8 +325,37 @@ function StepContent({ currentStep }: { currentStep: string }) {
       setShowColorSimulator(false);
     } catch (error) {
       console.error('Error saving color scheme:', error);
-      alert(t('colorScheme.saveError', 'Failed to save color scheme'));
+      // Handle error appropriately
     }
+  };
+
+  /**
+   * Handle pattern outline generation (US_5.3)
+   */
+  const handleGenerateOutline = async () => {
+    try {
+      if (!currentSession?.id) {
+        throw new Error('No active session');
+      }
+
+      setIsGeneratingOutline(true);
+      const outline = await patternDefinitionService.generateOutline(currentSession.id);
+      setCurrentOutline(outline);
+      setShowOutlineViewer(true);
+    } catch (error) {
+      console.error('Error generating pattern outline:', error);
+      // Handle error appropriately - could show a toast notification
+    } finally {
+      setIsGeneratingOutline(false);
+    }
+  };
+
+  /**
+   * Handle closing the outline viewer
+   */
+  const handleCloseOutlineViewer = () => {
+    setShowOutlineViewer(false);
+    setCurrentOutline(null);
   };
 
   switch (currentStep) {
@@ -828,11 +867,35 @@ function StepContent({ currentStep }: { currentStep: string }) {
             </div>
             
             <div className="mt-6 pt-6 border-t border-gray-300">
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-                Proceed to Pattern Calculation
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button 
+                  onClick={handleGenerateOutline}
+                  disabled={isGeneratingOutline}
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <DocumentTextIcon className="h-5 w-5" />
+                  <span>
+                    {isGeneratingOutline 
+                      ? t('patternDefinition.outline.generating', 'Generating outline...')
+                      : t('patternDefinition.outline.generateButton', 'Generate Outline')
+                    }
+                  </span>
+                </button>
+                <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                  Proceed to Pattern Calculation
+                </button>
+              </div>
             </div>
           </div>
+
+          {/* Pattern Outline Viewer */}
+          {currentOutline && (
+            <PatternOutlineViewer
+              outline={currentOutline}
+              isOpen={showOutlineViewer}
+              onClose={handleCloseOutlineViewer}
+            />
+          )}
         </div>
       );
 

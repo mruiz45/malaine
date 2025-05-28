@@ -899,6 +899,76 @@
       "ready_for_calculation": "Ready for Calculation",
       "completed": "Completed",
       "archived": "Archived"
+    },
+    "outline": {
+      "title": "Pattern Outline",
+      "subtitle": "Structured overview of your pattern definition",
+      "generateButton": "Generate Outline",
+      "generating": "Generating outline...",
+      "viewButton": "View Outline",
+      "closeButton": "Close Outline",
+      "printButton": "Print Outline",
+      "sections": {
+        "foundations": "Pattern Foundations",
+        "garmentOverview": "Garment Overview",
+        "components": "Component Breakdown",
+        "colorScheme": "Color Scheme",
+        "morphologyNotes": "Morphology Notes"
+      },
+      "foundations": {
+        "gauge": "Gauge",
+        "measurements": "Measurements",
+        "ease": "Ease Preferences",
+        "yarn": "Yarn",
+        "stitchPattern": "Stitch Pattern",
+        "gaugeDetails": "{{stitches}} sts, {{rows}} rows per {{unit}}",
+        "easeDetails": "{{type}} ({{value}}{{unit}})",
+        "yarnDetails": "{{name}} - {{weight}} weight, {{fiber}}",
+        "measurementSet": "Measurement set: {{name}}",
+        "keyMeasurements": "Key measurements: {{measurements}}"
+      },
+      "garmentOverview": {
+        "type": "Garment Type",
+        "construction": "Construction Method",
+        "difficulty": "Difficulty Level"
+      },
+      "components": {
+        "component": "Component",
+        "type": "Type",
+        "style": "Style",
+        "parameters": "Parameters",
+        "notes": "Notes",
+        "noComponents": "No components defined yet"
+      },
+      "colorScheme": {
+        "name": "Scheme Name",
+        "colors": "Colors",
+        "distribution": "Distribution",
+        "colorCount": "{{count}} color",
+        "colorCount_plural": "{{count}} colors"
+      },
+      "morphologyNotes": {
+        "characteristics": "Body Characteristics",
+        "advice": "Key Advice Points"
+      },
+      "completion": {
+        "status": "Completion Status",
+        "sectionsCompleted": "{{completed}} of {{total}} sections completed",
+        "missingSections": "Missing sections: {{sections}}",
+        "allComplete": "All sections completed!"
+      },
+      "notDefined": "Not yet defined",
+      "generatedAt": "Generated on {{date}} at {{time}}",
+      "sessionInfo": {
+        "name": "Session Name",
+        "status": "Status",
+        "lastUpdated": "Last Updated"
+      },
+      "errors": {
+        "generateFailed": "Failed to generate pattern outline",
+        "sessionNotFound": "Session not found",
+        "tryAgain": "Please try again"
+      }
     }
   },
   "sleeve": {
