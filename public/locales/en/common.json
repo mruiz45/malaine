@@ -691,6 +691,14 @@
         "loading_profiles": "Loading profiles...",
         "no_estimation": "No estimation available"
       }
+    },
+    "ease_advisor": {
+      "title": "Ease Advisor",
+      "description": "Get personalized ease recommendations for your projects"
+    },
+    "morphology_advisor": {
+      "title": "Body Morphology Advisor",
+      "description": "Get advice on adapting patterns to your body shape"
     }
   },
   "ease_advisor": {
@@ -984,5 +992,53 @@
       "neckline": "Neckline",
       "hem": "Hem"
     }
+  },
+  "morphology_advisor": {
+    "tool_title": "Body Morphology Adaptation Advisor",
+    "tool_description": "Get personalized advice on adapting patterns to your specific body characteristics for a better fit.",
+    "configuration_title": "Select Your Body Characteristics",
+    "select_characteristics": "Select Morphology Characteristics",
+    "select_characteristics_description": "Choose the characteristics that best describe your body shape to receive tailored fitting advice.",
+    "get_advice_button": "Get Morphology Advice",
+    "getting_advice": "Getting advice...",
+    "advice_title": "Your Morphology Advice",
+    "error_title": "Error",
+    "error_getting_advice": "Failed to get morphology advice. Please try again.",
+    "no_results_message": "No advice found for the selected characteristics. Please try different selections.",
+    "selected_count": "{{count}} characteristic selected",
+    "selected_count_plural": "{{count}} characteristics selected",
+    "categories": {
+      "torso": "Torso",
+      "shoulders": "Shoulders", 
+      "arms": "Arms",
+      "posture": "Posture"
+    },
+    "characteristics": {
+      "full_bust": "Full Bust",
+      "full_bust_description": "Larger bust measurement requiring additional shaping",
+      "sway_back": "Sway Back",
+      "sway_back_description": "Lower back curves inward more than average",
+      "broad_shoulders": "Broad Shoulders",
+      "broad_shoulders_description": "Shoulder width wider than average proportionally",
+      "sloping_shoulders": "Sloping Shoulders",
+      "sloping_shoulders_description": "Shoulders that slope downward more than average",
+      "long_torso": "Long Torso",
+      "long_torso_description": "Torso longer than average in proportion to height",
+      "short_torso": "Short Torso",
+      "short_torso_description": "Torso shorter than average in proportion to height",
+      "long_arms": "Long Arms",
+      "long_arms_description": "Arms longer than average requiring longer sleeves",
+      "short_arms": "Short Arms",
+      "short_arms_description": "Arms shorter than average requiring shorter sleeves"
+    },
+    "fitting_implications": "Fitting Implications",
+    "measurement_focus": "Key Measurements",
+    "ease_considerations": "Ease Considerations",
+    "adjustment_suggestions": "Adjustment Suggestions",
+    "visual_guide": "Visual Guide",
+    "related_information": "Related Information",
+    "related_measurements_link": "Review your body measurements for accuracy",
+    "related_ease_link": "Use the Ease Advisor for personalized ease recommendations",
+    "pattern_selection_tips": "Consider these factors when selecting patterns"
   }
 } 

@@ -10,10 +10,10 @@ import {
   SparklesIcon,
   Square3Stack3DIcon,
   DocumentTextIcon,
-  SwatchIcon,
-  CubeIcon,
   RectangleStackIcon,
-  HandRaisedIcon
+  HandRaisedIcon,
+  SwatchIcon,
+  Squares2X2Icon
 } from '@heroicons/react/24/outline';
 import {
   BeakerIcon as BeakerIconSolid,
@@ -22,10 +22,10 @@ import {
   SparklesIcon as SparklesIconSolid,
   Square3Stack3DIcon as Square3Stack3DIconSolid,
   DocumentTextIcon as DocumentTextIconSolid,
-  SwatchIcon as SwatchIconSolid,
-  CubeIcon as CubeIconSolid,
   RectangleStackIcon as RectangleStackIconSolid,
-  HandRaisedIcon as HandRaisedIconSolid
+  HandRaisedIcon as HandRaisedIconSolid,
+  SwatchIcon as SwatchIconSolid,
+  Squares2X2Icon as Squares2X2IconSolid
 } from '@heroicons/react/24/solid';
 import { DefinitionStep } from '@/types/patternDefinition';
 
@@ -75,8 +75,8 @@ const STEP_CONFIG: Record<DefinitionStep, {
     color: 'indigo'
   },
   'garment-structure': {
-    icon: CubeIcon,
-    iconSolid: CubeIconSolid,
+    icon: Squares2X2Icon,
+    iconSolid: Squares2X2IconSolid,
     label: 'Garment Structure',
     color: 'emerald'
   },
