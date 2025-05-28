@@ -18,6 +18,7 @@ import {
   PatternDefinitionComponentsResponse,
   PatternDefinitionComponentResponse
 } from '@/types/garment';
+import { ColorScheme, SaveColorSchemeResponse } from '@/types/colorScheme';
 
 /**
  * Service class for pattern definition session operations
@@ -422,6 +423,77 @@ export class PatternDefinitionService {
       return result.data || [];
     } catch (error) {
       console.error('Error creating components from garment type:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Save a color scheme for a pattern definition session (US_5.1)
+   */
+  async saveColorScheme(sessionId: string, colorScheme: ColorScheme): Promise<ColorScheme> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/color-scheme`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(colorScheme),
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('Session not found');
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: SaveColorSchemeResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to save color scheme');
+      }
+
+      if (!result.data) {
+        throw new Error('No color scheme data received');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('Error saving color scheme:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get the saved color scheme for a pattern definition session (US_5.1)
+   */
+  async getColorScheme(sessionId: string): Promise<ColorScheme | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${sessionId}/color-scheme`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          return null; // No color scheme saved yet
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: SaveColorSchemeResponse = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to get color scheme');
+      }
+
+      return result.data || null;
+    } catch (error) {
+      console.error('Error getting color scheme:', error);
       throw error;
     }
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePatternDefinition } from '@/contexts/PatternDefinitionContext';
 import DefinitionStepper from './DefinitionStepper';
@@ -10,10 +10,14 @@ import GarmentTypeSelector from './GarmentTypeSelector';
 import SweaterStructureSelector from './SweaterStructureSelector';
 import NecklineSelector from './NecklineSelector';
 import SleeveSelector from './SleeveSelector';
+import ColorSchemeSimulator from '../tools/ColorSchemeSimulator';
 import { GarmentType } from '@/types/garment';
 import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
 import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
 import { SleeveStyle, SleeveLength, CuffStyle, SleeveAttributes, CuffParameters } from '@/types/sleeve';
+import { ColorScheme } from '@/types/colorScheme';
+import { patternDefinitionService } from '@/services/patternDefinitionService';
+import { SwatchIcon } from '@heroicons/react/24/outline';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -114,6 +118,9 @@ export default function PatternDefinitionWorkspace() {
 function StepContent({ currentStep }: { currentStep: string }) {
   const { t } = useTranslation();
   const { currentSession, updateSession } = usePatternDefinition();
+  
+  // State for color scheme simulator
+  const [showColorSimulator, setShowColorSimulator] = useState(false);
 
   const handleGaugeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -288,6 +295,30 @@ function StepContent({ currentStep }: { currentStep: string }) {
     });
   };
 
+  /**
+   * Handle color scheme save (US_5.1)
+   */
+  const handleColorSchemeSave = async (colorScheme: ColorScheme) => {
+    if (!currentSession) return;
+
+    try {
+      await patternDefinitionService.saveColorScheme(currentSession.id, colorScheme);
+      
+      // Update the session to reflect the saved color scheme
+      await updateSession({
+        parameter_snapshot: {
+          ...currentSession.parameter_snapshot,
+          color_scheme: colorScheme
+        }
+      });
+
+      setShowColorSimulator(false);
+    } catch (error) {
+      console.error('Error saving color scheme:', error);
+      alert(t('colorScheme.saveError', 'Failed to save color scheme'));
+    }
+  };
+
   switch (currentStep) {
     case 'garment-type':
       return (
@@ -445,7 +476,9 @@ function StepContent({ currentStep }: { currentStep: string }) {
       return (
         <div>
           <h2 className="text-2xl font-bold mb-6">{t('yarn.title', 'Yarn')}</h2>
-          <form onSubmit={handleYarnSubmit} className="space-y-6">
+          
+          {/* Yarn Selection */}
+          <form onSubmit={handleYarnSubmit} className="space-y-6 mb-8">
             <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
               <p className="text-orange-800 mb-4">
                 For this demo, we'll simulate selecting a yarn profile.
@@ -461,6 +494,87 @@ function StepContent({ currentStep }: { currentStep: string }) {
               </button>
             </div>
           </form>
+
+          {/* Color Scheme Simulator Section (US_5.1) */}
+          <div className="border-t border-gray-200 pt-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t('colorScheme.title', 'Color Scheme Simulator')}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {t('colorScheme.description', 'Visualize how different yarn colors work together in your pattern')}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowColorSimulator(true)}
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                <SwatchIcon className="h-5 w-5" />
+                <span>{t('colorScheme.openSimulator', 'Open Color Simulator')}</span>
+              </button>
+            </div>
+
+            {/* Show saved color scheme if exists */}
+            {currentSession?.parameter_snapshot?.color_scheme && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-medium text-blue-900">
+                      {currentSession.parameter_snapshot.color_scheme.name || t('colorScheme.savedScheme', 'Saved Color Scheme')}
+                    </h4>
+                    <p className="text-sm text-blue-700 mt-1">
+                      {t('colorScheme.template', 'Template')}: {currentSession.parameter_snapshot.color_scheme.template_type} • {' '}
+                      {currentSession.parameter_snapshot.color_scheme.selected_colors.length} {t('colorScheme.colors', 'colors')}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowColorSimulator(true)}
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    {t('colorScheme.edit', 'Edit')}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Color Scheme Simulator Modal */}
+          {showColorSimulator && (
+            <ColorSchemeSimulator
+              availableYarnProfiles={[
+                // Mock data for demo - in real implementation, this would come from user's yarn profiles
+                {
+                  id: '1',
+                  yarn_name: 'Merino Wool',
+                  color_name: 'Ocean Blue',
+                  color_hex_code: '#1E40AF'
+                },
+                {
+                  id: '2',
+                  yarn_name: 'Cotton Blend',
+                  color_name: 'Cream',
+                  color_hex_code: '#FEF3C7'
+                },
+                {
+                  id: '3',
+                  yarn_name: 'Alpaca Silk',
+                  color_name: 'Forest Green',
+                  color_hex_code: '#065F46'
+                },
+                {
+                  id: '4',
+                  yarn_name: 'Bamboo Yarn',
+                  color_name: 'Coral Pink',
+                  color_hex_code: '#F472B6'
+                }
+              ]}
+              initialColorScheme={currentSession?.parameter_snapshot?.color_scheme}
+              onSchemeSaved={handleColorSchemeSave}
+              onClose={() => setShowColorSimulator(false)}
+              isModal={true}
+            />
+          )}
         </div>
       );
 
