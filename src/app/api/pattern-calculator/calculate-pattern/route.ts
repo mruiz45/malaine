@@ -9,7 +9,9 @@ import {
   PatternCalculationRequest,
   PatternCalculationResponse,
   PatternCalculationResult,
-  ComponentCalculationResult
+  ComponentCalculationResult,
+  CalculationGaugeData,
+  CalculationStitchPattern
 } from '@/types/pattern-calculation';
 import { validatePatternCalculationInput } from '@/utils/pattern-calculation-validators';
 import { 
@@ -20,6 +22,9 @@ import {
   generateBasicInstructions, 
   extractInstructionInput 
 } from '@/utils/instruction-generator';
+import { calculateBeanie, BeanieCalculationInput } from '@/utils/beanie-calculator';
+import { generateBeanieInstructions, BeanieInstructionGenerationInput } from '@/utils/beanie-instruction-generator';
+import { BeanieAttributes } from '@/types/accessories';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -185,96 +190,246 @@ async function performPatternCalculation(
 /**
  * Calculates stitch and row counts for a single component
  * Enhanced for US_6.2 with specialized rectangular piece calculation
+ * Enhanced for US_7.1.1 with specialized beanie calculation
  */
 function calculateComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge, stitchPattern } = input;
   
+  // Check if this is a beanie component (US_7.1.1)
+  if (component.beanieAttributes) {
+    return calculateBeanieComponent(component, input, craftType);
+  }
+  
   // Check if this is a rectangular component that can use the specialized calculator
   if (component.targetWidth && component.targetLength) {
-    // Use specialized rectangular piece calculator (US_6.2)
-    const rectangularInput: RectangularPieceInput = {
-      targetWidth_cm: component.targetWidth,
-      targetLength_cm: component.targetLength,
-      gauge,
-      stitchPattern,
-      componentKey: component.componentKey,
-    };
-
-    const rectangularResult = calculateRectangularPiece(rectangularInput);
-    
-    // Generate basic textual instructions (US_6.3)
-    let instructions: Array<{ step: number; text: string }> | undefined;
-    const instructionInput = extractInstructionInput(
-      rectangularResult.calculations,
-      stitchPattern.name || 'pattern',
-      craftType,
-      input.yarn?.name
-    );
-    
-    if (instructionInput) {
-      const instructionResult = generateBasicInstructions(instructionInput);
-      if (instructionResult.success && instructionResult.instructions) {
-        instructions = instructionResult.instructions;
-        
-        // Add instruction warnings to component warnings
-        if (instructionResult.warnings) {
-          rectangularResult.warnings = [
-            ...(rectangularResult.warnings || []),
-            ...instructionResult.warnings
-          ];
-        }
-      } else if (instructionResult.errors) {
-        // Add instruction errors to component errors
-        rectangularResult.errors = [
-          ...(rectangularResult.errors || []),
-          ...instructionResult.errors
-        ];
-      }
-    }
-    
-    // Generate shaping instructions based on calculation
-    const shapingInstructions: string[] = [];
-    if (rectangularResult.calculations.castOnStitches > 0) {
-      shapingInstructions.push(`Cast on ${rectangularResult.calculations.castOnStitches} stitches`);
-      shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
-      shapingInstructions.push('Bind off all stitches');
-    }
-
-    return {
-      componentKey: component.componentKey,
-      displayName: component.displayName,
-      stitchCount: rectangularResult.calculations.castOnStitches,
-      rowCount: rectangularResult.calculations.totalRows,
-      shapingInstructions,
-      detailedCalculations: {
-        targetWidthUsed_cm: rectangularResult.calculations.targetWidthUsed_cm,
-        targetLengthUsed_cm: rectangularResult.calculations.targetLengthUsed_cm,
-        castOnStitches: rectangularResult.calculations.castOnStitches,
-        totalRows: rectangularResult.calculations.totalRows,
-        actualCalculatedWidth_cm: rectangularResult.calculations.actualCalculatedWidth_cm,
-        actualCalculatedLength_cm: rectangularResult.calculations.actualCalculatedLength_cm,
-        rawStitchCount: rectangularResult.calculations.rawStitchCount,
-        patternRepeats: rectangularResult.calculations.patternRepeats,
-      },
-      instructions,
-      errors: rectangularResult.errors,
-      warnings: rectangularResult.warnings,
-      metadata: {
-        calculationType: 'rectangular',
-        targetDimensions: {
-          width: component.targetWidth,
-          length: component.targetLength,
-        },
-        calculatedDimensions: {
-          actualWidth: rectangularResult.calculations.actualCalculatedWidth_cm,
-          actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
-        }
-      }
-    };
+    return calculateRectangularComponent(component, input, craftType);
   }
 
   // Fallback to original calculation for non-rectangular components
   return calculateNonRectangularComponent(component, input, craftType);
+}
+
+/**
+ * Calculates stitch and row counts for beanie components
+ * Implements US_7.1.1 beanie calculation logic
+ */
+function calculateBeanieComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+  const { gauge, stitchPattern } = input;
+  
+  try {
+    // Prepare beanie calculation input
+    const beanieInput: BeanieCalculationInput = {
+      beanieAttributes: component.beanieAttributes as BeanieAttributes,
+      gauge: gauge as CalculationGaugeData,
+      stitchPattern: stitchPattern as CalculationStitchPattern,
+      componentKey: component.componentKey,
+    };
+
+    // Perform beanie calculation
+    const beanieResult = calculateBeanie(beanieInput);
+    
+    // Generate beanie-specific instructions
+    let instructions: Array<{ step: number; text: string; notes?: string }> | undefined;
+    const instructionInput: BeanieInstructionGenerationInput = {
+      calculationResult: beanieResult,
+      beanieAttributes: component.beanieAttributes as BeanieAttributes,
+      craftType,
+      yarnName: input.yarn?.name,
+      needleSize: input.needleSize,
+    };
+    
+    const instructionResult = generateBeanieInstructions(instructionInput);
+    if (instructionResult.success && instructionResult.instructions) {
+      instructions = instructionResult.instructions.map(inst => ({
+        step: inst.step,
+        text: inst.text,
+        notes: inst.notes
+      }));
+      
+      // Add instruction warnings to component warnings
+      if (instructionResult.warnings) {
+        beanieResult.warnings = [
+          ...(beanieResult.warnings || []),
+          ...instructionResult.warnings
+        ];
+      }
+    } else if (instructionResult.errors) {
+      // Add instruction errors to component errors
+      beanieResult.errors = [
+        ...(beanieResult.errors || []),
+        ...instructionResult.errors
+      ];
+    }
+
+    // Generate basic shaping instructions summary
+    const shapingInstructions: string[] = [];
+    if (beanieResult.calculations.castOnStitches > 0) {
+      shapingInstructions.push(`Cast on ${beanieResult.calculations.castOnStitches} stitches for working in the round`);
+      
+      const brimSection = beanieResult.sections.find(s => s.sectionName === 'brim');
+      const bodySection = beanieResult.sections.find(s => s.sectionName === 'body');
+      const crownSection = beanieResult.sections.find(s => s.sectionName === 'crown');
+      
+      if (brimSection && brimSection.rounds > 0) {
+        shapingInstructions.push(`Work brim for ${brimSection.rounds} rounds`);
+      }
+      if (bodySection && bodySection.rounds > 0) {
+        shapingInstructions.push(`Work body for ${bodySection.rounds} rounds`);
+      }
+      if (crownSection) {
+        shapingInstructions.push(`Work crown decreases for ${crownSection.rounds} rounds to ${crownSection.stitches} stitches`);
+      }
+      shapingInstructions.push('Finish crown and weave in ends');
+    }
+
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Beanie',
+      stitchCount: beanieResult.calculations.castOnStitches,
+      rowCount: beanieResult.calculations.totalRounds,
+      shapingInstructions,
+      detailedCalculations: {
+        castOnStitches: beanieResult.calculations.castOnStitches,
+        totalRows: beanieResult.calculations.totalRounds,
+        rawStitchCount: beanieResult.calculations.rawStitchCount,
+        patternRepeats: beanieResult.calculations.patternRepeats,
+      },
+      instructions,
+      errors: beanieResult.errors,
+      warnings: beanieResult.warnings,
+      metadata: {
+        calculationType: 'beanie',
+        targetDimensions: {
+          circumference: component.beanieAttributes.target_circumference_cm,
+          height: component.beanieAttributes.body_height_cm,
+        },
+        calculatedDimensions: {
+          actualCircumference: beanieResult.calculations.actualCalculatedCircumference_cm,
+          actualHeight: beanieResult.calculations.actualCalculatedHeight_cm,
+        },
+        beanieSpecific: {
+          crownStyle: component.beanieAttributes.crown_style,
+          brimStyle: component.beanieAttributes.brim_style,
+          workStyle: component.beanieAttributes.work_style,
+          negativeEaseApplied: beanieResult.calculations.targetCircumferenceUsed_cm < component.beanieAttributes.target_circumference_cm,
+          targetCircumferenceUsed_cm: beanieResult.calculations.targetCircumferenceUsed_cm,
+          targetHeightUsed_cm: beanieResult.calculations.targetHeightUsed_cm,
+          crownDecreasePoints: beanieResult.calculations.crownDecreasePoints,
+          sections: beanieResult.sections,
+        }
+      }
+    };
+  } catch (error) {
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Beanie',
+      stitchCount: 0,
+      rowCount: 0,
+      shapingInstructions: [],
+      errors: [`Beanie calculation failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      warnings: [],
+      metadata: {
+        calculationType: 'beanie',
+        targetDimensions: {
+          circumference: component.beanieAttributes?.target_circumference_cm || 0,
+          height: component.beanieAttributes?.body_height_cm || 0,
+        },
+        calculatedDimensions: {
+          actualCircumference: 0,
+          actualHeight: 0,
+        }
+      }
+    };
+  }
+}
+
+/**
+ * Calculates stitch and row counts for rectangular components
+ * Extracted from original calculateComponent function for clarity
+ */
+function calculateRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+  const { gauge, stitchPattern } = input;
+  
+  // Use specialized rectangular piece calculator (US_6.2)
+  const rectangularInput: RectangularPieceInput = {
+    targetWidth_cm: component.targetWidth,
+    targetLength_cm: component.targetLength,
+    gauge,
+    stitchPattern,
+    componentKey: component.componentKey,
+  };
+
+  const rectangularResult = calculateRectangularPiece(rectangularInput);
+  
+  // Generate basic textual instructions (US_6.3)
+  let instructions: Array<{ step: number; text: string }> | undefined;
+  const instructionInput = extractInstructionInput(
+    rectangularResult.calculations,
+    stitchPattern.name || 'pattern',
+    craftType,
+    input.yarn?.name
+  );
+  
+  if (instructionInput) {
+    const instructionResult = generateBasicInstructions(instructionInput);
+    if (instructionResult.success && instructionResult.instructions) {
+      instructions = instructionResult.instructions;
+      
+      // Add instruction warnings to component warnings
+      if (instructionResult.warnings) {
+        rectangularResult.warnings = [
+          ...(rectangularResult.warnings || []),
+          ...instructionResult.warnings
+        ];
+      }
+    } else if (instructionResult.errors) {
+      // Add instruction errors to component errors
+      rectangularResult.errors = [
+        ...(rectangularResult.errors || []),
+        ...instructionResult.errors
+      ];
+    }
+  }
+  
+  // Generate shaping instructions based on calculation
+  const shapingInstructions: string[] = [];
+  if (rectangularResult.calculations.castOnStitches > 0) {
+    shapingInstructions.push(`Cast on ${rectangularResult.calculations.castOnStitches} stitches`);
+    shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
+    shapingInstructions.push('Bind off all stitches');
+  }
+
+  return {
+    componentKey: component.componentKey,
+    displayName: component.displayName,
+    stitchCount: rectangularResult.calculations.castOnStitches,
+    rowCount: rectangularResult.calculations.totalRows,
+    shapingInstructions,
+    detailedCalculations: {
+      targetWidthUsed_cm: rectangularResult.calculations.targetWidthUsed_cm,
+      targetLengthUsed_cm: rectangularResult.calculations.targetLengthUsed_cm,
+      castOnStitches: rectangularResult.calculations.castOnStitches,
+      totalRows: rectangularResult.calculations.totalRows,
+      actualCalculatedWidth_cm: rectangularResult.calculations.actualCalculatedWidth_cm,
+      actualCalculatedLength_cm: rectangularResult.calculations.actualCalculatedLength_cm,
+      rawStitchCount: rectangularResult.calculations.rawStitchCount,
+      patternRepeats: rectangularResult.calculations.patternRepeats,
+    },
+    instructions,
+    errors: rectangularResult.errors,
+    warnings: rectangularResult.warnings,
+    metadata: {
+      calculationType: 'rectangular',
+      targetDimensions: {
+        width: component.targetWidth,
+        length: component.targetLength,
+      },
+      calculatedDimensions: {
+        actualWidth: rectangularResult.calculations.actualCalculatedWidth_cm,
+        actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
+      }
+    }
+  };
 }
 
 /**
