@@ -46,6 +46,8 @@ export interface PatternDefinitionSession {
   selected_stitch_pattern_id?: string;
   /** Selected garment type ID (US 4.2) */
   selected_garment_type_id?: string;
+  /** Craft type for terminology differentiation (US 6.3) */
+  craft_type: 'knitting' | 'crochet';
   /** Current status of the session */
   status: SessionStatus;
   /** Creation timestamp */
@@ -88,6 +90,8 @@ export interface PatternDefinitionSessionWithData extends PatternDefinitionSessi
 export interface CreatePatternDefinitionSessionData {
   /** Optional name for the session */
   session_name?: string;
+  /** Craft type for terminology differentiation (US 6.3) */
+  craft_type: 'knitting' | 'crochet';
   /** Initial status (defaults to 'draft') */
   status?: SessionStatus;
 }
@@ -114,6 +118,8 @@ export interface UpdatePatternDefinitionSessionData {
   selected_stitch_pattern_id?: string;
   /** Selected garment type ID (US 4.2) */
   selected_garment_type_id?: string;
+  /** Craft type for terminology differentiation (US 6.3) */
+  craft_type?: 'knitting' | 'crochet';
   /** Session status */
   status?: SessionStatus;
   /** Cached gauge values */

@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
     const sessionData = {
       user_id: user.id,
       session_name: body.session_name || `Pattern ${new Date().toLocaleDateString()}`,
+      craft_type: body.craft_type || 'knitting', // Default to knitting if not specified
       status: body.status || 'draft'
     };
 

@@ -184,6 +184,13 @@ export interface ComponentCalculationResult {
     /** Number of pattern repeats */
     patternRepeats?: number;
   };
+  /** Basic textual instructions for the component (US 6.3) */
+  instructions?: Array<{
+    /** Step number */
+    step: number;
+    /** Instruction text */
+    text: string;
+  }>;
   /** Component-specific errors */
   errors?: string[];
   /** Component-specific warnings */

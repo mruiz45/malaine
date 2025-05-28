@@ -1,10 +1,10 @@
 /**
- * Pattern Calculator API Route (US_6.1 + US_6.2)
+ * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
+import { getSupabaseSessionAppRouter } from '@/lib/getSupabaseSession';
 import {
   PatternCalculationRequest,
   PatternCalculationResponse,
@@ -16,6 +16,10 @@ import {
   calculateRectangularPiece, 
   RectangularPieceInput 
 } from '@/utils/rectangular-piece-calculator';
+import { 
+  generateBasicInstructions, 
+  extractInstructionInput 
+} from '@/utils/instruction-generator';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -24,7 +28,7 @@ import {
 export async function POST(request: NextRequest): Promise<NextResponse<PatternCalculationResponse>> {
   try {
     // Authenticate user session
-    const supabaseServer = await getSupabaseSessionApi(request);
+    const supabaseServer = await getSupabaseSessionAppRouter(request);
     if (!supabaseServer) {
       return NextResponse.json(
         {
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<PatternCa
     }
 
     // Perform pattern calculation
-    const calculationResult = await performPatternCalculation(requestData);
+    const calculationResult = await performPatternCalculation(requestData, supabaseServer);
 
     // Return successful response
     return NextResponse.json({
@@ -102,18 +106,37 @@ export async function POST(request: NextRequest): Promise<NextResponse<PatternCa
 
 /**
  * Performs the actual pattern calculation
- * This is a placeholder implementation for US_6.1 - the actual calculation engine will be implemented in subsequent US
+ * Enhanced for US_6.3 to include instruction generation
  */
-async function performPatternCalculation(request: PatternCalculationRequest): Promise<PatternCalculationResult> {
+async function performPatternCalculation(
+  request: PatternCalculationRequest, 
+  sessionResult: { supabase: any; user: any }
+): Promise<PatternCalculationResult> {
   const { input, options } = request;
   const calculationId = generateCalculationId();
 
   try {
+    // Fetch craft_type from the pattern definition session (US_6.3)
+    let craftType: 'knitting' | 'crochet' = 'knitting'; // Default fallback
+    try {
+      const { data: sessionData, error: sessionError } = await sessionResult.supabase
+        .from('pattern_definition_sessions')
+        .select('craft_type')
+        .eq('id', input.sessionId)
+        .single();
+
+      if (!sessionError && sessionData?.craft_type) {
+        craftType = sessionData.craft_type;
+      }
+    } catch (error) {
+      console.warn('Could not fetch craft_type from session, using default:', error);
+    }
+
     // Calculate components
     const componentResults: ComponentCalculationResult[] = [];
     
     for (const component of input.garment.components) {
-      const componentResult = calculateComponent(component, input);
+      const componentResult = calculateComponent(component, input, craftType);
       componentResults.push(componentResult);
     }
 
@@ -163,7 +186,7 @@ async function performPatternCalculation(request: PatternCalculationRequest): Pr
  * Calculates stitch and row counts for a single component
  * Enhanced for US_6.2 with specialized rectangular piece calculation
  */
-function calculateComponent(component: any, input: any): ComponentCalculationResult {
+function calculateComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge, stitchPattern } = input;
   
   // Check if this is a rectangular component that can use the specialized calculator
@@ -178,6 +201,36 @@ function calculateComponent(component: any, input: any): ComponentCalculationRes
     };
 
     const rectangularResult = calculateRectangularPiece(rectangularInput);
+    
+    // Generate basic textual instructions (US_6.3)
+    let instructions: Array<{ step: number; text: string }> | undefined;
+    const instructionInput = extractInstructionInput(
+      rectangularResult.calculations,
+      stitchPattern.name || 'pattern',
+      craftType,
+      input.yarn?.name
+    );
+    
+    if (instructionInput) {
+      const instructionResult = generateBasicInstructions(instructionInput);
+      if (instructionResult.success && instructionResult.instructions) {
+        instructions = instructionResult.instructions;
+        
+        // Add instruction warnings to component warnings
+        if (instructionResult.warnings) {
+          rectangularResult.warnings = [
+            ...(rectangularResult.warnings || []),
+            ...instructionResult.warnings
+          ];
+        }
+      } else if (instructionResult.errors) {
+        // Add instruction errors to component errors
+        rectangularResult.errors = [
+          ...(rectangularResult.errors || []),
+          ...instructionResult.errors
+        ];
+      }
+    }
     
     // Generate shaping instructions based on calculation
     const shapingInstructions: string[] = [];
@@ -203,6 +256,7 @@ function calculateComponent(component: any, input: any): ComponentCalculationRes
         rawStitchCount: rectangularResult.calculations.rawStitchCount,
         patternRepeats: rectangularResult.calculations.patternRepeats,
       },
+      instructions,
       errors: rectangularResult.errors,
       warnings: rectangularResult.warnings,
       metadata: {
@@ -220,14 +274,14 @@ function calculateComponent(component: any, input: any): ComponentCalculationRes
   }
 
   // Fallback to original calculation for non-rectangular components
-  return calculateNonRectangularComponent(component, input);
+  return calculateNonRectangularComponent(component, input, craftType);
 }
 
 /**
  * Calculates stitch and row counts for non-rectangular components
  * (Original logic preserved for cylindrical and circular components)
  */
-function calculateNonRectangularComponent(component: any, input: any): ComponentCalculationResult {
+function calculateNonRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge } = input;
   
   // Basic calculation: convert dimensions to stitches/rows
