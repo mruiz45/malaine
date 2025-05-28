@@ -24,6 +24,9 @@ const DEFINITION_STEPS: DefinitionStep[] = [
   'ease',
   'yarn',
   'stitch-pattern',
+  'garment-structure',
+  'neckline',
+  'sleeves',
   'summary'
 ];
 
@@ -394,6 +397,21 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
     completed.push('stitch-pattern');
   }
 
+  // Check for garment structure (sweater structure)
+  if (session.parameter_snapshot?.sweater_structure?.construction_method) {
+    completed.push('garment-structure');
+  }
+
+  // Check for neckline selection (US_4.4)
+  if (session.parameter_snapshot?.neckline?.style) {
+    completed.push('neckline');
+  }
+
+  // Check for sleeve selection (US_4.5)
+  if (session.parameter_snapshot?.sleeves?.style) {
+    completed.push('sleeves');
+  }
+
   return completed;
 }
 
@@ -425,6 +443,21 @@ function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionW
     
     case 'stitch-pattern':
       return session.selected_stitch_pattern_id ? 'Stitch Pattern Selected' : undefined;
+    
+    case 'garment-structure':
+      return session.parameter_snapshot?.sweater_structure?.construction_method ? 
+        `Structure: ${session.parameter_snapshot.sweater_structure.construction_method}${session.parameter_snapshot.sweater_structure.body_shape ? `, ${session.parameter_snapshot.sweater_structure.body_shape}` : ''}` : 
+        undefined;
+    
+    case 'neckline':
+      return session.parameter_snapshot?.neckline?.style ? 
+        `Neckline: ${session.parameter_snapshot.neckline.style}${session.parameter_snapshot.neckline.parameters?.depth_cm ? ` (${session.parameter_snapshot.neckline.parameters.depth_cm}cm depth)` : ''}` : 
+        undefined;
+    
+    case 'sleeves':
+      return session.parameter_snapshot?.sleeves?.style ? 
+        `Sleeves: ${session.parameter_snapshot.sleeves.style}${session.parameter_snapshot.sleeves.length_key ? `, ${session.parameter_snapshot.sleeves.length_key}` : ''}${session.parameter_snapshot.sleeves.cuff_style ? `, ${session.parameter_snapshot.sleeves.cuff_style}` : ''}` : 
+        undefined;
     
     case 'summary':
       return 'Pattern definition summary';
@@ -469,6 +502,15 @@ function getStepData(step: DefinitionStep, session: PatternDefinitionSessionWith
     
     case 'stitch-pattern':
       return session.selected_stitch_pattern_id ? { id: session.selected_stitch_pattern_id } : undefined;
+    
+    case 'garment-structure':
+      return session.parameter_snapshot?.sweater_structure ? session.parameter_snapshot.sweater_structure : undefined;
+    
+    case 'neckline':
+      return session.parameter_snapshot?.neckline ? session.parameter_snapshot.neckline : undefined;
+    
+    case 'sleeves':
+      return session.parameter_snapshot?.sleeves ? session.parameter_snapshot.sleeves : undefined;
     
     default:
       return undefined;

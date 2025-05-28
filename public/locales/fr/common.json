@@ -760,6 +760,80 @@
       "advanced": "Avancé"
     }
   },
+  "sweaterStructure": {
+    "title": "Structure du Pull",
+    "description": "Choisissez la méthode de construction et la forme du corps pour votre pull. Ces choix influenceront les calculs du patron et les options disponibles.",
+    "constructionMethod": "Méthode de Construction",
+    "bodyShape": "Forme du Corps",
+    "notApplicable": "Les options de structure de vêtement ne sont disponibles que pour les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
+    "helpText": "Votre choix de méthode de construction affecte les formes de corps disponibles. Certaines combinaisons fonctionnent mieux ensemble pour un ajustement optimal et une facilité de construction.",
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "fitType": {
+      "loose": "Ample",
+      "fitted": "Ajusté",
+      "oversized": "Surdimensionné"
+    }
+  },
+  "neckline": {
+    "title": "Style d'Encolure",
+    "description": "Choisissez le style d'encolure pour votre vêtement. Chaque style a différents paramètres que vous pouvez personnaliser pour obtenir l'ajustement et l'apparence parfaits.",
+    "selectStyle": "Sélectionner le Style d'Encolure",
+    "parameters": "Paramètres d'Encolure",
+    "notApplicable": "Les options d'encolure ne sont disponibles que pour les vêtements avec des encolures définies comme les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
+    "helpText": "Les paramètres d'encolure seront utilisés pour calculer les instructions de façonnage exactes pour votre patron. Ajustez ces valeurs pour obtenir l'ajustement et le style désirés.",
+    "styles": {
+      "round": {
+        "name": "Col Rond",
+        "description": "Encolure ronde classique, confortable et polyvalente pour le quotidien."
+      },
+      "v_neck": {
+        "name": "Col en V",
+        "description": "Encolure élégante en forme de V qui allonge le cou et crée une silhouette flatteuse."
+      },
+      "boat_neck": {
+        "name": "Col Bateau",
+        "description": "Encolure large et horizontale qui repose sur les épaules pour un look sophistiqué."
+      },
+      "square_neck": {
+        "name": "Col Carré",
+        "description": "Encolure moderne de forme carrée avec des lignes géométriques nettes."
+      },
+      "turtleneck": {
+        "name": "Col Roulé",
+        "description": "Col haut qui se replie, offrant chaleur et un look classique."
+      },
+      "scoop": {
+        "name": "Col Échancré",
+        "description": "Encolure courbée qui descend plus bas qu'un col rond pour une touche féminine."
+      },
+      "cowl": {
+        "name": "Col Drapé",
+        "description": "Encolure drapée qui crée des plis doux pour une apparence détendue et douillette."
+      }
+    },
+    "params": {
+      "depth": "Profondeur",
+      "widthAtShoulder": "Largeur à l'Épaule",
+      "widthAtCenter": "Largeur au Centre",
+      "angle": "Angle"
+    },
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire",
+      "advanced": "Avancé"
+    },
+    "validation": {
+      "error": "Veuillez corriger les valeurs des paramètres ci-dessus.",
+      "depthRange": "La profondeur doit être entre 1 et 30 cm",
+      "widthRange": "La largeur doit être entre 1 et 50 cm",
+      "centerWidthRange": "La largeur au centre doit être entre 1 et 40 cm",
+      "angleRange": "L'angle doit être entre 1 et 90 degrés"
+    }
+  },
   "patternDefinition": {
     "title": "Définition de Patron",
     "getStarted": "Commencer",
@@ -770,11 +844,88 @@
     "lastUpdated": "Dernière mise à jour",
     "noSession": "Aucune Session Active",
     "noSessionDescription": "Veuillez créer ou sélectionner une session de définition de patron pour continuer.",
+    "progress": "Progression de la Définition de Patron",
+    "completed": "Terminé",
+    "steps": {
+      "garment-type": {
+        "label": "Type de Vêtement"
+      },
+      "gauge": {
+        "label": "Échantillon"
+      },
+      "measurements": {
+        "label": "Mesures"
+      },
+      "ease": {
+        "label": "Aisance"
+      },
+      "yarn": {
+        "label": "Laine"
+      },
+      "stitch-pattern": {
+        "label": "Motif de Point"
+      },
+      "garment-structure": {
+        "label": "Structure du Vêtement"
+      },
+      "neckline": {
+        "label": "Encolure"
+      },
+      "sleeves": {
+        "label": "Manches"
+      },
+      "summary": {
+        "label": "Résumé"
+      }
+    },
     "status": {
       "draft": "Brouillon",
       "ready_for_calculation": "Prêt pour le Calcul",
       "completed": "Terminé",
       "archived": "Archivé"
+    }
+  },
+  "sleeve": {
+    "title": "Style et Longueur de Manche",
+    "description": "Choisissez le style, la longueur et les options de poignet pour vos manches. Les options disponibles dépendent de votre méthode de construction sélectionnée.",
+    "style": {
+      "title": "Style de Manche"
+    },
+    "length": {
+      "title": "Longueur de Manche",
+      "typical": "Typique : {{length}}cm",
+      "custom": {
+        "label": "Longueur Personnalisée (cm)",
+        "help": "Entrez la longueur de manche désirée de l'épaule au poignet en centimètres."
+      }
+    },
+    "cuff": {
+      "title": "Style de Poignet",
+      "parameters": {
+        "title": "Paramètres de Poignet",
+        "cuff_depth_cm": "Profondeur du Poignet",
+        "fold_depth_cm": "Profondeur du Pli",
+        "flare_width_cm": "Largeur de l'Évasement",
+        "band_width_cm": "Largeur de la Bande"
+      }
+    },
+    "summary": {
+      "title": "Résumé de Configuration des Manches",
+      "style": "Style :",
+      "length": "Longueur :",
+      "cuff": "Poignet :"
+    },
+    "constructionRequired": {
+      "title": "Méthode de Construction Requise",
+      "description": "Veuillez d'abord sélectionner une méthode de construction pour voir les options de manches disponibles."
+    },
+    "noOptions": {
+      "title": "Aucune Option de Manche Disponible",
+      "description": "Aucune option de manche n'est disponible pour la méthode de construction sélectionnée."
+    },
+    "notApplicable": "Les options de manches ne sont disponibles que pour les vêtements avec des manches comme les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
+    "error": {
+      "title": "Erreur lors du Chargement des Options de Manches"
     }
   }
 } 

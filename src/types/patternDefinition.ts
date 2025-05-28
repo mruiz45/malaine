@@ -18,7 +18,7 @@ export type SessionStatus = 'draft' | 'ready_for_calculation' | 'completed' | 'a
 /**
  * Steps in the pattern definition process
  */
-export type DefinitionStep = 'garment-type' | 'gauge' | 'measurements' | 'ease' | 'yarn' | 'stitch-pattern' | 'garment-structure' | 'summary';
+export type DefinitionStep = 'garment-type' | 'gauge' | 'measurements' | 'ease' | 'yarn' | 'stitch-pattern' | 'garment-structure' | 'neckline' | 'sleeves' | 'summary';
 
 /**
  * Base pattern definition session interface matching the database schema

@@ -760,6 +760,80 @@
       "advanced": "Advanced"
     }
   },
+  "sweaterStructure": {
+    "title": "Sweater Structure",
+    "description": "Choose the construction method and body shape for your sweater. These choices will influence the pattern calculations and available options.",
+    "constructionMethod": "Construction Method",
+    "bodyShape": "Body Shape",
+    "notApplicable": "Garment structure options are only available for sweaters and cardigans. Please select a compatible garment type first.",
+    "helpText": "Your construction method choice affects which body shapes are available. Some combinations work better together for optimal fit and construction ease.",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "fitType": {
+      "loose": "Loose",
+      "fitted": "Fitted",
+      "oversized": "Oversized"
+    }
+  },
+  "neckline": {
+    "title": "Neckline Style",
+    "description": "Choose the neckline style for your garment. Each style has different parameters you can customize to achieve the perfect fit and look.",
+    "selectStyle": "Select Neckline Style",
+    "parameters": "Neckline Parameters",
+    "notApplicable": "Neckline options are only available for garments with defined necklines like sweaters and cardigans. Please select a compatible garment type first.",
+    "helpText": "The neckline parameters will be used to calculate the exact shaping instructions for your pattern. Adjust these values to achieve your desired fit and style.",
+    "styles": {
+      "round": {
+        "name": "Round Neck",
+        "description": "Classic round neckline, comfortable and versatile for everyday wear."
+      },
+      "v_neck": {
+        "name": "V-Neck",
+        "description": "Elegant V-shaped neckline that elongates the neck and creates a flattering silhouette."
+      },
+      "boat_neck": {
+        "name": "Boat Neck",
+        "description": "Wide, horizontal neckline that sits off the shoulders for a sophisticated look."
+      },
+      "square_neck": {
+        "name": "Square Neck",
+        "description": "Modern square-shaped neckline with clean, geometric lines."
+      },
+      "turtleneck": {
+        "name": "Turtleneck",
+        "description": "High collar that folds over, providing warmth and a classic look."
+      },
+      "scoop": {
+        "name": "Scoop Neck",
+        "description": "Curved neckline that dips lower than a round neck for a feminine touch."
+      },
+      "cowl": {
+        "name": "Cowl Neck",
+        "description": "Draped neckline that creates soft folds for a relaxed, cozy appearance."
+      }
+    },
+    "params": {
+      "depth": "Depth",
+      "widthAtShoulder": "Width at Shoulder",
+      "widthAtCenter": "Width at Center",
+      "angle": "Angle"
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "validation": {
+      "error": "Please correct the parameter values above.",
+      "depthRange": "Depth must be between 1 and 30 cm",
+      "widthRange": "Width must be between 1 and 50 cm",
+      "centerWidthRange": "Center width must be between 1 and 40 cm",
+      "angleRange": "Angle must be between 1 and 90 degrees"
+    }
+  },
   "patternDefinition": {
     "title": "Pattern Definition",
     "getStarted": "Get Started",
@@ -770,11 +844,88 @@
     "lastUpdated": "Last updated",
     "noSession": "No Active Session",
     "noSessionDescription": "Please create or select a pattern definition session to continue.",
+    "progress": "Pattern Definition Progress",
+    "completed": "Completed",
+    "steps": {
+      "garment-type": {
+        "label": "Garment Type"
+      },
+      "gauge": {
+        "label": "Gauge"
+      },
+      "measurements": {
+        "label": "Measurements"
+      },
+      "ease": {
+        "label": "Ease"
+      },
+      "yarn": {
+        "label": "Yarn"
+      },
+      "stitch-pattern": {
+        "label": "Stitch Pattern"
+      },
+      "garment-structure": {
+        "label": "Garment Structure"
+      },
+      "neckline": {
+        "label": "Neckline"
+      },
+      "sleeves": {
+        "label": "Sleeves"
+      },
+      "summary": {
+        "label": "Summary"
+      }
+    },
     "status": {
       "draft": "Draft",
       "ready_for_calculation": "Ready for Calculation",
       "completed": "Completed",
       "archived": "Archived"
+    }
+  },
+  "sleeve": {
+    "title": "Sleeve Style and Length",
+    "description": "Choose the style, length, and cuff options for your sleeves. Available options depend on your selected construction method.",
+    "style": {
+      "title": "Sleeve Style"
+    },
+    "length": {
+      "title": "Sleeve Length",
+      "typical": "Typical: {{length}}cm",
+      "custom": {
+        "label": "Custom Length (cm)",
+        "help": "Enter the desired sleeve length from shoulder to wrist in centimeters."
+      }
+    },
+    "cuff": {
+      "title": "Cuff Style",
+      "parameters": {
+        "title": "Cuff Parameters",
+        "cuff_depth_cm": "Cuff Depth",
+        "fold_depth_cm": "Fold Depth",
+        "flare_width_cm": "Flare Width",
+        "band_width_cm": "Band Width"
+      }
+    },
+    "summary": {
+      "title": "Sleeve Configuration Summary",
+      "style": "Style:",
+      "length": "Length:",
+      "cuff": "Cuff:"
+    },
+    "constructionRequired": {
+      "title": "Construction Method Required",
+      "description": "Please select a construction method first to see available sleeve options."
+    },
+    "noOptions": {
+      "title": "No Sleeve Options Available",
+      "description": "No sleeve options are available for the selected construction method."
+    },
+    "notApplicable": "Sleeve options are only available for garments with sleeves like sweaters and cardigans. Please select a compatible garment type first.",
+    "error": {
+      "title": "Error Loading Sleeve Options"
     }
   }
 } 

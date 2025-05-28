@@ -7,7 +7,13 @@ import DefinitionStepper from './DefinitionStepper';
 import DefinitionSummary from './DefinitionSummary';
 import SessionHeader from './SessionHeader';
 import GarmentTypeSelector from './GarmentTypeSelector';
+import SweaterStructureSelector from './SweaterStructureSelector';
+import NecklineSelector from './NecklineSelector';
+import SleeveSelector from './SleeveSelector';
 import { GarmentType } from '@/types/garment';
+import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
+import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
+import { SleeveStyle, SleeveLength, CuffStyle, SleeveAttributes, CuffParameters } from '@/types/sleeve';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -159,6 +165,126 @@ function StepContent({ currentStep }: { currentStep: string }) {
   const handleGarmentTypeSelect = async (garmentType: GarmentType) => {
     await updateSession({
       selected_garment_type_id: garmentType.id
+    });
+  };
+
+  /**
+   * Handle sweater structure selections (US_4.3)
+   */
+  const handleConstructionMethodSelect = async (method: ConstructionMethod) => {
+    // For now, we'll store this in the session's parameter_snapshot
+    // In a full implementation, this would be stored in pattern_definition_components
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const sweaterStructure: SweaterStructureAttributes = {
+      ...currentSnapshot.sweater_structure,
+      construction_method: method
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        sweater_structure: sweaterStructure
+      }
+    });
+  };
+
+  const handleBodyShapeSelect = async (shape: BodyShape) => {
+    // For now, we'll store this in the session's parameter_snapshot
+    // In a full implementation, this would be stored in pattern_definition_components
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const sweaterStructure: SweaterStructureAttributes = {
+      ...currentSnapshot.sweater_structure,
+      body_shape: shape
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        sweater_structure: sweaterStructure
+      }
+    });
+  };
+
+  /**
+   * Handle neckline selections (US_4.4)
+   */
+  const handleNecklineStyleSelect = async (style: NecklineStyle) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const neckline: NecklineAttributes = {
+      ...currentSnapshot.neckline,
+      style: style
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        neckline: neckline
+      }
+    });
+  };
+
+  const handleNecklineParametersUpdate = async (parameters: NecklineParameters) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const neckline: NecklineAttributes = {
+      ...currentSnapshot.neckline,
+      parameters: parameters
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        neckline: neckline
+      }
+    });
+  };
+
+  /**
+   * Handle sleeve selections (US_4.5)
+   */
+  const handleSleeveStyleSelect = async (style: SleeveStyle) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const sleeves: SleeveAttributes = {
+      ...currentSnapshot.sleeves,
+      style: style
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        sleeves: sleeves
+      }
+    });
+  };
+
+  const handleSleeveLengthSelect = async (length: SleeveLength, customLength?: number) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const sleeves: SleeveAttributes = {
+      ...currentSnapshot.sleeves,
+      length_key: length,
+      ...(length === 'custom' && customLength ? { custom_length_cm: customLength } : {})
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        sleeves: sleeves
+      }
+    });
+  };
+
+  const handleCuffStyleSelect = async (cuffStyle: CuffStyle, parameters?: CuffParameters) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    const sleeves: SleeveAttributes = {
+      ...currentSnapshot.sleeves,
+      cuff_style: cuffStyle,
+      ...(parameters || {})
+    };
+
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        sleeves: sleeves
+      }
     });
   };
 
@@ -361,6 +487,115 @@ function StepContent({ currentStep }: { currentStep: string }) {
         </div>
       );
 
+    case 'garment-structure':
+      // Check if this step should be displayed (only for sweaters/cardigans)
+      const shouldShowSweaterStructure = currentSession?.garment_type?.type_key === 'sweater' || 
+                                        currentSession?.garment_type?.type_key === 'cardigan' ||
+                                        currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
+
+      if (!shouldShowSweaterStructure) {
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">{t('sweaterStructure.title', 'Garment Structure')}</h2>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <p className="text-yellow-800">
+                {t('sweaterStructure.notApplicable', 'Garment structure options are only available for sweaters and cardigans. Please select a compatible garment type first.')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      const sweaterStructure = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
+
+      return (
+        <div>
+          <SweaterStructureSelector
+            selectedGarmentTypeId={currentSession?.selected_garment_type_id}
+            selectedConstructionMethod={sweaterStructure?.construction_method}
+            selectedBodyShape={sweaterStructure?.body_shape}
+            onConstructionMethodSelect={handleConstructionMethodSelect}
+            onBodyShapeSelect={handleBodyShapeSelect}
+            disabled={false}
+            isLoading={false}
+          />
+        </div>
+      );
+
+    case 'neckline':
+      // Check if this step should be displayed (only for garments with necklines)
+      const shouldShowNecklineSelector = currentSession?.garment_type?.type_key === 'sweater' || 
+                                        currentSession?.garment_type?.type_key === 'cardigan' ||
+                                        currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
+
+      if (!shouldShowNecklineSelector) {
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">{t('neckline.title', 'Neckline Style')}</h2>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <p className="text-yellow-800">
+                {t('neckline.notApplicable', 'Neckline options are only available for garments with defined necklines like sweaters and cardigans. Please select a compatible garment type first.')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      const necklineAttributes = currentSession?.parameter_snapshot?.neckline as NecklineAttributes;
+      const sweaterStructureForNeckline = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
+
+      return (
+        <div>
+          <NecklineSelector
+            selectedGarmentTypeId={currentSession?.selected_garment_type_id}
+            selectedConstructionMethod={sweaterStructureForNeckline?.construction_method}
+            selectedNecklineStyle={necklineAttributes?.style}
+            selectedNecklineParameters={necklineAttributes?.parameters}
+            onNecklineStyleSelect={handleNecklineStyleSelect}
+            onNecklineParametersUpdate={handleNecklineParametersUpdate}
+            disabled={false}
+            isLoading={false}
+          />
+        </div>
+      );
+
+    case 'sleeves':
+      // Check if this step should be displayed (only for garments with sleeves)
+      const shouldShowSleeveSelector = currentSession?.garment_type?.type_key === 'sweater' || 
+                                      currentSession?.garment_type?.type_key === 'cardigan' ||
+                                      currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
+
+      if (!shouldShowSleeveSelector) {
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">{t('sleeve.title', 'Sleeve Style and Length')}</h2>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <p className="text-yellow-800">
+                {t('sleeve.notApplicable', 'Sleeve options are only available for garments with sleeves like sweaters and cardigans. Please select a compatible garment type first.')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      const sleeveAttributes = currentSession?.parameter_snapshot?.sleeves as SleeveAttributes;
+      const sweaterStructureForSleeves = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
+
+      return (
+        <div>
+          <SleeveSelector
+            selectedGarmentTypeId={currentSession?.selected_garment_type_id}
+            selectedConstructionMethod={sweaterStructureForSleeves?.construction_method}
+            selectedSleeveAttributes={sleeveAttributes}
+            onSleeveStyleSelect={handleSleeveStyleSelect}
+            onSleeveLengthSelect={handleSleeveLengthSelect}
+            onCuffStyleSelect={handleCuffStyleSelect}
+            disabled={false}
+            isLoading={false}
+          />
+        </div>
+      );
+
     case 'summary':
       return (
         <div>
@@ -396,6 +631,84 @@ function StepContent({ currentStep }: { currentStep: string }) {
                 <div className="flex justify-between">
                   <span className="font-medium">Stitch Pattern:</span>
                   <span>Stitch pattern selected</span>
+                </div>
+              )}
+              {currentSession?.parameter_snapshot?.sweater_structure && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Sweater Structure:</span>
+                    <span></span>
+                  </div>
+                  {(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes)?.construction_method && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Construction:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes).construction_method?.replace('_', ' ')}</span>
+                    </div>
+                  )}
+                  {(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes)?.body_shape && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Body Shape:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes).body_shape?.replace('_', ' ')}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {currentSession?.parameter_snapshot?.neckline && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Neckline:</span>
+                    <span></span>
+                  </div>
+                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.style && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Style:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).style?.replace('_', ' ')}</span>
+                    </div>
+                  )}
+                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.parameters?.depth_cm && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Depth:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).parameters?.depth_cm}cm</span>
+                    </div>
+                  )}
+                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.parameters?.width_at_center_cm && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Width:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).parameters?.width_at_center_cm}cm</span>
+                    </div>
+                  )}
+                </div>
+              )}
+              {currentSession?.parameter_snapshot?.sleeves && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Sleeves:</span>
+                    <span></span>
+                  </div>
+                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.style && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Style:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.sleeves as SleeveAttributes).style?.replace('_', ' ')}</span>
+                    </div>
+                  )}
+                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.length_key && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Length:</span>
+                      <span className="text-sm">
+                        {(currentSession.parameter_snapshot.sleeves as SleeveAttributes).length_key?.replace('_', ' ')}
+                        {(currentSession.parameter_snapshot.sleeves as SleeveAttributes).length_key === 'custom' && 
+                         (currentSession.parameter_snapshot.sleeves as SleeveAttributes).custom_length_cm && 
+                         ` (${(currentSession.parameter_snapshot.sleeves as SleeveAttributes).custom_length_cm}cm)`
+                        }
+                      </span>
+                    </div>
+                  )}
+                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.cuff_style && (
+                    <div className="flex justify-between pl-4">
+                      <span className="text-sm text-gray-600">Cuff:</span>
+                      <span className="text-sm">{(currentSession.parameter_snapshot.sleeves as SleeveAttributes).cuff_style?.replace('_', ' ')}</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
