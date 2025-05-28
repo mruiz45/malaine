@@ -165,6 +165,29 @@ export interface ComponentCalculationResult {
   shapingInstructions?: string[];
   /** Additional calculation metadata */
   metadata?: Record<string, any>;
+  /** Detailed calculation data (US_6.2) */
+  detailedCalculations?: {
+    /** Target width used in calculation */
+    targetWidthUsed_cm?: number;
+    /** Target length used in calculation */
+    targetLengthUsed_cm?: number;
+    /** Final cast-on stitch count */
+    castOnStitches?: number;
+    /** Total row count */
+    totalRows?: number;
+    /** Actual calculated width after adjustments */
+    actualCalculatedWidth_cm?: number;
+    /** Actual calculated length after adjustments */
+    actualCalculatedLength_cm?: number;
+    /** Raw stitch count before adjustments */
+    rawStitchCount?: number;
+    /** Number of pattern repeats */
+    patternRepeats?: number;
+  };
+  /** Component-specific errors */
+  errors?: string[];
+  /** Component-specific warnings */
+  warnings?: string[];
 }
 
 /**

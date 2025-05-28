@@ -1,5 +1,5 @@
 /**
- * Pattern Calculator API Route (US_6.1)
+ * Pattern Calculator API Route (US_6.1 + US_6.2)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
  */
 
@@ -12,6 +12,10 @@ import {
   ComponentCalculationResult
 } from '@/types/pattern-calculation';
 import { validatePatternCalculationInput } from '@/utils/pattern-calculation-validators';
+import { 
+  calculateRectangularPiece, 
+  RectangularPieceInput 
+} from '@/utils/rectangular-piece-calculator';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -157,26 +161,84 @@ async function performPatternCalculation(request: PatternCalculationRequest): Pr
 
 /**
  * Calculates stitch and row counts for a single component
+ * Enhanced for US_6.2 with specialized rectangular piece calculation
  */
 function calculateComponent(component: any, input: any): ComponentCalculationResult {
+  const { gauge, stitchPattern } = input;
+  
+  // Check if this is a rectangular component that can use the specialized calculator
+  if (component.targetWidth && component.targetLength) {
+    // Use specialized rectangular piece calculator (US_6.2)
+    const rectangularInput: RectangularPieceInput = {
+      targetWidth_cm: component.targetWidth,
+      targetLength_cm: component.targetLength,
+      gauge,
+      stitchPattern,
+      componentKey: component.componentKey,
+    };
+
+    const rectangularResult = calculateRectangularPiece(rectangularInput);
+    
+    // Generate shaping instructions based on calculation
+    const shapingInstructions: string[] = [];
+    if (rectangularResult.calculations.castOnStitches > 0) {
+      shapingInstructions.push(`Cast on ${rectangularResult.calculations.castOnStitches} stitches`);
+      shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
+      shapingInstructions.push('Bind off all stitches');
+    }
+
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName,
+      stitchCount: rectangularResult.calculations.castOnStitches,
+      rowCount: rectangularResult.calculations.totalRows,
+      shapingInstructions,
+      detailedCalculations: {
+        targetWidthUsed_cm: rectangularResult.calculations.targetWidthUsed_cm,
+        targetLengthUsed_cm: rectangularResult.calculations.targetLengthUsed_cm,
+        castOnStitches: rectangularResult.calculations.castOnStitches,
+        totalRows: rectangularResult.calculations.totalRows,
+        actualCalculatedWidth_cm: rectangularResult.calculations.actualCalculatedWidth_cm,
+        actualCalculatedLength_cm: rectangularResult.calculations.actualCalculatedLength_cm,
+        rawStitchCount: rectangularResult.calculations.rawStitchCount,
+        patternRepeats: rectangularResult.calculations.patternRepeats,
+      },
+      errors: rectangularResult.errors,
+      warnings: rectangularResult.warnings,
+      metadata: {
+        calculationType: 'rectangular',
+        targetDimensions: {
+          width: component.targetWidth,
+          length: component.targetLength,
+        },
+        calculatedDimensions: {
+          actualWidth: rectangularResult.calculations.actualCalculatedWidth_cm,
+          actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
+        }
+      }
+    };
+  }
+
+  // Fallback to original calculation for non-rectangular components
+  return calculateNonRectangularComponent(component, input);
+}
+
+/**
+ * Calculates stitch and row counts for non-rectangular components
+ * (Original logic preserved for cylindrical and circular components)
+ */
+function calculateNonRectangularComponent(component: any, input: any): ComponentCalculationResult {
   const { gauge } = input;
   
   // Basic calculation: convert dimensions to stitches/rows
   let stitchCount = 0;
   let rowCount = 0;
   const shapingInstructions: string[] = [];
+  const errors: string[] = [];
+  const warnings: string[] = [];
 
   // Calculate based on component type and dimensions
-  if (component.targetWidth && component.targetLength) {
-    // Rectangular component (body panel)
-    stitchCount = Math.round((component.targetWidth / 10) * gauge.stitchesPer10cm);
-    rowCount = Math.round((component.targetLength / 10) * gauge.rowsPer10cm);
-    
-    shapingInstructions.push(`Cast on ${stitchCount} stitches`);
-    shapingInstructions.push(`Work in pattern for ${rowCount} rows`);
-    shapingInstructions.push('Bind off all stitches');
-    
-  } else if (component.targetCircumference && component.targetLength) {
+  if (component.targetCircumference && component.targetLength) {
     // Cylindrical component (sleeve)
     stitchCount = Math.round((component.targetCircumference / 10) * gauge.stitchesPer10cm);
     rowCount = Math.round((component.targetLength / 10) * gauge.rowsPer10cm);
@@ -194,15 +256,17 @@ function calculateComponent(component: any, input: any): ComponentCalculationRes
     shapingInstructions.push(`Pick up ${stitchCount} stitches around neck opening`);
     shapingInstructions.push(`Work in ribbing for ${rowCount} rounds`);
     shapingInstructions.push('Bind off in pattern');
+  } else {
+    errors.push('Component must have either rectangular dimensions (width + length) or circular dimensions (circumference)');
   }
 
   // Adjust for stitch pattern repeat
-  if (input.stitchPattern.horizontalRepeat > 1) {
+  if (input.stitchPattern.horizontalRepeat > 1 && stitchCount > 0) {
     const repeatAdjustment = stitchCount % input.stitchPattern.horizontalRepeat;
     if (repeatAdjustment !== 0) {
       const adjustment = input.stitchPattern.horizontalRepeat - repeatAdjustment;
       stitchCount += adjustment;
-      shapingInstructions.unshift(`Note: Stitch count adjusted by +${adjustment} to accommodate pattern repeat`);
+      warnings.push(`Stitch count adjusted by +${adjustment} to accommodate ${input.stitchPattern.horizontalRepeat}-stitch pattern repeat`);
     }
   }
 
@@ -212,16 +276,17 @@ function calculateComponent(component: any, input: any): ComponentCalculationRes
     stitchCount,
     rowCount,
     shapingInstructions,
+    errors,
+    warnings,
     metadata: {
+      calculationType: 'non-rectangular',
       targetDimensions: {
-        width: component.targetWidth,
+        circumference: component.targetCircumference,
         length: component.targetLength,
-        circumference: component.targetCircumference
       },
       calculatedDimensions: {
-        actualWidth: component.targetWidth,
+        actualCircumference: component.targetCircumference,
         actualLength: component.targetLength,
-        actualCircumference: component.targetCircumference
       }
     }
   };
