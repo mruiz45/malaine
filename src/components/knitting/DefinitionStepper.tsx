@@ -13,7 +13,8 @@ import {
   RectangleStackIcon,
   HandRaisedIcon,
   SwatchIcon,
-  Squares2X2Icon
+  Squares2X2Icon,
+  CubeIcon
 } from '@heroicons/react/24/outline';
 import {
   BeakerIcon as BeakerIconSolid,
@@ -25,7 +26,8 @@ import {
   RectangleStackIcon as RectangleStackIconSolid,
   HandRaisedIcon as HandRaisedIconSolid,
   SwatchIcon as SwatchIconSolid,
-  Squares2X2Icon as Squares2X2IconSolid
+  Squares2X2Icon as Squares2X2IconSolid,
+  CubeIcon as CubeIconSolid
 } from '@heroicons/react/24/solid';
 import { DefinitionStep } from '@/types/patternDefinition';
 
@@ -97,6 +99,12 @@ const STEP_CONFIG: Record<DefinitionStep, {
     iconSolid: DocumentTextIconSolid,
     label: 'Summary',
     color: 'gray'
+  },
+  'accessory-definition': {
+    icon: CubeIcon,
+    iconSolid: CubeIconSolid,
+    label: 'Accessory Definition',
+    color: 'teal'
   }
 };
 

@@ -9,6 +9,11 @@ import { EasePreference } from './ease';
 import { YarnProfile } from './yarn';
 import { StitchPattern } from './stitchPattern';
 import { PatternDefinitionComponentWithTemplate, GarmentType } from './garment';
+import { SweaterStructureAttributes } from './sweaterStructure';
+import { NecklineAttributes } from './neckline';
+import { SleeveAttributes } from './sleeve';
+import { BeanieAttributes, ScarfCowlAttributes } from './accessories';
+import { ColorScheme } from './colorScheme';
 
 /**
  * Status of a pattern definition session
@@ -18,7 +23,18 @@ export type SessionStatus = 'draft' | 'ready_for_calculation' | 'completed' | 'a
 /**
  * Steps in the pattern definition process
  */
-export type DefinitionStep = 'garment-type' | 'gauge' | 'measurements' | 'ease' | 'yarn' | 'stitch-pattern' | 'garment-structure' | 'neckline' | 'sleeves' | 'summary';
+export type DefinitionStep = 
+  | 'garment-type'
+  | 'gauge'
+  | 'measurements'
+  | 'ease'
+  | 'yarn'
+  | 'stitch-pattern'
+  | 'garment-structure'
+  | 'neckline'
+  | 'sleeves'
+  | 'accessory-definition'
+  | 'summary';
 
 /**
  * Base pattern definition session interface matching the database schema
@@ -60,8 +76,8 @@ export interface PatternDefinitionSession {
   gauge_row_count?: number;
   /** Unit for gauge measurements */
   gauge_unit?: string;
-  /** Snapshot of all parameters for calculation */
-  parameter_snapshot?: Record<string, any>;
+  /** Snapshot of current parameter selections */
+  parameter_snapshot?: ParameterSnapshot;
 }
 
 /**
@@ -82,6 +98,8 @@ export interface PatternDefinitionSessionWithData extends PatternDefinitionSessi
   garment_type?: GarmentType;
   /** Pattern definition components for this session */
   components?: PatternDefinitionComponentWithTemplate[];
+  /** Snapshot of current parameter selections */
+  parameter_snapshot?: ParameterSnapshot;
 }
 
 /**
@@ -373,4 +391,17 @@ export interface PatternOutlineResponse {
   data?: PatternOutline;
   /** Error message if any */
   error?: string;
+}
+
+/**
+ * Parameter snapshot interface for storing session-specific attributes
+ */
+export interface ParameterSnapshot {
+  sweater_structure?: SweaterStructureAttributes;
+  neckline?: NecklineAttributes;
+  sleeves?: SleeveAttributes;
+  beanie?: BeanieAttributes;
+  scarf_cowl?: ScarfCowlAttributes;
+  color_scheme?: ColorScheme;
+  [key: string]: any; // Allow for additional dynamic properties
 } 

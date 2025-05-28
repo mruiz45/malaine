@@ -27,6 +27,7 @@ const DEFINITION_STEPS: DefinitionStep[] = [
   'garment-structure',
   'neckline',
   'sleeves',
+  'accessory-definition',
   'summary'
 ];
 
@@ -412,6 +413,11 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
     completed.push('sleeves');
   }
 
+  // Check for accessory definition (US_7.1)
+  if (session.parameter_snapshot?.beanie || session.parameter_snapshot?.scarf_cowl) {
+    completed.push('accessory-definition');
+  }
+
   return completed;
 }
 
@@ -458,6 +464,16 @@ function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionW
       return session.parameter_snapshot?.sleeves?.style ? 
         `Sleeves: ${session.parameter_snapshot.sleeves.style}${session.parameter_snapshot.sleeves.length_key ? `, ${session.parameter_snapshot.sleeves.length_key}` : ''}${session.parameter_snapshot.sleeves.cuff_style ? `, ${session.parameter_snapshot.sleeves.cuff_style}` : ''}` : 
         undefined;
+    
+    case 'accessory-definition':
+      const beanieAttrs = session.parameter_snapshot?.beanie;
+      const scarfCowlAttrs = session.parameter_snapshot?.scarf_cowl;
+      if (beanieAttrs) {
+        return `Beanie: ${beanieAttrs.target_circumference_cm}cm circumference, ${beanieAttrs.crown_style} crown`;
+      } else if (scarfCowlAttrs) {
+        return `${scarfCowlAttrs.type}: ${scarfCowlAttrs.type === 'scarf' ? `${scarfCowlAttrs.width_cm}x${scarfCowlAttrs.length_cm}cm` : `${scarfCowlAttrs.circumference_cm}cm circumference`}`;
+      }
+      return undefined;
     
     case 'summary':
       return 'Pattern definition summary';
@@ -511,6 +527,11 @@ function getStepData(step: DefinitionStep, session: PatternDefinitionSessionWith
     
     case 'sleeves':
       return session.parameter_snapshot?.sleeves ? session.parameter_snapshot.sleeves : undefined;
+    
+    case 'accessory-definition':
+      return session.parameter_snapshot?.beanie || session.parameter_snapshot?.scarf_cowl ? 
+        { beanie: session.parameter_snapshot.beanie, scarf_cowl: session.parameter_snapshot.scarf_cowl } : 
+        undefined;
     
     default:
       return undefined;

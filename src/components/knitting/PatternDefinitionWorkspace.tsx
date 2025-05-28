@@ -10,12 +10,15 @@ import GarmentTypeSelector from './GarmentTypeSelector';
 import SweaterStructureSelector from './SweaterStructureSelector';
 import NecklineSelector from './NecklineSelector';
 import SleeveSelector from './SleeveSelector';
+import BeanieDefinitionForm from './BeanieDefinitionForm';
+import ScarfCowlDefinitionForm from './ScarfCowlDefinitionForm';
 import ColorSchemeSimulator from '../tools/ColorSchemeSimulator';
 import PatternOutlineViewer from './PatternOutlineViewer';
 import { GarmentType } from '@/types/garment';
 import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
 import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
 import { SleeveStyle, SleeveLength, CuffStyle, SleeveAttributes, CuffParameters } from '@/types/sleeve';
+import { BeanieAttributes, ScarfCowlAttributes } from '@/types/accessories';
 import { ColorScheme } from '@/types/colorScheme';
 import { PatternOutline } from '@/types/patternDefinition';
 import { patternDefinitionService } from '@/services/patternDefinitionService';
@@ -327,6 +330,32 @@ function StepContent({ currentStep }: { currentStep: string }) {
       console.error('Error saving color scheme:', error);
       // Handle error appropriately
     }
+  };
+
+  /**
+   * Handle beanie attributes update (US_7.1 - FR2)
+   */
+  const handleBeanieAttributesChange = async (attributes: BeanieAttributes) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        beanie: attributes
+      }
+    });
+  };
+
+  /**
+   * Handle scarf/cowl attributes update (US_7.1 - FR3)
+   */
+  const handleScarfCowlAttributesChange = async (attributes: ScarfCowlAttributes) => {
+    const currentSnapshot = currentSession?.parameter_snapshot || {};
+    await updateSession({
+      parameter_snapshot: {
+        ...currentSnapshot,
+        scarf_cowl: attributes
+      }
+    });
   };
 
   /**
@@ -749,6 +778,65 @@ function StepContent({ currentStep }: { currentStep: string }) {
         </div>
       );
 
+    case 'accessory-definition':
+      // Check if this step should be displayed (only for accessory garment types)
+      const selectedGarmentType = currentSession?.garment_type?.type_key;
+      const isAccessoryType = selectedGarmentType === 'beanie' || selectedGarmentType === 'scarf' || selectedGarmentType === 'scarf_cowl';
+
+      if (!isAccessoryType) {
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">{t('accessory.title', 'Accessory Definition')}</h2>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+              <p className="text-yellow-800">
+                {t('accessory.notApplicable', 'Accessory definition is only available for accessory garment types like beanies, hats, scarves, and cowls. Please select a compatible garment type first.')}
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      // Show appropriate form based on garment type
+      if (selectedGarmentType === 'beanie') {
+        const beanieAttributes = currentSession?.parameter_snapshot?.beanie;
+        
+        return (
+          <div>
+            <BeanieDefinitionForm
+              selectedAttributes={beanieAttributes}
+              measurementSets={[]} // TODO: Load from user's measurement sets
+              onAttributesChange={handleBeanieAttributesChange}
+              disabled={false}
+              isLoading={false}
+            />
+          </div>
+        );
+      } else if (selectedGarmentType === 'scarf' || selectedGarmentType === 'scarf_cowl') {
+        const scarfCowlAttributes = currentSession?.parameter_snapshot?.scarf_cowl;
+        
+        return (
+          <div>
+            <ScarfCowlDefinitionForm
+              selectedAttributes={scarfCowlAttributes}
+              onAttributesChange={handleScarfCowlAttributesChange}
+              disabled={false}
+              isLoading={false}
+            />
+          </div>
+        );
+      }
+
+      return (
+        <div>
+          <h2 className="text-2xl font-bold mb-6">{t('accessory.title', 'Accessory Definition')}</h2>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
+            <p className="text-gray-600">
+              {t('accessory.selectType', 'Please select an accessory garment type to continue.')}
+            </p>
+          </div>
+        </div>
+      );
+
     case 'summary':
       return (
         <div>
@@ -861,6 +949,72 @@ function StepContent({ currentStep }: { currentStep: string }) {
                       <span className="text-sm text-gray-600">Cuff:</span>
                       <span className="text-sm">{(currentSession.parameter_snapshot.sleeves as SleeveAttributes).cuff_style?.replace('_', ' ')}</span>
                     </div>
+                  )}
+                </div>
+              )}
+              {/* Accessory Attributes Display (US_7.1) */}
+              {currentSession?.parameter_snapshot?.beanie && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">Beanie:</span>
+                    <span></span>
+                  </div>
+                  <div className="flex justify-between pl-4">
+                    <span className="text-sm text-gray-600">Circumference:</span>
+                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.target_circumference_cm}cm</span>
+                  </div>
+                  <div className="flex justify-between pl-4">
+                    <span className="text-sm text-gray-600">Height:</span>
+                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.body_height_cm}cm</span>
+                  </div>
+                  <div className="flex justify-between pl-4">
+                    <span className="text-sm text-gray-600">Crown:</span>
+                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.crown_style?.replace('_', ' ')}</span>
+                  </div>
+                  <div className="flex justify-between pl-4">
+                    <span className="text-sm text-gray-600">Brim:</span>
+                    <span className="text-sm">
+                      {currentSession.parameter_snapshot.beanie.brim_style?.replace('_', ' ')}
+                      {currentSession.parameter_snapshot.beanie.brim_depth_cm && currentSession.parameter_snapshot.beanie.brim_style !== 'no_brim' && 
+                       ` (${currentSession.parameter_snapshot.beanie.brim_depth_cm}cm)`
+                      }
+                    </span>
+                  </div>
+                </div>
+              )}
+              {currentSession?.parameter_snapshot?.scarf_cowl && (
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="font-medium">{currentSession.parameter_snapshot.scarf_cowl.type === 'scarf' ? 'Scarf' : 'Cowl'}:</span>
+                    <span></span>
+                  </div>
+                  <div className="flex justify-between pl-4">
+                    <span className="text-sm text-gray-600">Work Style:</span>
+                    <span className="text-sm">{currentSession.parameter_snapshot.scarf_cowl.work_style?.replace('_', ' ')}</span>
+                  </div>
+                  {currentSession.parameter_snapshot.scarf_cowl.type === 'scarf' && (
+                    <>
+                      <div className="flex justify-between pl-4">
+                        <span className="text-sm text-gray-600">Width:</span>
+                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).width_cm}cm</span>
+                      </div>
+                      <div className="flex justify-between pl-4">
+                        <span className="text-sm text-gray-600">Length:</span>
+                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).length_cm}cm</span>
+                      </div>
+                    </>
+                  )}
+                  {currentSession.parameter_snapshot.scarf_cowl.type === 'cowl' && (
+                    <>
+                      <div className="flex justify-between pl-4">
+                        <span className="text-sm text-gray-600">Circumference:</span>
+                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).circumference_cm}cm</span>
+                      </div>
+                      <div className="flex justify-between pl-4">
+                        <span className="text-sm text-gray-600">Height:</span>
+                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).height_cm}cm</span>
+                      </div>
+                    </>
                   )}
                 </div>
               )}
