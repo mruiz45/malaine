@@ -153,9 +153,25 @@ export default function GaugeProfileList({
           <div className="text-blue-700">
             <p className="font-medium mb-2">{t('gauge.info.how_to_measure')}</p>
             <ol className="list-decimal list-inside space-y-1 text-sm">
-              {(t('gauge.info.measure_steps', { returnObjects: true }) as string[]).map((step, index) => (
-                <li key={index}>{step}</li>
-              ))}
+              {(() => {
+                try {
+                  const steps = t('gauge.info.measure_steps', { returnObjects: true });
+                  if (Array.isArray(steps)) {
+                    return steps.map((step, index) => (
+                      <li key={index}>{step}</li>
+                    ));
+                  }
+                  // Fallback if not an array
+                  return (
+                    <li>Create a gauge swatch and measure stitches and rows per 10cm</li>
+                  );
+                } catch (error) {
+                  // Fallback in case of error
+                  return (
+                    <li>Create a gauge swatch and measure stitches and rows per 10cm</li>
+                  );
+                }
+              })()}
             </ol>
           </div>
         </div>

@@ -256,6 +256,18 @@
       "create_new": "Create New",
       "edit": "Edit",
       "view": "View"
+    },
+    "info": {
+      "what_is_gauge": "What is gauge?",
+      "gauge_explanation": "Gauge is the number of stitches and rows per inch or centimeter in your knitting or crochet work. It's crucial for ensuring your finished project matches the intended size.",
+      "how_to_measure": "How to measure gauge:",
+      "measure_steps": [
+        "Create a gauge swatch larger than 10cm x 10cm using your yarn and needle/hook",
+        "Work in the stitch pattern specified in your pattern",
+        "Block your swatch as you would the finished project",
+        "Measure and count stitches and rows over exactly 10cm",
+        "Record your measurements for future reference"
+      ]
     }
   },
   "ease": {
@@ -1161,5 +1173,68 @@
     "summary": "Summary",
     "type": "Type",
     "construction": "Construction"
+  },
+  "stitchLibrary": {
+    "title": "Stitch Pattern Library",
+    "subtitle": "Discover and explore stitch patterns for your projects",
+    "categories": "Categories",
+    "searchPlaceholder": "Search stitch patterns, techniques, or keywords...",
+    "filters": "Filters",
+    "craftType": "Craft Type",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "patternType": "Pattern Type",
+    "basicOnly": "Basic patterns only",
+    "activeFilters": "Active Filters",
+    "selectCategory": "Select a category to explore patterns",
+    "allCategories": "All Categories",
+    "categoriesForCraft": "{{craftType}} Categories",
+    "noCategories": "No categories found",
+    "noCategoriesForCraft": "No categories found for {{craftType}}",
+    "noCategoriesGeneral": "No stitch pattern categories available",
+    "categoriesSummary": "Showing {{count}} categories with patterns",
+    "difficultyLevels": "Difficulty Levels",
+    "samplePatterns": "Sample Patterns",
+    "andMore": "+ {{count}} more patterns",
+    "noPatterns": "No patterns found",
+    "noPatternsSuggestion": "Try adjusting your search or filters"
+  },
+  "stitchCategory": {
+    "basic": "Basic",
+    "cables": "Cables",
+    "lace": "Lace",
+    "textured": "Textured",
+    "ribbing": "Ribbing",
+    "colorwork": "Colorwork",
+    "motifs": "Motifs"
+  },
+  "stitchInstructions": {
+    "title": "Instructions",
+    "noInstructions": "No detailed instructions available for this pattern",
+    "abbreviation": "Abbreviation",
+    "rowByRow": "Row-by-Row Instructions",
+    "roundByRound": "Round-by-Round Instructions",
+    "notes": "Notes",
+    "commonUses": "Common Uses"
+  },
+  "craftType": {
+    "knitting": "Knitting",
+    "crochet": "Crochet"
+  },
+  "common": {
+    "loading": "Loading...",
+    "all": "All",
+    "filters": "Filters",
+    "clearAll": "Clear All",
+    "clearFilters": "Clear Filters",
+    "copy": "Copy",
+    "print": "Print",
+    "retry": "Try Again",
+    "gridView": "Grid View",
+    "listView": "List View"
+  },
+  "error": {
+    "categoriesLoadFailed": "Failed to load categories",
+    "patternsLoadFailed": "Failed to load patterns"
   }
 } 

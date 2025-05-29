@@ -314,6 +314,18 @@
       "create_new": "Créer Nouveau",
       "edit": "Modifier",
       "view": "Voir"
+    },
+    "info": {
+      "what_is_gauge": "Qu'est-ce que l'échantillon ?",
+      "gauge_explanation": "L'échantillon est le nombre de mailles et de rangs par pouce ou centimètre dans votre tricot ou crochet. Il est crucial pour s'assurer que votre projet fini correspond à la taille prévue.",
+      "how_to_measure": "Comment mesurer l'échantillon :",
+      "measure_steps": [
+        "Créez un échantillon plus grand que 10cm x 10cm avec votre laine et aiguille/crochet",
+        "Travaillez dans le point spécifié dans votre modèle",
+        "Bloquez votre échantillon comme vous le feriez pour le projet fini",
+        "Mesurez et comptez les mailles et rangs sur exactement 10cm",
+        "Enregistrez vos mesures pour référence future"
+      ]
     }
   },
   "colorScheme": {
