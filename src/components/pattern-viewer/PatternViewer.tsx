@@ -211,6 +211,7 @@ export default function PatternViewer({
           id="components"
           components={pattern.components}
           printMode={printMode}
+          sessionId={pattern.session_id}
         />
 
         {/* Assembly & Finishing */}

@@ -165,8 +165,9 @@ function StepContent({ currentStep }: { currentStep: string }) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     
+    // TODO: In a full implementation, this would use an actual selected gauge profile ID
     await updateSession({
-      selected_gauge_profile_id: crypto.randomUUID(), // Simulated ID
+      selected_gauge_profile_id: undefined, // Set to undefined to avoid foreign key constraint violations
       gauge_stitch_count: parseFloat(formData.get('stitchCount') as string),
       gauge_row_count: parseFloat(formData.get('rowCount') as string),
       gauge_unit: formData.get('unit') as string
@@ -176,8 +177,9 @@ function StepContent({ currentStep }: { currentStep: string }) {
   const handleMeasurementsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    // TODO: In a full implementation, this would use an actual selected measurement set ID
     await updateSession({
-      selected_measurement_set_id: crypto.randomUUID() // Simulated ID
+      selected_measurement_set_id: undefined // Set to undefined to avoid foreign key constraint violations
     });
   };
 
@@ -195,16 +197,19 @@ function StepContent({ currentStep }: { currentStep: string }) {
   const handleYarnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    // TODO: In a full implementation, this would use an actual selected yarn profile ID
+    // For now, we set it to undefined to avoid foreign key constraint violations
     await updateSession({
-      selected_yarn_profile_id: crypto.randomUUID() // Simulated ID
+      selected_yarn_profile_id: undefined
     });
   };
 
   const handleStitchPatternSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
+    // TODO: In a full implementation, this would use an actual selected stitch pattern ID
     await updateSession({
-      selected_stitch_pattern_id: crypto.randomUUID() // Simulated ID
+      selected_stitch_pattern_id: undefined // Set to undefined to avoid foreign key constraint violations
     });
   };
 

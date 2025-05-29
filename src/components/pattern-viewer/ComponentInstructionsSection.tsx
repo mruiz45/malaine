@@ -1,14 +1,17 @@
 /**
- * Component Instructions Section (US_9.1)
- * Displays detailed instructions for each garment component
+ * Component Instructions Section (US_9.1 + US_9.3)
+ * Displays detailed instructions for each garment component with schematic diagrams
  */
 
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { PatternComponent } from '@/types/assembled-pattern';
+import { SchematicDiagram } from '@/types/schematics';
+import { schematicService } from '@/services/schematicService';
+import SchematicDisplay from '@/components/knitting/SchematicDisplay';
 
 interface ComponentInstructionsSectionProps {
   /** List of pattern components */
@@ -17,20 +20,60 @@ interface ComponentInstructionsSectionProps {
   printMode?: boolean;
   /** Section ID for navigation */
   id?: string;
+  /** Session ID for generating schematics */
+  sessionId?: string;
 }
 
 /**
- * Component for displaying component instructions
+ * Component for displaying component instructions with schematics
  */
 export default function ComponentInstructionsSection({
   components,
   printMode = false,
-  id
+  id,
+  sessionId
 }: ComponentInstructionsSectionProps) {
   const { t } = useTranslation();
   const [expandedComponents, setExpandedComponents] = useState<Set<number>>(
     printMode ? new Set(components.map((_, index) => index)) : new Set()
   );
+  const [schematics, setSchematics] = useState<{ [componentName: string]: SchematicDiagram }>({});
+  const [loadingSchematics, setLoadingSchematics] = useState(false);
+  const [schematicsError, setSchematicsError] = useState<string | null>(null);
+
+  /**
+   * Load schematics for all components
+   */
+  useEffect(() => {
+    if (sessionId && components.length > 0) {
+      loadSchematics();
+    }
+  }, [sessionId, components]);
+
+  const loadSchematics = async () => {
+    if (!sessionId) return;
+
+    try {
+      setLoadingSchematics(true);
+      setSchematicsError(null);
+
+      // Generate schematics for the session
+      const schematicDiagrams = await schematicService.generateSchematicsForSession(sessionId);
+      
+      // Convert to component name indexed object
+      const schematicsMap: { [componentName: string]: SchematicDiagram } = {};
+      schematicDiagrams.forEach(schematic => {
+        schematicsMap[schematic.componentName] = schematic;
+      });
+      
+      setSchematics(schematicsMap);
+    } catch (error) {
+      console.error('Error loading schematics:', error);
+      setSchematicsError(error instanceof Error ? error.message : 'Failed to load schematics');
+    } finally {
+      setLoadingSchematics(false);
+    }
+  };
 
   const toggleComponent = (index: number) => {
     if (printMode) return; // Don't allow collapse in print mode
@@ -57,6 +100,7 @@ export default function ComponentInstructionsSection({
         {components.map((component, index) => {
           const isExpanded = expandedComponents.has(index);
           const componentId = `component-${component.componentName.toLowerCase().replace(/\s+/g, '-')}`;
+          const componentSchematic = schematics[component.componentName];
 
           return (
             <div key={index} id={componentId} className="border border-gray-200 rounded-lg overflow-hidden">
@@ -116,6 +160,44 @@ export default function ComponentInstructionsSection({
               {/* Component Content */}
               {isExpanded && (
                 <div className="p-6 space-y-6">
+                  {/* Schematic Display (US_9.3) */}
+                  {componentSchematic && (
+                    <div>
+                      <h4 className="font-medium text-gray-900 mb-3">
+                        {t('patternViewer.componentSchematic', 'Component Diagram')}
+                      </h4>
+                      <div className="flex justify-center">
+                        <SchematicDisplay
+                          schematic={componentSchematic}
+                          compact={false}
+                          showDownload={!printMode}
+                          showZoomControls={!printMode}
+                          printMode={printMode}
+                          maxWidth="500px"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Schematic Loading State */}
+                  {loadingSchematics && !componentSchematic && (
+                    <div className="text-center py-4">
+                      <div className="inline-flex items-center space-x-2 text-sm text-gray-600">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                        <span>{t('patternViewer.loadingSchematic', 'Loading schematic...')}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Schematic Error State */}
+                  {schematicsError && !componentSchematic && !loadingSchematics && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                      <p className="text-sm text-red-800">
+                        {t('patternViewer.schematicError', 'Unable to load schematic')}: {schematicsError}
+                      </p>
+                    </div>
+                  )}
+
                   {/* Shaping Summary */}
                   {component.shaping_summary && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
