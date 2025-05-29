@@ -1,6 +1,7 @@
 /**
  * Instruction Generator Service (US 7.3)
  * Generates detailed textual instructions for garment pieces with shaping
+ * Extended for US_8.3: Stitch pattern integration
  */
 
 import { 
@@ -12,9 +13,20 @@ import {
   PlainInstructionTemplate
 } from '@/types/instruction-generation';
 import { ShapingSchedule, ShapingEvent } from '@/types/shaping';
+import { 
+  StitchPatternInstructionContext,
+  ComponentStitchPatternIntegrationData
+} from '@/types/pattern-calculation';
+import { StitchPattern } from '@/types/stitchPattern';
+import {
+  createStitchPatternContext,
+  generateStitchPatternRowInstruction,
+  validateStitchPatternCompatibility,
+  generateStitchPatternCastOnInstruction
+} from '@/utils/stitch-pattern-instruction-generator';
 
 /**
- * Service class for generating detailed instructions with shaping
+ * Service class for generating detailed instructions with shaping and stitch patterns
  */
 export class InstructionGeneratorService {
   private readonly defaultConfig: InstructionGenerationConfig = {
@@ -101,6 +113,95 @@ export class InstructionGeneratorService {
         success: false,
         error: `Failed to generate instructions: ${error instanceof Error ? error.message : 'Unknown error'}`,
         warnings: []
+      };
+    }
+  }
+
+  /**
+   * Generates detailed instructions with stitch pattern integration (US_8.3)
+   * @param context - Generation context including stitch pattern data
+   * @param shapingSchedule - Optional shaping schedule
+   * @param stitchPattern - Stitch pattern data from database
+   * @param integrationData - Stitch pattern integration data from US_8.2
+   * @param config - Optional configuration overrides
+   * @returns Generated instructions with success status
+   */
+  async generateInstructionsWithStitchPattern(
+    context: InstructionGenerationContext,
+    shapingSchedule: ShapingSchedule | undefined,
+    stitchPattern: StitchPattern,
+    integrationData: ComponentStitchPatternIntegrationData,
+    config?: Partial<InstructionGenerationConfig>
+  ): Promise<InstructionGenerationResult> {
+    const finalConfig = { ...this.defaultConfig, ...config };
+
+    try {
+      // Validate stitch pattern compatibility
+      const validation = validateStitchPatternCompatibility(stitchPattern, integrationData);
+      if (!validation.isValid) {
+        return {
+          success: false,
+          instructions: [],
+          errors: validation.errors,
+          warnings: validation.warnings
+        };
+      }
+
+      // Create stitch pattern instruction context
+      const stitchPatternContext = createStitchPatternContext(stitchPattern, integrationData);
+
+      // Generate instructions
+      const instructions: DetailedInstruction[] = [];
+      const warnings: string[] = [...validation.warnings];
+      let stepNumber = 1;
+
+      // Step 1: Cast On with stitch pattern integration
+      const castOnInstruction = generateStitchPatternCastOnInstruction(
+        stitchPatternContext,
+        integrationData,
+        context.craftType
+      );
+
+      instructions.push({
+        step: stepNumber++,
+        type: 'setup_row',
+        text: castOnInstruction,
+        stitchCount: integrationData.adjustedComponentStitchCount
+      });
+
+      // Generate body instructions with pattern integration
+      const bodyInstructions = await this.generateStitchPatternBodyInstructions(
+        context,
+        stitchPatternContext,
+        shapingSchedule,
+        finalConfig,
+        stepNumber
+      );
+
+      instructions.push(...bodyInstructions.instructions);
+      stepNumber += bodyInstructions.instructions.length;
+      warnings.push(...bodyInstructions.warnings);
+
+      // Step Final: Bind Off
+      instructions.push({
+        step: stepNumber++,
+        type: 'finishing',
+        text: context.craftType === 'knitting' ? 'Bind off all stitches.' : 'Fasten off.',
+        stitchCount: bodyInstructions.finalStitchCount
+      });
+
+      return {
+        success: true,
+        instructions,
+        warnings: warnings.length > 0 ? warnings : undefined,
+        totalRows: this.calculateTotalRows(instructions)
+      };
+
+    } catch (error) {
+      return {
+        success: false,
+        instructions: [],
+        errors: [`Failed to generate instructions with stitch pattern: ${error instanceof Error ? error.message : 'Unknown error'}`]
       };
     }
   }
@@ -341,5 +442,105 @@ export class InstructionGeneratorService {
       }
       return total;
     }, 0);
+  }
+
+  /**
+   * Generates body instructions with stitch pattern integration (US_8.3)
+   */
+  private async generateStitchPatternBodyInstructions(
+    context: InstructionGenerationContext,
+    stitchPatternContext: StitchPatternInstructionContext,
+    shapingSchedule: ShapingSchedule | undefined,
+    config: InstructionGenerationConfig,
+    startStep: number
+  ): Promise<{
+    instructions: DetailedInstruction[];
+    warnings: string[];
+    finalStitchCount: number;
+  }> {
+    const instructions: DetailedInstruction[] = [];
+    const warnings: string[] = [];
+    
+    let currentStitchCount = context.startingStitchCount;
+    let currentPatternRowIndex = stitchPatternContext.currentPatternRowIndex;
+    let stepNumber = startStep;
+    let overallRowNumber = 1;
+
+    // Calculate total rows needed
+    const totalRows = context.totalRows || 20; // Default if not specified
+
+    // Build a simplified shaping schedule - distribute shaping events across total rows
+    const shapingRowMap = new Map<number, ShapingEvent>();
+    if (shapingSchedule?.hasShaping && shapingSchedule.shapingEvents.length > 0) {
+      // For simplicity, distribute shaping events evenly across the total rows
+      // This is a simplified approach - more sophisticated scheduling would be needed for production
+      const firstShapingEvent = shapingSchedule.shapingEvents[0];
+      if (firstShapingEvent.numShapingEvents > 0) {
+        const interval = Math.floor(totalRows / firstShapingEvent.numShapingEvents);
+        for (let i = 0; i < firstShapingEvent.numShapingEvents; i++) {
+          const shapingRow = (i + 1) * interval;
+          if (shapingRow <= totalRows) {
+            shapingRowMap.set(shapingRow, {
+              ...firstShapingEvent,
+              totalStitchesToChange: firstShapingEvent.stitchesPerEvent
+            });
+          }
+        }
+      }
+    }
+
+    // Process each row
+    for (let row = 1; row <= totalRows; row++) {
+      // Check if this row has shaping
+      const shapingEvent = shapingRowMap.get(row);
+
+      // Update stitch pattern context with current row index
+      const contextWithCurrentRow = {
+        ...stitchPatternContext,
+        currentPatternRowIndex: currentPatternRowIndex
+      };
+
+      // Generate row instruction
+      const rowInstruction = generateStitchPatternRowInstruction(
+        contextWithCurrentRow,
+        overallRowNumber,
+        currentStitchCount,
+        context.craftType,
+        shapingEvent
+      );
+
+      // Update stitch count if shaping occurred
+      if (shapingEvent) {
+        const stitchChange = shapingEvent.type === 'decrease' 
+          ? -shapingEvent.totalStitchesToChange 
+          : shapingEvent.totalStitchesToChange;
+        currentStitchCount += stitchChange;
+      }
+
+      // Add instruction
+      instructions.push({
+        step: stepNumber++,
+        row_number_in_section: overallRowNumber,
+        type: rowInstruction.isShapingRow ? 'shaping_row' : 'pattern_row',
+        text: rowInstruction.instruction,
+        stitchCount: currentStitchCount,
+        metadata: {
+          isRightSide: this.isRightSideRow(overallRowNumber),
+          stitchesChanged: shapingEvent ? (shapingEvent.type === 'decrease' ? -shapingEvent.totalStitchesToChange : shapingEvent.totalStitchesToChange) : 0,
+          shapingType: shapingEvent?.type,
+          stitchPatternRowIndex: currentPatternRowIndex
+        }
+      });
+
+      // Update pattern row index for next iteration
+      currentPatternRowIndex = rowInstruction.nextPatternRowIndex;
+      overallRowNumber++;
+    }
+
+    return {
+      instructions,
+      warnings,
+      finalStitchCount: currentStitchCount
+    };
   }
 } 

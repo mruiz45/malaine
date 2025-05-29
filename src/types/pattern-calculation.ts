@@ -63,6 +63,8 @@ export interface CalculationStitchPattern {
   verticalRepeat: number;
   /** Pattern type (stockinette, ribbing, cable, etc.) */
   patternType?: string;
+  /** Stitch pattern ID for detailed instructions (US_8.3) */
+  stitchPatternId?: string;
   /** Additional pattern metadata */
   metadata?: Record<string, any>;
 }
@@ -81,6 +83,8 @@ export interface CalculationComponentDefinition {
   targetLength?: number;
   /** Target circumference for circular components */
   targetCircumference?: number;
+  /** Component-specific stitch pattern integration data (US_8.3) */
+  stitchPatternIntegration?: ComponentStitchPatternIntegrationData;
   /** Component-specific attributes */
   attributes: Record<string, any>;
 }
@@ -167,6 +171,8 @@ export interface ComponentCalculationResult {
   shapingInstructions?: string[];
   /** Shaping schedule for this component (US 7.2) */
   shapingSchedule?: ShapingSchedule;
+  /** Stitch pattern context for instruction generation (US_8.3) */
+  stitchPatternContext?: StitchPatternInstructionContext;
   /** Additional calculation metadata */
   metadata?: Record<string, any>;
   /** Detailed calculation data (US_6.2) */
@@ -194,6 +200,21 @@ export interface ComponentCalculationResult {
     step: number;
     /** Instruction text */
     text: string;
+  }>;
+  /** Detailed stitch pattern instructions (US_8.3) */
+  detailedInstructions?: Array<{
+    /** Step number */
+    step: number;
+    /** Row number within the component */
+    rowNumber?: number;
+    /** Instruction text with integrated stitch pattern */
+    text: string;
+    /** Current stitch pattern row index */
+    stitchPatternRowIndex?: number;
+    /** Stitch count after this row */
+    stitchCount?: number;
+    /** Whether this is a shaping row */
+    isShapingRow?: boolean;
   }>;
   /** Component-specific errors */
   errors?: string[];
@@ -308,4 +329,58 @@ export interface TransformationResult {
   warnings?: string[];
   /** Debug information */
   debugInfo?: Record<string, any>;
+}
+
+/**
+ * Stitch pattern integration data for components (US_8.3)
+ * Based on US_8.2 integration choices
+ */
+export interface ComponentStitchPatternIntegrationData {
+  /** ID of the applied stitch pattern */
+  stitchPatternId: string;
+  /** Name of the applied stitch pattern for reference */
+  appliedStitchPatternName: string;
+  /** Adjusted stitch count for the component */
+  adjustedComponentStitchCount: number;
+  /** Edge stitches on each side */
+  edgeStitchesEachSide: number;
+  /** Centering offset stitches */
+  centeringOffsetStitches: number;
+  /** Type of integration used */
+  integrationType: 'center_with_stockinette' | 'adjust_for_full_repeats';
+  /** Stockinette stitches on each side (if applicable) */
+  stockinetteStitchesEachSide?: number;
+  /** Number of full repeats integrated */
+  fullRepeatsCount: number;
+}
+
+/**
+ * Stitch pattern instruction context for row-by-row generation (US_8.3)
+ */
+export interface StitchPatternInstructionContext {
+  /** Stitch pattern ID */
+  stitchPatternId: string;
+  /** Stitch pattern name */
+  stitchPatternName: string;
+  /** Row-by-row instructions from the stitch pattern */
+  patternRows: Array<{
+    /** Row number within the repeat */
+    rowNumber: number;
+    /** Instruction text for this row */
+    instruction: string;
+    /** Optional note for this row */
+    note?: string;
+  }>;
+  /** Number of rows in the pattern repeat */
+  repeatHeight: number;
+  /** Number of stitches in the pattern repeat */
+  repeatWidth: number;
+  /** Edge stitches on each side */
+  edgeStitchesEachSide: number;
+  /** Stockinette stitches on each side (if applicable) */
+  stockinetteStitchesEachSide?: number;
+  /** Number of full pattern repeats across the width */
+  fullRepeatsCount: number;
+  /** Current row index within the pattern repeat (0-based) */
+  currentPatternRowIndex: number;
 } 

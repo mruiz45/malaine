@@ -1,6 +1,7 @@
 /**
- * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2)
+ * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2 + US_8.3)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
+ * Extended for US_8.3: Stitch pattern integration
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -11,8 +12,10 @@ import {
   PatternCalculationResult,
   ComponentCalculationResult,
   CalculationGaugeData,
-  CalculationStitchPattern
+  CalculationStitchPattern,
+  ComponentStitchPatternIntegrationData
 } from '@/types/pattern-calculation';
+import { StitchPattern } from '@/types/stitchPattern';
 import { validatePatternCalculationInput } from '@/utils/pattern-calculation-validators';
 import { 
   calculateRectangularPiece, 
@@ -28,6 +31,8 @@ import { generateBeanieInstructions, BeanieInstructionGenerationInput } from '@/
 import { BeanieAttributes } from '@/types/accessories';
 import { calculateShaping } from '@/utils/shaping-calculator';
 import { ShapingCalculationInput } from '@/types/shaping';
+import { InstructionGeneratorService } from '@/services/instructionGeneratorService';
+import { InstructionGenerationContext } from '@/types/instruction-generation';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -144,7 +149,7 @@ async function performPatternCalculation(
     const componentResults: ComponentCalculationResult[] = [];
     
     for (const component of input.garment.components) {
-      const componentResult = calculateComponent(component, input, craftType);
+      const componentResult = await calculateComponent(component, input, craftType, sessionResult.supabase);
       componentResults.push(componentResult);
     }
 
@@ -194,8 +199,14 @@ async function performPatternCalculation(
  * Calculates stitch and row counts for a single component
  * Enhanced for US_6.2 with specialized rectangular piece calculation
  * Enhanced for US_7.1.1 with specialized beanie calculation
+ * Enhanced for US_8.3 with stitch pattern integration
  */
-function calculateComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+async function calculateComponent(
+  component: any, 
+  input: any, 
+  craftType: 'knitting' | 'crochet',
+  supabaseClient?: any
+): Promise<ComponentCalculationResult> {
   const { gauge, stitchPattern } = input;
   
   // Check if this is a beanie component (US_7.1.1)
@@ -205,7 +216,7 @@ function calculateComponent(component: any, input: any, craftType: 'knitting' | 
   
   // Check if this is a rectangular component that can use the specialized calculator
   if (component.targetWidth && component.targetLength) {
-    return calculateRectangularComponent(component, input, craftType);
+    return await calculateRectangularComponent(component, input, craftType, supabaseClient);
   }
 
   // Fallback to original calculation for non-rectangular components
@@ -350,9 +361,30 @@ function calculateBeanieComponent(component: any, input: any, craftType: 'knitti
  * Calculates stitch and row counts for a rectangular component
  * Enhanced with US_7.2 shaping calculations
  * Enhanced with US_7.3 detailed instruction generation
+ * Enhanced with US_8.3 stitch pattern integration
  */
-function calculateRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+async function calculateRectangularComponent(
+  component: any, 
+  input: any, 
+  craftType: 'knitting' | 'crochet',
+  supabaseClient?: any
+): Promise<ComponentCalculationResult> {
   const { gauge, stitchPattern } = input;
+  
+  // Check for stitch pattern integration (US_8.3)
+  const stitchPatternIntegration = extractStitchPatternIntegration(component);
+  let integratedStitchPattern: StitchPattern | null = null;
+  
+  if (stitchPatternIntegration && supabaseClient) {
+    try {
+      integratedStitchPattern = await fetchStitchPattern(
+        supabaseClient, 
+        stitchPatternIntegration.stitchPatternId
+      );
+    } catch (error) {
+      console.error('Failed to fetch stitch pattern for integration:', error);
+    }
+  }
   
   // Use specialized rectangular piece calculator (US_6.2)
   const rectangularInput: RectangularPieceInput = {
@@ -364,6 +396,15 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
   };
 
   const rectangularResult = calculateRectangularPiece(rectangularInput);
+  
+  // Override stitch count with adjusted count if stitch pattern integration is used (US_8.3)
+  if (stitchPatternIntegration) {
+    rectangularResult.calculations.castOnStitches = stitchPatternIntegration.adjustedComponentStitchCount;
+    rectangularResult.warnings = [
+      ...(rectangularResult.warnings || []),
+      `Using adjusted stitch count ${stitchPatternIntegration.adjustedComponentStitchCount} for ${stitchPatternIntegration.appliedStitchPatternName} integration`
+    ];
+  }
   
   // Calculate shaping if required (US_7.2)
   const shapingResult = calculateComponentShaping(component, gauge);
@@ -387,12 +428,89 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
     ];
   }
   
-  // Generate detailed textual instructions with shaping (US_7.3)
+  // Generate detailed instructions with stitch pattern integration (US_8.3)
   let instructions: Array<{ step: number; text: string }> | undefined;
+  let detailedInstructions: Array<any> | undefined;
   
-  // Check if we have shaping to generate detailed instructions
-  if (shapingSchedule?.hasShaping && rectangularResult.calculations.castOnStitches > 0) {
-    // Use detailed instruction generation with shaping (US_7.3)
+  // Check if we have stitch pattern integration for advanced instruction generation
+  if (integratedStitchPattern && stitchPatternIntegration && rectangularResult.calculations.castOnStitches > 0) {
+    try {
+      const instructionService = new InstructionGeneratorService();
+      
+      // Create instruction generation context
+      const context: InstructionGenerationContext = {
+        craftType,
+        componentKey: component.componentKey,
+        componentDisplayName: component.displayName,
+        startingStitchCount: rectangularResult.calculations.castOnStitches,
+        finalStitchCount: rectangularResult.calculations.castOnStitches, // Will be updated by shaping
+        totalRows: rectangularResult.calculations.totalRows
+      };
+      
+      // Generate instructions with stitch pattern integration
+      const instructionResult = await instructionService.generateInstructionsWithStitchPattern(
+        context,
+        shapingSchedule,
+        integratedStitchPattern,
+        stitchPatternIntegration
+      );
+      
+      if (instructionResult.success && instructionResult.instructions) {
+        detailedInstructions = instructionResult.instructions.map(instr => ({
+          step: instr.step,
+          rowNumber: instr.row_number_in_section,
+          text: instr.text,
+          stitchPatternRowIndex: instr.metadata?.stitchPatternRowIndex,
+          stitchCount: instr.stitchCount,
+          isShapingRow: instr.type === 'shaping_row'
+        }));
+        
+        // Convert to simple instructions format for backward compatibility
+        instructions = instructionResult.instructions.map(instr => ({
+          step: instr.step,
+          text: instr.text
+        }));
+        
+        // Add instruction warnings to component warnings
+        if (instructionResult.warnings) {
+          rectangularResult.warnings = [
+            ...(rectangularResult.warnings || []),
+            ...instructionResult.warnings
+          ];
+        }
+      } else {
+        // Add instruction errors to component errors
+        if (instructionResult.errors) {
+          rectangularResult.errors = [
+            ...(rectangularResult.errors || []),
+            ...instructionResult.errors
+          ];
+        }
+        
+        // Fall back to basic instruction generation
+        const instructionInput = extractInstructionInput(
+          rectangularResult.calculations,
+          stitchPattern.name || 'pattern',
+          craftType,
+          input.yarn?.name
+        );
+        
+        if (instructionInput) {
+          const basicInstructionResult = generateBasicInstructions(instructionInput);
+          if (basicInstructionResult.success && basicInstructionResult.instructions) {
+            instructions = basicInstructionResult.instructions;
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error generating stitch pattern instructions:', error);
+      rectangularResult.errors = [
+        ...(rectangularResult.errors || []),
+        `Failed to generate stitch pattern instructions: ${error instanceof Error ? error.message : 'Unknown error'}`
+      ];
+    }
+  } else if (shapingSchedule?.hasShaping && rectangularResult.calculations.castOnStitches > 0) {
+    // Use detailed instruction generation with shaping (US_7.3) - existing logic
     const finalStitchCount = shapingSchedule.shapingEvents.reduce((count, event) => {
       const stitchChange = event.type === 'decrease' ? 
         -event.totalStitchesToChange : 
@@ -410,7 +528,7 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
       stitchPattern.name
     );
   } else {
-    // Fall back to basic instruction generation (US_6.3)
+    // Fall back to basic instruction generation (US_6.3) - existing logic
     const instructionInput = extractInstructionInput(
       rectangularResult.calculations,
       stitchPattern.name || 'pattern',
@@ -440,7 +558,7 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
     }
   }
   
-  // Generate shaping instructions based on calculation
+  // Generate shaping instructions based on calculation (existing logic)
   const shapingInstructions: string[] = [];
   if (rectangularResult.calculations.castOnStitches > 0) {
     shapingInstructions.push(`Cast on ${rectangularResult.calculations.castOnStitches} stitches`);
@@ -451,7 +569,8 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
         shapingInstructions.push(event.instructionsTextSimple);
       }
     } else {
-      shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
+      const patternName = integratedStitchPattern?.stitch_name || stitchPattern.name || 'pattern';
+      shapingInstructions.push(`Work in ${patternName} for ${rectangularResult.calculations.totalRows} rows`);
     }
     
     shapingInstructions.push('Bind off all stitches');
@@ -475,6 +594,7 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
       patternRepeats: rectangularResult.calculations.patternRepeats,
     },
     instructions,
+    detailedInstructions, // Add detailed instructions with stitch pattern integration (US_8.3)
     errors: rectangularResult.errors,
     warnings: rectangularResult.warnings,
     metadata: {
@@ -487,7 +607,8 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
         actualWidth: rectangularResult.calculations.actualCalculatedWidth_cm,
         actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
       },
-      hasShaping: shapingSchedule?.hasShaping || false
+      hasShaping: shapingSchedule?.hasShaping || false,
+      hasStitchPatternIntegration: !!integratedStitchPattern // US_8.3
     }
   };
 }
@@ -696,4 +817,68 @@ function calculateComponentShaping(component: any, gauge: CalculationGaugeData) 
   const shapingResult = calculateShaping(shapingInput);
 
   return shapingResult;
+}
+
+/**
+ * Fetches stitch pattern details from Supabase (US_8.3)
+ * @param supabaseClient - Authenticated Supabase client
+ * @param stitchPatternId - ID of the stitch pattern to fetch
+ * @returns Stitch pattern data or null if not found
+ */
+async function fetchStitchPattern(
+  supabaseClient: any,
+  stitchPatternId: string
+): Promise<StitchPattern | null> {
+  try {
+    const { data, error } = await supabaseClient
+      .from('stitch_patterns')
+      .select('*')
+      .eq('id', stitchPatternId)
+      .single();
+
+    if (error) {
+      console.error('Error fetching stitch pattern:', error);
+      return null;
+    }
+
+    return data as StitchPattern;
+  } catch (error) {
+    console.error('Failed to fetch stitch pattern:', error);
+    return null;
+  }
+}
+
+/**
+ * Extracts stitch pattern integration data from component attributes (US_8.3)
+ * @param component - Component definition
+ * @returns Integration data or null if not found
+ */
+function extractStitchPatternIntegration(
+  component: any
+): ComponentStitchPatternIntegrationData | null {
+  if (!component.stitchPatternIntegration) {
+    return null;
+  }
+
+  const integration = component.stitchPatternIntegration;
+  
+  // Validate required fields
+  if (!integration.stitchPatternId || 
+      !integration.appliedStitchPatternName || 
+      typeof integration.adjustedComponentStitchCount !== 'number' ||
+      typeof integration.edgeStitchesEachSide !== 'number' ||
+      typeof integration.fullRepeatsCount !== 'number') {
+    return null;
+  }
+
+  return {
+    stitchPatternId: integration.stitchPatternId,
+    appliedStitchPatternName: integration.appliedStitchPatternName,
+    adjustedComponentStitchCount: integration.adjustedComponentStitchCount,
+    edgeStitchesEachSide: integration.edgeStitchesEachSide,
+    centeringOffsetStitches: integration.centeringOffsetStitches || 0,
+    integrationType: integration.integrationType || 'center_with_stockinette',
+    stockinetteStitchesEachSide: integration.stockinetteStitchesEachSide,
+    fullRepeatsCount: integration.fullRepeatsCount
+  };
 } 

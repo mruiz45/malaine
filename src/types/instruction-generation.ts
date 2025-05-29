@@ -8,7 +8,7 @@ import { ShapingSchedule } from './shaping';
 /**
  * Type of instruction step
  */
-export type InstructionType = 'shaping_row' | 'plain_segment' | 'cast_on' | 'cast_off' | 'setup_row';
+export type InstructionType = 'shaping_row' | 'plain_segment' | 'cast_on' | 'cast_off' | 'setup_row' | 'pattern_row' | 'finishing';
 
 /**
  * Detailed instruction with shaping information
@@ -32,6 +32,8 @@ export interface DetailedInstruction {
     stitchesChanged?: number;
     /** Type of shaping (increase/decrease) */
     shapingType?: 'increase' | 'decrease';
+    /** Current stitch pattern row index (US_8.3) */
+    stitchPatternRowIndex?: number;
   };
 }
 
@@ -49,6 +51,8 @@ export interface InstructionGenerationContext {
   startingStitchCount: number;
   /** Target final stitch count */
   finalStitchCount: number;
+  /** Total rows to generate (US_8.3) */
+  totalRows?: number;
   /** Shaping schedule to process */
   shapingSchedule?: ShapingSchedule;
   /** Additional context metadata */
@@ -72,8 +76,12 @@ export interface InstructionGenerationResult {
   instructions?: DetailedInstruction[];
   /** Error message if generation failed */
   error?: string;
+  /** Multiple error messages (US_8.3) */
+  errors?: string[];
   /** Warnings during generation */
   warnings?: string[];
+  /** Total rows covered (US_8.3) */
+  totalRows?: number;
   /** Summary information */
   summary?: {
     /** Total number of instructions */

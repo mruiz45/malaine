@@ -6,13 +6,13 @@ import type {
 } from '@/types/stitch-integration';
 
 /**
- * PUT /api/pattern-definition-sessions/[sessionId]/components/[componentId]
+ * PUT /api/pattern-definition-sessions/[id]/components/[componentId]
  * Met à jour un composant avec les détails d'intégration de motif de mailles
  * US_8.2 - Stitch Pattern Integration Advisor
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { sessionId: string; componentId: string } }
+  { params }: { params: { id: string; componentId: string } }
 ): Promise<NextResponse> {
   try {
     // Vérification de l'authentification
@@ -25,7 +25,7 @@ export async function PUT(
     }
 
     const { supabase, user } = sessionResult;
-    const { sessionId, componentId } = params;
+    const { id: sessionId, componentId } = params;
 
     // Validation des paramètres de route
     if (!sessionId || !componentId) {
@@ -47,7 +47,7 @@ export async function PUT(
           { status: 400 }
         );
       }
-    } catch (parseError) {
+    } catch {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
         { status: 400 }
@@ -156,13 +156,13 @@ export async function PUT(
 }
 
 /**
- * GET /api/pattern-definition-sessions/[sessionId]/components/[componentId]
+ * GET /api/pattern-definition-sessions/[id]/components/[componentId]
  * Récupère les détails d'un composant spécifique
  * Utile pour l'interface utilisateur pour afficher l'état actuel
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { sessionId: string; componentId: string } }
+  { params }: { params: { id: string; componentId: string } }
 ): Promise<NextResponse> {
   try {
     // Vérification de l'authentification
@@ -175,7 +175,7 @@ export async function GET(
     }
 
     const { supabase, user } = sessionResult;
-    const { sessionId, componentId } = params;
+    const { id: sessionId, componentId } = params;
 
     // Validation des paramètres de route
     if (!sessionId || !componentId) {
@@ -216,21 +216,23 @@ export async function GET(
     }
 
     // Préparation de la réponse
-    const componentData = {
-      id: component.id,
-      name: component.name,
-      target_stitch_count: component.selected_attributes?.stitch_pattern_integration?.adjusted_component_stitch_count || 
-                          component.selected_attributes?.target_stitch_count ||
-                          0,
-      selected_attributes: component.selected_attributes?.stitch_pattern_integration
+    const response = {
+      success: true,
+      component: {
+        id: component.id,
+        name: component.name,
+        component_type: component.component_type,
+        selected_attributes: component.selected_attributes,
+        stitch_pattern_integration: component.selected_attributes?.stitch_pattern_integration || null
+      }
     };
 
-    return NextResponse.json(componentData, { status: 200 });
+    return NextResponse.json(response, { status: 200 });
 
   } catch (error) {
-    console.error('Error retrieving component:', error);
+    console.error('Error fetching component:', error);
     return NextResponse.json(
-      { error: 'Internal server error during retrieval' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
