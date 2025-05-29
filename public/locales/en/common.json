@@ -8,6 +8,7 @@
     "dashboard": "Dashboard",
     "measurements": "Measurements",
     "tools": "Tools",
+    "showcase": "Pattern Gallery",
     "logout": "Logout"
   },
   "home": {
@@ -1475,5 +1476,36 @@
   "pattern": {
     "downloadPdf": "Download PDF",
     "downloadPdfTooltip": "Download the pattern as a PDF file"
+  },
+  "showcase": {
+    "title": "Pattern Gallery",
+    "subtitle": "Discover inspiring knitting and crochet patterns",
+    "search": "Search patterns...",
+    "filters": "Filters",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "allCategories": "All Categories",
+    "allDifficulties": "All Difficulties",
+    "clearFilters": "Clear Filters",
+    "noImage": "Preview Available",
+    "addedOn": "Added",
+    "viewPattern": "View Pattern",
+    "loading": "Loading patterns...",
+    "loadMore": "Load More Patterns",
+    "retry": "Try Again",
+    "backToGallery": "Back to Gallery",
+    "resultsCount": "Showing {{count}} of {{total}} patterns",
+    "noPatterns": "No Patterns Found",
+    "noResultsFiltered": "Try adjusting your filters or search terms",
+    "noResultsEmpty": "No patterns have been added to the showcase yet",
+    "error": "Error Loading Patterns",
+    "errors": {
+      "title": "Pattern Load Error",
+      "noPatternId": "No pattern ID provided",
+      "patternNotFound": "Pattern not found or not available",
+      "invalidPattern": "Invalid pattern ID",
+      "loadFailed": "Failed to load pattern",
+      "noPattern": "No pattern data available"
+    }
   }
 } 

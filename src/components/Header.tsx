@@ -44,6 +44,7 @@ const Header: React.FC = () => {
           <nav>
             <ul className="flex space-x-6">
               <li><Link href="/" className="hover:underline">{t('navigation.home')}</Link></li>
+              <li><Link href="/showcase" className="hover:underline">{t('navigation.showcase')}</Link></li>
               <li><Link href="/tools" className="hover:underline">{t('navigation.tools')}</Link></li>
               {!loading && (
                 user ? (
@@ -69,6 +70,7 @@ const Header: React.FC = () => {
         <nav className="md:hidden bg-stone-100 text-neutral-800">
           <ul className="flex flex-col items-center py-4">
             <li className="py-2"><Link href="/" className="hover:underline">{t('navigation.home')}</Link></li>
+            <li className="py-2"><Link href="/showcase" className="hover:underline">{t('navigation.showcase')}</Link></li>
             <li className="py-2"><Link href="/tools" className="hover:underline">{t('navigation.tools')}</Link></li>
             {!loading && (
               user ? (

@@ -57,6 +57,8 @@ export default function ComponentInstructionsSection({
       setLoadingSchematics(true);
       setSchematicsError(null);
 
+      console.log('Loading schematics for session:', sessionId);
+      
       // Generate schematics for the session
       const schematicDiagrams = await schematicService.generateSchematicsForSession(sessionId);
       
@@ -69,7 +71,24 @@ export default function ComponentInstructionsSection({
       setSchematics(schematicsMap);
     } catch (error) {
       console.error('Error loading schematics:', error);
-      setSchematicsError(error instanceof Error ? error.message : 'Failed to load schematics');
+      
+      let errorMessage = 'Failed to load schematics';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('404')) {
+          if (error.message.includes('Pattern session not found or not accessible')) {
+            errorMessage = 'Pattern session not found or you don\'t have access to it';
+          } else {
+            errorMessage = 'Pattern session not found';
+          }
+        } else if (error.message.includes('401')) {
+          errorMessage = 'Please log in to view schematics';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setSchematicsError(errorMessage);
     } finally {
       setLoadingSchematics(false);
     }
@@ -191,10 +210,38 @@ export default function ComponentInstructionsSection({
 
                   {/* Schematic Error State */}
                   {schematicsError && !componentSchematic && !loadingSchematics && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                      <p className="text-sm text-red-800">
-                        {t('patternViewer.schematicError', 'Unable to load schematic')}: {schematicsError}
-                      </p>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <div className="flex">
+                        <div className="flex-shrink-0">
+                          <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <div className="ml-3 flex-1">
+                          <h4 className="text-sm font-medium text-blue-800">
+                            {t('patternViewer.schematicNotAvailable', 'Diagram not available')}
+                          </h4>
+                          <p className="text-sm text-blue-700 mt-1">
+                            {schematicsError.includes('Pattern session not found') 
+                              ? t('patternViewer.schematicSessionIssue', 'The pattern session may need to be refreshed to generate diagrams.')
+                              : schematicsError
+                            }
+                          </p>
+                          {process.env.NODE_ENV === 'development' && sessionId && (
+                            <div className="mt-2">
+                              <button
+                                onClick={() => {
+                                  console.log('Debug: Session ID for schematics:', sessionId);
+                                  console.log('Debug: Components available:', components.map(c => c.componentName));
+                                }}
+                                className="text-xs text-blue-600 hover:text-blue-800 underline"
+                              >
+                                Debug Session Info (Dev Mode)
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   )}
 

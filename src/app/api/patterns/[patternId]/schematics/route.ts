@@ -109,6 +109,12 @@ export async function GET(
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId');
 
+    console.log('GET schematics request:', {
+      sessionId,
+      userId: sessionResult.user?.id,
+      userEmail: sessionResult.user?.email
+    });
+
     if (!sessionId) {
       return NextResponse.json(
         { success: false, error: 'Session ID is required' },
@@ -124,11 +130,23 @@ export async function GET(
       .single();
 
     if (sessionError || !sessionData) {
+      console.error('Session validation failed:', {
+        sessionId,
+        sessionError: sessionError?.message || sessionError,
+        sessionData: sessionData ? 'exists' : 'null'
+      });
+      
       return NextResponse.json(
         { success: false, error: 'Pattern session not found or not accessible' },
         { status: 404 }
       );
     }
+
+    console.log('Session found for schematics:', {
+      sessionId,
+      userId: sessionData.user_id,
+      hasPatternDefinition: !!sessionData.pattern_definition
+    });
 
     // Extract component information from pattern definition
     const patternDefinition = sessionData.pattern_definition;

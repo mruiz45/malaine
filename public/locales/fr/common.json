@@ -8,6 +8,7 @@
     "dashboard": "Tableau de bord",
     "measurements": "Mensurations",
     "tools": "Outils",
+    "showcase": "Galerie de Modèles",
     "logout": "Déconnexion"
   },
   "home": {
@@ -138,6 +139,37 @@
     "error_password_match": "Les mots de passe ne correspondent pas.",
     "error_password_length": "Le mot de passe doit comporter au moins 6 caractères.",
     "error_generic": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "showcase": {
+    "title": "Galerie de Modèles",
+    "subtitle": "Découvrez des modèles de tricot et crochet inspirants",
+    "search": "Rechercher des modèles...",
+    "filters": "Filtres",
+    "category": "Catégorie",
+    "difficulty": "Difficulté",
+    "allCategories": "Toutes les Catégories",
+    "allDifficulties": "Toutes les Difficultés",
+    "clearFilters": "Effacer les Filtres",
+    "noImage": "Aperçu Disponible",
+    "addedOn": "Ajouté le",
+    "viewPattern": "Voir le Modèle",
+    "loading": "Chargement des modèles...",
+    "loadMore": "Charger Plus de Modèles",
+    "retry": "Réessayer",
+    "backToGallery": "Retour à la Galerie",
+    "resultsCount": "Affichage de {{count}} sur {{total}} modèles",
+    "noPatterns": "Aucun Modèle Trouvé",
+    "noResultsFiltered": "Essayez d'ajuster vos filtres ou termes de recherche",
+    "noResultsEmpty": "Aucun modèle n'a encore été ajouté à la galerie",
+    "error": "Erreur de Chargement des Modèles",
+    "errors": {
+      "title": "Erreur de Chargement du Modèle",
+      "noPatternId": "Aucun ID de modèle fourni",
+      "patternNotFound": "Modèle non trouvé ou non disponible",
+      "invalidPattern": "ID de modèle invalide",
+      "loadFailed": "Échec du chargement du modèle",
+      "noPattern": "Aucune donnée de modèle disponible"
+    }
   },
   "measurements": {
     "title": "Mensurations Corporelles",
