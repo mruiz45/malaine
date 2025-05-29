@@ -20,7 +20,8 @@ import {
 } from '@/utils/rectangular-piece-calculator';
 import { 
   generateBasicInstructions, 
-  extractInstructionInput 
+  extractInstructionInput,
+  generateDetailedInstructionsWithShaping
 } from '@/utils/instruction-generator';
 import { calculateBeanie, BeanieCalculationInput } from '@/utils/beanie-calculator';
 import { generateBeanieInstructions, BeanieInstructionGenerationInput } from '@/utils/beanie-instruction-generator';
@@ -346,8 +347,9 @@ function calculateBeanieComponent(component: any, input: any, craftType: 'knitti
 }
 
 /**
- * Calculates stitch and row counts for rectangular components
+ * Calculates stitch and row counts for a rectangular component
  * Enhanced with US_7.2 shaping calculations
+ * Enhanced with US_7.3 detailed instruction generation
  */
 function calculateRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge, stitchPattern } = input;
@@ -385,33 +387,56 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
     ];
   }
   
-  // Generate basic textual instructions (US_6.3)
+  // Generate detailed textual instructions with shaping (US_7.3)
   let instructions: Array<{ step: number; text: string }> | undefined;
-  const instructionInput = extractInstructionInput(
-    rectangularResult.calculations,
-    stitchPattern.name || 'pattern',
-    craftType,
-    input.yarn?.name
-  );
   
-  if (instructionInput) {
-    const instructionResult = generateBasicInstructions(instructionInput);
-    if (instructionResult.success && instructionResult.instructions) {
-      instructions = instructionResult.instructions;
-      
-      // Add instruction warnings to component warnings
-      if (instructionResult.warnings) {
-        rectangularResult.warnings = [
-          ...(rectangularResult.warnings || []),
-          ...instructionResult.warnings
+  // Check if we have shaping to generate detailed instructions
+  if (shapingSchedule?.hasShaping && rectangularResult.calculations.castOnStitches > 0) {
+    // Use detailed instruction generation with shaping (US_7.3)
+    const finalStitchCount = shapingSchedule.shapingEvents.reduce((count, event) => {
+      const stitchChange = event.type === 'decrease' ? 
+        -event.totalStitchesToChange : 
+        event.totalStitchesToChange;
+      return count + stitchChange;
+    }, rectangularResult.calculations.castOnStitches);
+    
+    instructions = generateDetailedInstructionsWithShaping(
+      component.componentKey,
+      component.displayName,
+      rectangularResult.calculations.castOnStitches,
+      finalStitchCount,
+      shapingSchedule,
+      craftType,
+      stitchPattern.name
+    );
+  } else {
+    // Fall back to basic instruction generation (US_6.3)
+    const instructionInput = extractInstructionInput(
+      rectangularResult.calculations,
+      stitchPattern.name || 'pattern',
+      craftType,
+      input.yarn?.name
+    );
+    
+    if (instructionInput) {
+      const instructionResult = generateBasicInstructions(instructionInput);
+      if (instructionResult.success && instructionResult.instructions) {
+        instructions = instructionResult.instructions;
+        
+        // Add instruction warnings to component warnings
+        if (instructionResult.warnings) {
+          rectangularResult.warnings = [
+            ...(rectangularResult.warnings || []),
+            ...instructionResult.warnings
+          ];
+        }
+      } else if (instructionResult.errors) {
+        // Add instruction errors to component errors
+        rectangularResult.errors = [
+          ...(rectangularResult.errors || []),
+          ...instructionResult.errors
         ];
       }
-    } else if (instructionResult.errors) {
-      // Add instruction errors to component errors
-      rectangularResult.errors = [
-        ...(rectangularResult.errors || []),
-        ...instructionResult.errors
-      ];
     }
   }
   

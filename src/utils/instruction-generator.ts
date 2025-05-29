@@ -1,8 +1,16 @@
 /**
  * Instruction Generator for Basic Textual Instructions (US 6.3)
+ * Enhanced for US 7.3 to include detailed shaping instructions
  * Generates human-readable instructions for rectangular garment pieces
  * based on calculation results from US 6.2
  */
+
+import { InstructionGeneratorService } from '@/services/instructionGeneratorService';
+import { 
+  InstructionGenerationContext, 
+  DetailedInstruction 
+} from '@/types/instruction-generation';
+import { ShapingSchedule } from '@/types/shaping';
 
 /**
  * Input data for instruction generation
@@ -257,4 +265,80 @@ export function extractInstructionInput(
     craftType,
     yarnName
   };
+}
+
+/**
+ * Generates detailed instructions with shaping for a component (US 7.3)
+ * @param componentKey - Component identifier
+ * @param componentDisplayName - Component display name
+ * @param startingStitchCount - Starting stitch count
+ * @param finalStitchCount - Final stitch count after shaping
+ * @param shapingSchedule - Shaping schedule from US 7.2
+ * @param craftType - Craft type (knitting or crochet)
+ * @param stitchPatternName - Stitch pattern name
+ * @returns Instructions formatted for ComponentCalculationResult
+ */
+export function generateDetailedInstructionsWithShaping(
+  componentKey: string,
+  componentDisplayName: string,
+  startingStitchCount: number,
+  finalStitchCount: number,
+  shapingSchedule: ShapingSchedule | undefined,
+  craftType: 'knitting' | 'crochet',
+  stitchPatternName?: string
+): InstructionStep[] {
+  const instructionService = new InstructionGeneratorService();
+  
+  const context: InstructionGenerationContext = {
+    craftType,
+    componentKey,
+    componentDisplayName,
+    startingStitchCount,
+    finalStitchCount,
+    shapingSchedule,
+    metadata: {
+      stitchPatternName: stitchPatternName || (craftType === 'knitting' ? 'Stockinette Stitch' : 'Single Crochet')
+    }
+  };
+
+  const result = instructionService.generateDetailedInstructionsWithShaping(context);
+  
+  if (!result.success || !result.instructions) {
+    // Fallback to basic instructions if detailed generation fails
+    console.warn(`Failed to generate detailed instructions for ${componentKey}: ${result.error}`);
+    return generateFallbackInstructions(startingStitchCount, craftType);
+  }
+
+  // Convert DetailedInstruction[] to InstructionStep[]
+  return result.instructions.map((instruction: DetailedInstruction): InstructionStep => ({
+    step: instruction.step,
+    text: instruction.text
+  }));
+}
+
+/**
+ * Generates fallback basic instructions when detailed generation fails
+ */
+function generateFallbackInstructions(
+  castOnStitches: number,
+  craftType: 'knitting' | 'crochet'
+): InstructionStep[] {
+  const instructions: InstructionStep[] = [];
+  
+  instructions.push({
+    step: 1,
+    text: generateCastOnInstruction(castOnStitches, craftType)
+  });
+  
+  instructions.push({
+    step: 2,
+    text: `Work in pattern as desired.`
+  });
+  
+  instructions.push({
+    step: 3,
+    text: generateBindOffInstruction(craftType)
+  });
+  
+  return instructions;
 } 
