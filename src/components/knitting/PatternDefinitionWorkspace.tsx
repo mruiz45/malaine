@@ -14,6 +14,7 @@ import BeanieDefinitionForm from './BeanieDefinitionForm';
 import ScarfCowlDefinitionForm from './ScarfCowlDefinitionForm';
 import ColorSchemeSimulator from '../tools/ColorSchemeSimulator';
 import PatternOutlineViewer from './PatternOutlineViewer';
+import StitchIntegrationAdvisor from './StitchIntegrationAdvisor';
 import { GarmentType } from '@/types/garment';
 import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
 import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
@@ -21,8 +22,9 @@ import { SleeveStyle, SleeveLength, CuffStyle, SleeveAttributes, CuffParameters 
 import { BeanieAttributes, ScarfCowlAttributes } from '@/types/accessories';
 import { ColorScheme } from '@/types/colorScheme';
 import { PatternOutline } from '@/types/patternDefinition';
+import { ComponentForIntegration } from '@/types/stitch-integration';
 import { patternDefinitionService } from '@/services/patternDefinitionService';
-import { SwatchIcon, DocumentTextIcon } from '@heroicons/react/24/outline';
+import { SwatchIcon, DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -131,6 +133,33 @@ function StepContent({ currentStep }: { currentStep: string }) {
   const [showOutlineViewer, setShowOutlineViewer] = useState(false);
   const [currentOutline, setCurrentOutline] = useState<PatternOutline | null>(null);
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false);
+
+  // State for stitch integration advisor (US_8.2)
+  const [showStitchIntegrationAdvisor, setShowStitchIntegrationAdvisor] = useState(false);
+
+  // Mock data for available components (in real implementation, this would come from the session)
+  const availableComponents: ComponentForIntegration[] = [
+    {
+      id: 'front-panel',
+      name: 'Front Panel',
+      target_stitch_count: 120
+    },
+    {
+      id: 'back-panel', 
+      name: 'Back Panel',
+      target_stitch_count: 120
+    },
+    {
+      id: 'left-sleeve',
+      name: 'Left Sleeve',
+      target_stitch_count: 80
+    },
+    {
+      id: 'right-sleeve',
+      name: 'Right Sleeve', 
+      target_stitch_count: 80
+    }
+  ];
 
   const handleGaugeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -385,6 +414,29 @@ function StepContent({ currentStep }: { currentStep: string }) {
   const handleCloseOutlineViewer = () => {
     setShowOutlineViewer(false);
     setCurrentOutline(null);
+  };
+
+  /**
+   * Handle opening the stitch integration advisor (US_8.2)
+   */
+  const handleOpenStitchIntegrationAdvisor = () => {
+    setShowStitchIntegrationAdvisor(true);
+  };
+
+  /**
+   * Handle closing the stitch integration advisor
+   */
+  const handleCloseStitchIntegrationAdvisor = () => {
+    setShowStitchIntegrationAdvisor(false);
+  };
+
+  /**
+   * Handle successful stitch integration
+   */
+  const handleStitchIntegrationSuccess = (componentId: string, integration: any) => {
+    console.log('Stitch integration applied successfully:', { componentId, integration });
+    // In a real implementation, this would update the session state
+    // For now, we'll just log the success
   };
 
   switch (currentStep) {
@@ -650,7 +702,9 @@ function StepContent({ currentStep }: { currentStep: string }) {
       return (
         <div>
           <h2 className="text-2xl font-bold mb-6">{t('stitchPattern.title', 'Stitch Pattern')}</h2>
-          <form onSubmit={handleStitchPatternSubmit} className="space-y-6">
+          
+          {/* Stitch Pattern Selection */}
+          <form onSubmit={handleStitchPatternSubmit} className="space-y-6 mb-8">
             <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
               <p className="text-indigo-800 mb-4">
                 For this demo, we'll simulate selecting a stitch pattern.
@@ -666,6 +720,39 @@ function StepContent({ currentStep }: { currentStep: string }) {
               </button>
             </div>
           </form>
+
+          {/* Stitch Pattern Integration Advisor Section (US_8.2) */}
+          <div className="border-t border-gray-200 pt-8">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {t('stitchIntegration.title', 'Stitch Pattern Integration Advisor')}
+                </h3>
+                <p className="text-sm text-gray-600">
+                  {t('stitchIntegration.description', 'Plan how your stitch patterns fit into your garment components with precise calculations')}
+                </p>
+              </div>
+              <button
+                onClick={handleOpenStitchIntegrationAdvisor}
+                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              >
+                <SparklesIcon className="h-5 w-5" />
+                <span>{t('stitchIntegration.openTool', 'Open Integration Tool')}</span>
+              </button>
+            </div>
+            
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="text-sm font-medium text-blue-900 mb-2">
+                {t('stitchIntegration.toolFeatures', 'Tool Features')}
+              </h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• {t('stitchIntegration.feature1', 'Calculate exact pattern repeats for each component')}</li>
+                <li>• {t('stitchIntegration.feature2', 'Handle remaining stitches with smart suggestions')}</li>
+                <li>• {t('stitchIntegration.feature3', 'Manage edge stitches and centering')}</li>
+                <li>• {t('stitchIntegration.feature4', 'Visual preview of stitch distribution')}</li>
+              </ul>
+            </div>
+          </div>
         </div>
       );
 
@@ -1048,6 +1135,17 @@ function StepContent({ currentStep }: { currentStep: string }) {
               outline={currentOutline}
               isOpen={showOutlineViewer}
               onClose={handleCloseOutlineViewer}
+            />
+          )}
+
+          {/* Stitch Integration Advisor (US_8.2) */}
+          {showStitchIntegrationAdvisor && (
+            <StitchIntegrationAdvisor
+              sessionId={currentSession?.id || ''}
+              availableComponents={availableComponents}
+              onClose={handleCloseStitchIntegrationAdvisor}
+              onSuccess={handleStitchIntegrationSuccess}
+              isModal={true}
             />
           )}
         </div>
