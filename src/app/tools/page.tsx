@@ -7,7 +7,8 @@ import {
   BeakerIcon,
   ChartBarIcon,
   ScaleIcon,
-  SparklesIcon
+  SparklesIcon,
+  ArrowsRightLeftIcon
 } from '@heroicons/react/24/outline';
 
 export const metadata: Metadata = {
@@ -123,6 +124,60 @@ export default function ToolsPage() {
             </div>
           </Link>
 
+          {/* Pattern Resizer */}
+          <Link 
+            href="/tools/pattern-resizer"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center mb-4">
+              <div className="p-2 bg-orange-100 rounded-lg group-hover:bg-orange-200 transition-colors">
+                <ArrowsRightLeftIcon className="h-6 w-6 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 ml-3">
+                Redimensionnement de Patron Existant
+              </h3>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées. 
+              Redimensionnez les nombres de mailles et mesures selon vos spécifications.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                US_10.1
+              </span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                ✅ Implémenté
+              </span>
+            </div>
+          </Link>
+
+          {/* Morphology Advisor */}
+          <Link 
+            href="/tools/morphology-advisor"
+            className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow group"
+          >
+            <div className="flex items-center mb-4">
+              <div className="p-2 bg-teal-100 rounded-lg group-hover:bg-teal-200 transition-colors">
+                <BeakerIcon className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 ml-3">
+                Conseiller de Morphologie Corporelle
+              </h3>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques 
+              corporelles spécifiques pour un meilleur ajustement.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full">
+                US_3.1
+              </span>
+              <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                ✅ Implémenté
+              </span>
+            </div>
+          </Link>
+
           {/* Placeholder for future tools */}
           <div className="bg-gray-100 border border-gray-200 rounded-lg p-6 opacity-50">
             <div className="flex items-center mb-4">
@@ -195,6 +250,8 @@ export default function ToolsPage() {
                 <li>✅ Calculateur d'Échantillon Inversé (US_2.1)</li>
                 <li>✅ Estimateur de Quantité de Laine (US_2.2)</li>
                 <li>✅ Conseiller de Sélection d'Aisance (US_3.2)</li>
+                <li>✅ Redimensionnement de Patron Existant (US_10.1)</li>
+                <li>✅ Conseiller de Morphologie Corporelle (US_3.1)</li>
                 <li className="text-gray-400">⏳ Prochain outil selon spécifications</li>
               </ul>
             </div>

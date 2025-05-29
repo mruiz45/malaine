@@ -629,6 +629,142 @@
     "morphology_advisor": {
       "title": "Conseiller de Morphologie Corporelle",
       "description": "Obtenez des conseils pour adapter les patrons à votre morphologie"
+    },
+    "pattern_resizer": {
+      "title": "Redimensionnement de Patron Existant",
+      "description": "Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées",
+      "subtitle": "Redimensionnez les nombres de mailles et mesures d'un patron existant selon vos spécifications",
+      "template_selection": "Sélectionnez la Structure du Patron",
+      "original_pattern_section": "Informations du Patron Original",
+      "new_gauge_section": "Votre Nouvel Échantillon",
+      "new_dimensions_section": "Vos Nouvelles Dimensions Souhaitées",
+      "results_section": "Nouvelles Valeurs Calculées",
+      "calculate": "Calculer le Nouveau Patron",
+      "calculating": "Calcul en cours...",
+      "reset": "Réinitialiser le Formulaire",
+      "select_template": "Sélectionnez un modèle de structure de patron",
+      "no_template_selected": "Veuillez sélectionner un modèle de structure de patron pour commencer",
+      "gauge_selection": {
+        "title": "Sélectionnez Votre Échantillon",
+        "use_saved_profile": "Utiliser un Profil d'Échantillon Sauvegardé",
+        "enter_manually": "Saisir l'Échantillon Manuellement",
+        "select_profile": "Sélectionnez un profil d'échantillon",
+        "no_profiles": "Aucun profil d'échantillon trouvé",
+        "create_profile_link": "Créez d'abord un profil d'échantillon",
+        "manual_entry": "Saisie Manuelle d'Échantillon"
+      },
+      "templates": {
+        "simple_body_panel_rectangular": {
+          "name": "Panel de Corps Rectangulaire Simple",
+          "description": "Pour les pièces de corps rectangulaires basiques comme les devants/dos de pulls sans façonnage complexe"
+        },
+        "simple_sleeve_tapered": {
+          "name": "Manche Effilée Simple",
+          "description": "Pour les manches avec effilage linéaire basique du poignet au haut du bras"
+        },
+        "simple_scarf_rectangular": {
+          "name": "Écharpe Rectangulaire Simple",
+          "description": "Pour les écharpes rectangulaires basiques avec largeur constante"
+        },
+        "simple_hat_cylindrical": {
+          "name": "Corps de Bonnet Cylindrique Simple",
+          "description": "Pour le corps cylindrique principal d'un bonnet (avant le façonnage de la calotte)"
+        }
+      },
+      "form": {
+        "original_gauge_section": "Échantillon du Patron Original",
+        "original_gauge_stitches": "Échantillon Original : Mailles par 10cm/4po",
+        "original_gauge_rows": "Échantillon Original : Rangs par 10cm/4po",
+        "original_gauge_unit": "Unité de l'Échantillon Original",
+        "original_cast_on": "Montage Original",
+        "original_rows_total": "Total de Rangs Original",
+        "original_finished_width": "Largeur Finie Originale",
+        "original_finished_length": "Longueur Finie Originale",
+        "original_cuff_stitches": "Mailles de Poignet Originales",
+        "original_upper_arm_stitches": "Mailles du Haut du Bras Originales",
+        "original_sleeve_length_rows": "Longueur de Manche Originale (en Rangs)",
+        "original_shaping_stitches_per_event": "Mailles Aug/Dim par Rang de Façonnage Original",
+        "original_head_circumference": "Tour de Tête Original",
+        "original_hat_height": "Hauteur de Bonnet Originale",
+        "new_finished_width": "NOUVELLE Largeur Finie Souhaitée",
+        "new_finished_length": "NOUVELLE Longueur Finie Souhaitée",
+        "new_cuff_width": "NOUVELLE Largeur de Poignet Souhaitée",
+        "new_upper_arm_width": "NOUVELLE Largeur du Haut du Bras Souhaitée",
+        "new_sleeve_length": "NOUVELLE Longueur de Manche Souhaitée",
+        "new_head_circumference": "NOUVEAU Tour de Tête Souhaité",
+        "new_hat_height": "NOUVELLE Hauteur de Bonnet Souhaitée",
+        "unit_cm": "Centimètres (cm)",
+        "unit_inch": "Pouces (po)"
+      },
+      "results": {
+        "title": "Vos Nouveaux Nombres de Patron",
+        "new_cast_on_stitches": "Nouveau Montage",
+        "new_total_rows": "Nouveau Total de Rangs",
+        "new_actual_width": "Nouvelle Largeur Réelle",
+        "new_actual_length": "Nouvelle Longueur Réelle",
+        "new_cuff_stitches": "Nouvelles Mailles de Poignet",
+        "new_upper_arm_stitches": "Nouvelles Mailles du Haut du Bras",
+        "new_sleeve_length_rows": "Nouvelle Longueur de Manche (en Rangs)",
+        "new_shaping_schedule_summary": "Nouveau Planning de Façonnage",
+        "new_actual_circumference": "Nouvelle Circonférence Réelle",
+        "new_actual_height": "Nouvelle Hauteur Réelle",
+        "original_values_title": "Valeurs du Patron Original",
+        "new_values_title": "Vos Nouvelles Valeurs",
+        "calculation_summary": "Résumé du Calcul",
+        "stitches": "mailles",
+        "rows": "rangs",
+        "gauge_used": "Échantillon utilisé",
+        "template_used": "Modèle utilisé"
+      },
+      "validation": {
+        "template_required": "Veuillez sélectionner un modèle de structure de patron",
+        "original_gauge_stitches_required": "L'échantillon original mailles par unité est requis",
+        "original_gauge_rows_required": "L'échantillon original rangs par unité est requis",
+        "original_gauge_positive": "Les valeurs d'échantillon original doivent être des nombres positifs",
+        "new_gauge_required": "Vos informations de nouvel échantillon sont requises",
+        "new_gauge_positive": "Les valeurs de nouvel échantillon doivent être des nombres positifs",
+        "original_pattern_values_required": "Les valeurs du patron original sont requises",
+        "original_values_positive": "Les valeurs du patron original doivent être des nombres positifs",
+        "new_dimensions_required": "Les nouvelles dimensions souhaitées sont requises",
+        "new_dimensions_positive": "Les nouvelles dimensions doivent être des nombres positifs",
+        "calculation_error": "Erreur lors du calcul"
+      },
+      "messages": {
+        "calculation_success": "Patron redimensionné avec succès !",
+        "calculation_error": "Échec du calcul des nouvelles valeurs de patron",
+        "loading_templates": "Chargement des modèles de patron...",
+        "loading_profiles": "Chargement des profils d'échantillon...",
+        "no_calculation": "Aucun calcul disponible"
+      },
+      "disclaimers": {
+        "title": "Avertissements Importants",
+        "content": "Cet outil fournit uniquement un redimensionnement numérique et ne peut pas tenir compte de :",
+        "limitations": [
+          "Caractéristiques complexes du patron au-delà des mesures de base",
+          "Ajustements ou interactions des motifs de points",
+          "Différences de caractéristiques et de tombé de la laine",
+          "Variations des méthodes de construction",
+          "Techniques de façonnage avancées"
+        ],
+        "recommendation": "Utilisez votre jugement en tricot/crochet pour vérifier les résultats et faire les ajustements nécessaires.",
+        "note": "Ceci est un point de départ pour l'adaptation de patron, pas une solution complète."
+      },
+      "help": {
+        "title": "Comment Utiliser Cet Outil",
+        "steps": [
+          "Sélectionnez la structure de patron qui correspond à votre patron existant",
+          "Entrez l'échantillon et les mesures clés du patron original",
+          "Entrez votre propre échantillon (d'après votre échantillon test ou profils sauvegardés)",
+          "Entrez vos nouvelles dimensions souhaitées",
+          "Examinez les ajustements calculés"
+        ],
+        "tips": [
+          "Toujours faire un échantillon avec votre laine pour obtenir un échantillon précis",
+          "Vérifiez soigneusement les mesures du patron original",
+          "Considérez comment les différences de poids de laine pourraient affecter le tombé",
+          "Testez les calculs sur un petit échantillon d'abord si vous n'êtes pas sûr"
+        ]
+      }
     }
   },
   "common": {

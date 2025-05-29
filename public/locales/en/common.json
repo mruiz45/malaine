@@ -711,6 +711,142 @@
     "morphology_advisor": {
       "title": "Body Morphology Advisor",
       "description": "Get advice on adapting patterns to your body shape"
+    },
+    "pattern_resizer": {
+      "title": "Existing Pattern Resizer",
+      "description": "Adapt existing pattern numbers to your gauge and desired dimensions",
+      "subtitle": "Rescale an existing pattern's stitch counts and measurements to your specifications",
+      "template_selection": "Select Pattern Structure",
+      "original_pattern_section": "Original Pattern Information",
+      "new_gauge_section": "Your New Gauge",
+      "new_dimensions_section": "Your Desired New Dimensions",
+      "results_section": "Calculated New Values",
+      "calculate": "Calculate New Pattern",
+      "calculating": "Calculating...",
+      "reset": "Reset Form",
+      "select_template": "Select a pattern structure template",
+      "no_template_selected": "Please select a pattern structure template to begin",
+      "gauge_selection": {
+        "title": "Select Your Gauge",
+        "use_saved_profile": "Use Saved Gauge Profile",
+        "enter_manually": "Enter Gauge Manually",
+        "select_profile": "Select a gauge profile",
+        "no_profiles": "No gauge profiles found",
+        "create_profile_link": "Create a gauge profile first",
+        "manual_entry": "Manual Gauge Entry"
+      },
+      "templates": {
+        "simple_body_panel_rectangular": {
+          "name": "Simple Rectangular Body Panel",
+          "description": "For basic rectangular body pieces like sweater fronts/backs without complex shaping"
+        },
+        "simple_sleeve_tapered": {
+          "name": "Simple Tapered Sleeve",
+          "description": "For sleeves with basic linear tapering from cuff to upper arm"
+        },
+        "simple_scarf_rectangular": {
+          "name": "Simple Rectangular Scarf",
+          "description": "For basic rectangular scarves with consistent width"
+        },
+        "simple_hat_cylindrical": {
+          "name": "Simple Cylindrical Hat Body",
+          "description": "For the main cylindrical body of a hat (before crown shaping)"
+        }
+      },
+      "form": {
+        "original_gauge_section": "Original Pattern Gauge",
+        "original_gauge_stitches": "Original Gauge: Stitches per 10cm/4in",
+        "original_gauge_rows": "Original Gauge: Rows per 10cm/4in",
+        "original_gauge_unit": "Original Gauge Unit",
+        "original_cast_on": "Original Cast-On Stitches",
+        "original_rows_total": "Original Total Rows",
+        "original_finished_width": "Original Finished Width",
+        "original_finished_length": "Original Finished Length",
+        "original_cuff_stitches": "Original Cuff Stitches",
+        "original_upper_arm_stitches": "Original Upper Arm Stitches",
+        "original_sleeve_length_rows": "Original Sleeve Length (in Rows)",
+        "original_shaping_stitches_per_event": "Original Sts Inc/Dec per Shaping Row",
+        "original_head_circumference": "Original Head Circumference",
+        "original_hat_height": "Original Hat Height",
+        "new_finished_width": "Desired NEW Finished Width",
+        "new_finished_length": "Desired NEW Finished Length",
+        "new_cuff_width": "Desired NEW Cuff Width",
+        "new_upper_arm_width": "Desired NEW Upper Arm Width",
+        "new_sleeve_length": "Desired NEW Sleeve Length",
+        "new_head_circumference": "Desired NEW Head Circumference",
+        "new_hat_height": "Desired NEW Hat Height",
+        "unit_cm": "Centimeters (cm)",
+        "unit_inch": "Inches (in)"
+      },
+      "results": {
+        "title": "Your New Pattern Numbers",
+        "new_cast_on_stitches": "New Cast-On Stitches",
+        "new_total_rows": "New Total Rows",
+        "new_actual_width": "New Actual Width",
+        "new_actual_length": "New Actual Length",
+        "new_cuff_stitches": "New Cuff Stitches",
+        "new_upper_arm_stitches": "New Upper Arm Stitches",
+        "new_sleeve_length_rows": "New Sleeve Length (in Rows)",
+        "new_shaping_schedule_summary": "New Shaping Schedule",
+        "new_actual_circumference": "New Actual Circumference",
+        "new_actual_height": "New Actual Height",
+        "original_values_title": "Original Pattern Values",
+        "new_values_title": "Your New Values",
+        "calculation_summary": "Calculation Summary",
+        "stitches": "stitches",
+        "rows": "rows",
+        "gauge_used": "Gauge used",
+        "template_used": "Template used"
+      },
+      "validation": {
+        "template_required": "Please select a pattern structure template",
+        "original_gauge_stitches_required": "Original gauge stitches per unit is required",
+        "original_gauge_rows_required": "Original gauge rows per unit is required",
+        "original_gauge_positive": "Original gauge values must be positive numbers",
+        "new_gauge_required": "Your new gauge information is required",
+        "new_gauge_positive": "New gauge values must be positive numbers",
+        "original_pattern_values_required": "Original pattern values are required",
+        "original_values_positive": "Original pattern values must be positive numbers",
+        "new_dimensions_required": "New desired dimensions are required",
+        "new_dimensions_positive": "New dimensions must be positive numbers",
+        "calculation_error": "Error performing calculation"
+      },
+      "messages": {
+        "calculation_success": "Pattern resized successfully!",
+        "calculation_error": "Failed to calculate new pattern values",
+        "loading_templates": "Loading pattern templates...",
+        "loading_profiles": "Loading gauge profiles...",
+        "no_calculation": "No calculation available"
+      },
+      "disclaimers": {
+        "title": "Important Disclaimers",
+        "content": "This tool provides numerical rescaling only and cannot account for:",
+        "limitations": [
+          "Complex pattern features beyond basic measurements",
+          "Stitch pattern adjustments or interactions",
+          "Yarn characteristics and drape differences",
+          "Construction method variations",
+          "Advanced shaping techniques"
+        ],
+        "recommendation": "Use your knitting/crochet judgment to verify results and make necessary adjustments.",
+        "note": "This is a starting point for pattern adaptation, not a complete solution."
+      },
+      "help": {
+        "title": "How to Use This Tool",
+        "steps": [
+          "Select the pattern structure that matches your existing pattern",
+          "Enter the original pattern's gauge and key measurements",
+          "Enter your own gauge (from swatching or saved profiles)",
+          "Enter your desired new dimensions",
+          "Review the calculated adjustments"
+        ],
+        "tips": [
+          "Always swatch with your yarn to get accurate gauge",
+          "Double-check original pattern measurements carefully",
+          "Consider how yarn weight differences might affect drape",
+          "Test calculations on a small sample first if unsure"
+        ]
+      }
     }
   },
   "ease_advisor": {
