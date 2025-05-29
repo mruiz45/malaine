@@ -635,7 +635,10 @@
     "search": "Rechercher",
     "hideSearch": "Masquer la Recherche",
     "searching": "Recherche...",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "generating": "Génération...",
+    "downloaded": "Téléchargé!",
+    "error": "Erreur"
   },
   "garmentType": {
     "selectType": "Sélectionner le Type de Vêtement",
@@ -1027,5 +1030,9 @@
     "edgeStitchesTotal": "Mailles de lisière",
     "patternStitches": "Mailles de motif",
     "stockinetteStitches": "Mailles de jersey"
+  },
+  "pattern": {
+    "downloadPdf": "Télécharger PDF",
+    "downloadPdfTooltip": "Télécharger le patron en format PDF"
   }
 }

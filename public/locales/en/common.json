@@ -786,7 +786,17 @@
       "beginner": "Beginner",
       "intermediate": "Intermediate", 
       "advanced": "Advanced"
-    }
+    },
+    "title": "Garment Type",
+    "sweater": "Sweater",
+    "cardigan": "Cardigan", 
+    "vest": "Vest",
+    "beanie": "Beanie",
+    "scarf": "Scarf",
+    "cowl": "Cowl",
+    "socks": "Socks",
+    "shawl": "Shawl",
+    "poncho": "Poncho"
   },
   "sweaterStructure": {
     "title": "Sweater Structure",
@@ -1231,7 +1241,10 @@
     "print": "Print",
     "retry": "Try Again",
     "gridView": "Grid View",
-    "listView": "List View"
+    "listView": "List View",
+    "generating": "Generating...",
+    "downloaded": "Downloaded!",
+    "error": "Error"
   },
   "error": {
     "categoriesLoadFailed": "Failed to load categories",
@@ -1279,5 +1292,9 @@
     "edgeStitchesTotal": "Edge stitches",
     "patternStitches": "Pattern stitches",
     "stockinetteStitches": "Stockinette stitches"
+  },
+  "pattern": {
+    "downloadPdf": "Download PDF",
+    "downloadPdfTooltip": "Download the pattern as a PDF file"
   }
 } 
