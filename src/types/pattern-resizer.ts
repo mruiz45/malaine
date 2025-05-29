@@ -198,4 +198,105 @@ export interface ResizerShapingData {
   total_shaping_rows: number;
   /** Stitches changed per shaping event */
   stitches_per_event: number;
+}
+
+// ===== US 10.2: Pattern Text Parser Types =====
+
+/**
+ * Structured pattern text input (US 10.2)
+ */
+export interface StructuredPatternText {
+  /** Raw text input from user */
+  text: string;
+  /** Unit preference for parsing (cm or inch) */
+  unit: MeasurementUnit;
+  /** Template key to parse for */
+  template_key: string;
+}
+
+/**
+ * Parsed pattern data result (US 10.2)
+ */
+export interface ParsedPatternData {
+  /** Pattern name if found */
+  pattern_name?: string;
+  /** Parsed original gauge data */
+  original_gauge?: Partial<OriginalPatternGauge>;
+  /** Parsed original pattern values */
+  original_pattern_values?: OriginalPatternValues;
+  /** Components found in the text */
+  components?: ParsedComponent[];
+  /** Parsing warnings */
+  warnings?: string[];
+}
+
+/**
+ * Parsed component from structured text
+ */
+export interface ParsedComponent {
+  /** Component name/type */
+  name: string;
+  /** Parsed values for this component */
+  values: { [key: string]: number | string };
+}
+
+/**
+ * Pattern text parse result (US 10.2)
+ */
+export interface PatternTextParseResult {
+  /** Success status */
+  success: boolean;
+  /** Parsed data if successful */
+  data?: ParsedPatternData;
+  /** Error message if parsing failed */
+  error?: string;
+  /** Parsing warnings */
+  warnings?: string[];
+}
+
+/**
+ * API response for pattern text parsing (US 10.2)
+ */
+export interface PatternTextParseApiResponse {
+  /** Success status */
+  success: boolean;
+  /** Parse result data */
+  data?: PatternTextParseResult;
+  /** Error message */
+  error?: string;
+}
+
+/**
+ * Pattern text parser configuration
+ */
+export interface PatternTextParserConfig {
+  /** Supported keywords for each template */
+  template_keywords: { [templateKey: string]: TemplateKeywords };
+  /** Unit conversion patterns */
+  unit_patterns: UnitPatterns;
+}
+
+/**
+ * Keywords mapping for a specific template
+ */
+export interface TemplateKeywords {
+  /** Gauge keywords */
+  gauge: {
+    stitches: string[];
+    rows: string[];
+  };
+  /** Pattern value keywords */
+  pattern_values: { [fieldKey: string]: string[] };
+  /** Component keywords */
+  components?: string[];
+}
+
+/**
+ * Unit detection patterns
+ */
+export interface UnitPatterns {
+  /** Patterns that indicate centimeters */
+  cm: string[];
+  /** Patterns that indicate inches */
+  inch: string[];
 } 

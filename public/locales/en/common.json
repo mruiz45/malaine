@@ -846,6 +846,49 @@
           "Consider how yarn weight differences might affect drape",
           "Test calculations on a small sample first if unsure"
         ]
+      },
+      "input_method": {
+        "manual": "Manual Input",
+        "text": "Import from Text"
+      },
+      "text_parser": {
+        "title": "Import from Text",
+        "description": "Paste your pattern text using the structured format below. The parser will extract gauge and measurement values automatically.",
+        "unit": "Unit",
+        "text_label": "Pattern Text",
+        "placeholder": "Paste your structured pattern text here...\n\nExample:\nPATTERN_NAME: My Pattern\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
+        "show_example": "Show Example Format",
+        "parse_button": "Parse Text",
+        "parsing": "Parsing...",
+        "clear_button": "Clear",
+        "parse_errors": "Parsing Errors",
+        "parse_success": "Parsing Successful",
+        "pattern_name": "Pattern:",
+        "gauge": "Gauge:",
+        "values_found": "Values found:",
+        "components_found": "Components:",
+        "warnings": "Warnings:",
+        "format_help": {
+          "title": "Text Format Guide",
+          "description": "Use this simple keyword-based format:",
+          "keywords": {
+            "pattern_name": "PATTERN_NAME: Your pattern name",
+            "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: number (or _PER_4IN for inches)",
+            "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: number (or _PER_4IN for inches)",
+            "component": "COMPONENT: ComponentName (optional, to group values)",
+            "cast_on": "CAST_ON: number of stitches",
+            "rows": "ROWS_TOTAL: number of rows",
+            "width": "FINISHED_WIDTH_CM: measurement (or _IN for inches)",
+            "length": "FINISHED_LENGTH_CM: measurement (or _IN for inches)"
+          },
+          "example_title": "Example for Body Panel:",
+          "tips": [
+            "Use keywords exactly as shown (case-insensitive)",
+            "One value per line in format KEYWORD: value",
+            "Comments start with // or #",
+            "Unit suffixes (_CM or _IN) help with automatic detection"
+          ]
+        }
       }
     }
   },

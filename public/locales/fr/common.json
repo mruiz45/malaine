@@ -764,6 +764,49 @@
           "Considérez comment les différences de poids de laine pourraient affecter le tombé",
           "Testez les calculs sur un petit échantillon d'abord si vous n'êtes pas sûr"
         ]
+      },
+      "input_method": {
+        "manual": "Saisie Manuelle",
+        "text": "Importer depuis le Texte"
+      },
+      "text_parser": {
+        "title": "Importer depuis le Texte",
+        "description": "Collez votre texte de patron en utilisant le format structuré ci-dessous. L'analyseur extraira automatiquement les valeurs d'échantillon et de mesures.",
+        "unit": "Unité",
+        "text_label": "Texte du Patron",
+        "placeholder": "Collez votre texte de patron structuré ici...\n\nExemple :\nPATTERN_NAME: Mon Patron\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
+        "show_example": "Afficher le Format d'Exemple",
+        "parse_button": "Analyser le Texte",
+        "parsing": "Analyse en cours...",
+        "clear_button": "Effacer",
+        "parse_errors": "Erreurs d'Analyse",
+        "parse_success": "Analyse Réussie",
+        "pattern_name": "Patron :",
+        "gauge": "Échantillon :",
+        "values_found": "Valeurs trouvées :",
+        "components_found": "Composants :",
+        "warnings": "Avertissements :",
+        "format_help": {
+          "title": "Guide du Format de Texte",
+          "description": "Utilisez ce format simple basé sur des mots-clés :",
+          "keywords": {
+            "pattern_name": "PATTERN_NAME: Nom de votre patron",
+            "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: nombre (ou _PER_4IN pour pouces)",
+            "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: nombre (ou _PER_4IN pour pouces)",
+            "component": "COMPONENT: NomComposant (optionnel, pour grouper les valeurs)",
+            "cast_on": "CAST_ON: nombre de mailles",
+            "rows": "ROWS_TOTAL: nombre de rangs",
+            "width": "FINISHED_WIDTH_CM: mesure (ou _IN pour pouces)",
+            "length": "FINISHED_LENGTH_CM: mesure (ou _IN pour pouces)"
+          },
+          "example_title": "Exemple pour Panel de Corps :",
+          "tips": [
+            "Utilisez les mots-clés exactement comme indiqué (insensible à la casse)",
+            "Une valeur par ligne au format MOT_CLE: valeur",
+            "Les commentaires commencent par // ou #",
+            "Les suffixes d'unité (_CM ou _IN) aident à la détection automatique"
+          ]
+        }
       }
     }
   },

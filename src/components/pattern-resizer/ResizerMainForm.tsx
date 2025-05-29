@@ -16,6 +16,7 @@ import { getTemplateByKey, getAllTemplates } from '@/utils/pattern-resizer-templ
 import { calculatePatternResize } from '@/services/patternResizerService';
 import ResizerTemplateSelector from './ResizerTemplateSelector';
 import ResizerResultsDisplay from './ResizerResultsDisplay';
+import PatternTextParser from './PatternTextParser';
 
 interface ResizerMainFormProps {
   /** Called when calculation is completed */
@@ -54,6 +55,9 @@ export default function ResizerMainForm({
   const [result, setResult] = useState<PatternResizerResult | null>(null);
   const [errors, setErrors] = useState<PatternResizerFormErrors>({});
   const [showResults, setShowResults] = useState(false);
+  
+  // US 10.2: Tab state for input method
+  const [inputMethod, setInputMethod] = useState<'manual' | 'text'>('manual');
 
   // Get current template
   const currentTemplate = selectedTemplate ? getTemplateByKey(selectedTemplate) : null;
@@ -72,6 +76,24 @@ export default function ResizerMainForm({
   // Handle template selection
   const handleTemplateChange = (templateKey: string) => {
     setSelectedTemplate(templateKey);
+  };
+
+  // US 10.2: Handle successful text parsing
+  const handleTextParseSuccess = (
+    parsedGauge: OriginalPatternGauge,
+    parsedValues: OriginalPatternValues
+  ) => {
+    setOriginalGauge(parsedGauge);
+    setOriginalPatternValues(parsedValues);
+    // Switch to manual tab to allow user to review and complete the form
+    setInputMethod('manual');
+    setErrors({});
+  };
+
+  // US 10.2: Handle unit change from text parser
+  const handleUnitChange = (unit: MeasurementUnit) => {
+    setOriginalGauge(prev => ({ ...prev, original_gauge_unit: unit }));
+    setNewGauge(prev => ({ ...prev, new_gauge_unit: unit }));
   };
 
   // Handle input changes
@@ -322,44 +344,113 @@ export default function ResizerMainForm({
       {/* Show form sections only when template is selected */}
       {currentTemplate && (
         <>
-          {/* Original Gauge Section */}
+          {/* US 10.2: Input Method Tabs */}
           <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {t('tools.pattern_resizer.form.original_gauge_section')}
-            </h3>
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {renderInputField(
-                  { key: 'original_gauge_stitches', label: t('tools.pattern_resizer.form.original_gauge_stitches'), type: 'number', min: 0.1, step: 0.1, required: true },
-                  originalGauge.original_gauge_stitches,
-                  (_, value) => handleOriginalGaugeChange('original_gauge_stitches', value),
-                  errors.original_gauge?.original_gauge_stitches
-                )}
-                {renderInputField(
-                  { key: 'original_gauge_rows', label: t('tools.pattern_resizer.form.original_gauge_rows'), type: 'number', min: 0.1, step: 0.1, required: true },
-                  originalGauge.original_gauge_rows,
-                  (_, value) => handleOriginalGaugeChange('original_gauge_rows', value),
-                  errors.original_gauge?.original_gauge_rows
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
-                  {t('tools.pattern_resizer.form.original_gauge_unit')}
-                </label>
-                <select
-                  value={originalGauge.original_gauge_unit}
-                  onChange={(e) => handleOriginalGaugeChange('original_gauge_unit', e.target.value as MeasurementUnit)}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <nav className="-mb-px flex space-x-8">
+                <button
+                  type="button"
+                  onClick={() => setInputMethod('manual')}
                   disabled={disabled || isCalculating}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    inputMethod === 'manual'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  } ${disabled || isCalculating ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
-                  <option value="cm">{t('tools.pattern_resizer.form.unit_cm')}</option>
-                  <option value="inch">{t('tools.pattern_resizer.form.unit_inch')}</option>
-                </select>
-              </div>
+                  {t('tools.pattern_resizer.input_method.manual', 'Manual Input')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setInputMethod('text')}
+                  disabled={disabled || isCalculating}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm transition-colors ${
+                    inputMethod === 'text'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+                  } ${disabled || isCalculating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  {t('tools.pattern_resizer.input_method.text', 'Import from Text')}
+                </button>
+              </nav>
             </div>
           </section>
 
-          {/* New Gauge Section */}
+          {/* US 10.2: Text Parser Tab Content */}
+          {inputMethod === 'text' && (
+            <section>
+              <PatternTextParser
+                templateKey={selectedTemplate}
+                unit={originalGauge.original_gauge_unit}
+                onParseSuccess={handleTextParseSuccess}
+                onUnitChange={handleUnitChange}
+                disabled={disabled || isCalculating}
+              />
+            </section>
+          )}
+
+          {/* Manual Input Tab Content */}
+          {inputMethod === 'manual' && (
+            <>
+              {/* Original Gauge Section */}
+              <section>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {t('tools.pattern_resizer.form.original_gauge_section')}
+                </h3>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {renderInputField(
+                      { key: 'original_gauge_stitches', label: t('tools.pattern_resizer.form.original_gauge_stitches'), type: 'number', min: 0.1, step: 0.1, required: true },
+                      originalGauge.original_gauge_stitches,
+                      (_, value) => handleOriginalGaugeChange('original_gauge_stitches', value),
+                      errors.original_gauge?.original_gauge_stitches
+                    )}
+                    {renderInputField(
+                      { key: 'original_gauge_rows', label: t('tools.pattern_resizer.form.original_gauge_rows'), type: 'number', min: 0.1, step: 0.1, required: true },
+                      originalGauge.original_gauge_rows,
+                      (_, value) => handleOriginalGaugeChange('original_gauge_rows', value),
+                      errors.original_gauge?.original_gauge_rows
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">
+                      {t('tools.pattern_resizer.form.original_gauge_unit')}
+                    </label>
+                    <select
+                      value={originalGauge.original_gauge_unit}
+                      onChange={(e) => handleOriginalGaugeChange('original_gauge_unit', e.target.value as MeasurementUnit)}
+                      disabled={disabled || isCalculating}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                    >
+                      <option value="cm">{t('tools.pattern_resizer.form.unit_cm')}</option>
+                      <option value="inch">{t('tools.pattern_resizer.form.unit_inch')}</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+
+              {/* Original Pattern Values Section */}
+              <section>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {t('tools.pattern_resizer.original_pattern_section')}
+                </h3>
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {currentTemplate.inputs_original_pattern
+                      .filter(field => !field.key.includes('gauge')) // Filter out gauge fields since we handle them separately
+                      .map(field => renderInputField(
+                        field,
+                        originalPatternValues[field.key],
+                        handleOriginalPatternValueChange,
+                        errors.original_pattern_values?.[field.key]
+                      ))}
+                  </div>
+                </div>
+              </section>
+            </>
+          )}
+
+          {/* New Gauge Section - Always visible */}
           <section>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('tools.pattern_resizer.new_gauge_section')}
@@ -396,26 +487,7 @@ export default function ResizerMainForm({
             </div>
           </section>
 
-          {/* Original Pattern Values Section */}
-          <section>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              {t('tools.pattern_resizer.original_pattern_section')}
-            </h3>
-            <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {currentTemplate.inputs_original_pattern
-                  .filter(field => !field.key.includes('gauge')) // Filter out gauge fields since we handle them separately
-                  .map(field => renderInputField(
-                    field,
-                    originalPatternValues[field.key],
-                    handleOriginalPatternValueChange,
-                    errors.original_pattern_values?.[field.key]
-                  ))}
-              </div>
-            </div>
-          </section>
-
-          {/* New Dimensions Section */}
+          {/* New Dimensions Section - Always visible */}
           <section>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('tools.pattern_resizer.new_dimensions_section')}
@@ -476,7 +548,7 @@ export default function ResizerMainForm({
       {/* No Template Selected Message */}
       {!selectedTemplate && (
         <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-          <p className="text-lg">{t('tools.pattern_resizer.no_template_selected')}</p>
+          <p>{t('tools.pattern_resizer.select_template_first')}</p>
         </div>
       )}
     </div>

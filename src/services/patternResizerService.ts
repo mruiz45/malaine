@@ -7,7 +7,10 @@
 import { 
   PatternResizerInput, 
   PatternResizerResult, 
-  PatternResizerApiResponse 
+  PatternResizerApiResponse,
+  StructuredPatternText,
+  PatternTextParseResult,
+  PatternTextParseApiResponse
 } from '@/types/pattern-resizer';
 
 /**
@@ -174,5 +177,129 @@ export function formatPatternResizerResult(result: PatternResizerResult): {
       calculatedAt: result.metadata?.calculated_at || new Date().toISOString(),
       hadShaping: result.metadata?.had_shaping || false
     }
+  };
+}
+
+// ===== US 10.2: Pattern Text Parser Service Functions =====
+
+/**
+ * Parse structured pattern text to extract numerical values (US 10.2)
+ * @param input Structured pattern text input
+ * @returns Promise resolving to parse result
+ */
+export async function parsePatternText(input: StructuredPatternText): Promise<PatternTextParseResult> {
+  try {
+    const response = await fetch('/api/tools/pattern-resizer/parse-text', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(input),
+    });
+
+    const data: PatternTextParseApiResponse = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    if (!data.success) {
+      throw new Error(data.error || 'Text parsing failed');
+    }
+
+    if (!data.data) {
+      throw new Error('No parsing result returned');
+    }
+
+    return data.data;
+
+  } catch (error) {
+    console.error('Pattern text parsing service error:', error);
+    
+    // Re-throw with a more user-friendly message
+    if (error instanceof Error) {
+      throw new Error(`Failed to parse pattern text: ${error.message}`);
+    } else {
+      throw new Error('Failed to parse pattern text: Unknown error');
+    }
+  }
+}
+
+/**
+ * Validate structured pattern text input on client side (US 10.2)
+ * @param input Pattern text input to validate
+ * @returns Object with validation result and errors
+ */
+export function validatePatternTextInput(input: Partial<StructuredPatternText>): {
+  isValid: boolean;
+  errors: string[];
+} {
+  const errors: string[] = [];
+
+  // Validate text content
+  if (!input.text || typeof input.text !== 'string') {
+    errors.push('Pattern text is required');
+  } else if (input.text.trim().length === 0) {
+    errors.push('Pattern text cannot be empty');
+  } else if (input.text.length > 10000) {
+    errors.push('Pattern text is too long (maximum 10,000 characters)');
+  }
+
+  // Validate template key
+  if (!input.template_key || typeof input.template_key !== 'string') {
+    errors.push('Template selection is required');
+  }
+
+  // Validate unit
+  if (!input.unit || (input.unit !== 'cm' && input.unit !== 'inch')) {
+    errors.push('Valid unit (cm or inch) is required');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+}
+
+/**
+ * Format pattern text parse result for display (US 10.2)
+ * @param result Pattern text parse result
+ * @returns Formatted result object for UI display
+ */
+export function formatPatternTextParseResult(result: PatternTextParseResult): {
+  hasData: boolean;
+  patternName?: string;
+  gaugeInfo?: string;
+  valuesCount: number;
+  componentsCount: number;
+  warnings: string[];
+} {
+  if (!result.success || !result.data) {
+    return {
+      hasData: false,
+      valuesCount: 0,
+      componentsCount: 0,
+      warnings: result.warnings || []
+    };
+  }
+
+  const data = result.data;
+  const valuesCount = Object.keys(data.original_pattern_values || {}).length;
+  const componentsCount = data.components?.length || 0;
+
+  let gaugeInfo: string | undefined;
+  if (data.original_gauge?.original_gauge_stitches && data.original_gauge?.original_gauge_rows) {
+    const unit = data.original_gauge.original_gauge_unit || 'cm';
+    const unitDisplay = unit === 'cm' ? '10cm' : '4in';
+    gaugeInfo = `${data.original_gauge.original_gauge_stitches} sts × ${data.original_gauge.original_gauge_rows} rows per ${unitDisplay}`;
+  }
+
+  return {
+    hasData: true,
+    patternName: data.pattern_name,
+    gaugeInfo,
+    valuesCount,
+    componentsCount,
+    warnings: data.warnings || []
   };
 } 
