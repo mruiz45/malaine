@@ -8,7 +8,7 @@ import { UpdatePatternDefinitionSessionData } from '@/types/patternDefinition';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const sessionResult = await getSupabaseSessionAppRouter(request);
@@ -21,7 +21,7 @@ export async function GET(
     }
 
     const { supabase } = sessionResult;
-    const { id } = params;
+    const { id } = await params;
 
     // Fetch session (without joins for now since other tables don't exist yet)
     const { data: session, error } = await supabase
@@ -64,7 +64,7 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const sessionResult = await getSupabaseSessionAppRouter(request);
@@ -77,7 +77,7 @@ export async function PUT(
     }
 
     const { supabase } = sessionResult;
-    const { id } = params;
+    const { id } = await params;
 
     // Parse request body
     const body: UpdatePatternDefinitionSessionData = await request.json();
@@ -130,7 +130,7 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const sessionResult = await getSupabaseSessionAppRouter(request);
@@ -143,7 +143,7 @@ export async function DELETE(
     }
 
     const { supabase } = sessionResult;
-    const { id } = params;
+    const { id } = await params;
 
     // Delete session
     const { error } = await supabase

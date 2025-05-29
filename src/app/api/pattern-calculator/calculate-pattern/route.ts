@@ -1,5 +1,5 @@
 /**
- * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3)
+ * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
  */
 
@@ -25,6 +25,8 @@ import {
 import { calculateBeanie, BeanieCalculationInput } from '@/utils/beanie-calculator';
 import { generateBeanieInstructions, BeanieInstructionGenerationInput } from '@/utils/beanie-instruction-generator';
 import { BeanieAttributes } from '@/types/accessories';
+import { calculateShaping } from '@/utils/shaping-calculator';
+import { ShapingCalculationInput } from '@/types/shaping';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -345,7 +347,7 @@ function calculateBeanieComponent(component: any, input: any, craftType: 'knitti
 
 /**
  * Calculates stitch and row counts for rectangular components
- * Extracted from original calculateComponent function for clarity
+ * Enhanced with US_7.2 shaping calculations
  */
 function calculateRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge, stitchPattern } = input;
@@ -360,6 +362,28 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
   };
 
   const rectangularResult = calculateRectangularPiece(rectangularInput);
+  
+  // Calculate shaping if required (US_7.2)
+  const shapingResult = calculateComponentShaping(component, gauge);
+  let shapingSchedule = undefined;
+  
+  if (shapingResult?.success && shapingResult.schedule) {
+    shapingSchedule = shapingResult.schedule;
+    
+    // Add shaping warnings to component warnings
+    if (shapingResult.warnings) {
+      rectangularResult.warnings = [
+        ...(rectangularResult.warnings || []),
+        ...shapingResult.warnings
+      ];
+    }
+  } else if (shapingResult?.error) {
+    // Add shaping errors to component errors
+    rectangularResult.errors = [
+      ...(rectangularResult.errors || []),
+      `Shaping calculation failed: ${shapingResult.error}`
+    ];
+  }
   
   // Generate basic textual instructions (US_6.3)
   let instructions: Array<{ step: number; text: string }> | undefined;
@@ -395,7 +419,16 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
   const shapingInstructions: string[] = [];
   if (rectangularResult.calculations.castOnStitches > 0) {
     shapingInstructions.push(`Cast on ${rectangularResult.calculations.castOnStitches} stitches`);
-    shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
+    
+    // Add shaping instructions if available
+    if (shapingSchedule?.hasShaping && shapingSchedule.shapingEvents.length > 0) {
+      for (const event of shapingSchedule.shapingEvents) {
+        shapingInstructions.push(event.instructionsTextSimple);
+      }
+    } else {
+      shapingInstructions.push(`Work in ${stitchPattern.name || 'pattern'} for ${rectangularResult.calculations.totalRows} rows`);
+    }
+    
     shapingInstructions.push('Bind off all stitches');
   }
 
@@ -405,6 +438,7 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
     stitchCount: rectangularResult.calculations.castOnStitches,
     rowCount: rectangularResult.calculations.totalRows,
     shapingInstructions,
+    shapingSchedule, // Add shaping schedule to result (US_7.2)
     detailedCalculations: {
       targetWidthUsed_cm: rectangularResult.calculations.targetWidthUsed_cm,
       targetLengthUsed_cm: rectangularResult.calculations.targetLengthUsed_cm,
@@ -427,14 +461,15 @@ function calculateRectangularComponent(component: any, input: any, craftType: 'k
       calculatedDimensions: {
         actualWidth: rectangularResult.calculations.actualCalculatedWidth_cm,
         actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
-      }
+      },
+      hasShaping: shapingSchedule?.hasShaping || false
     }
   };
 }
 
 /**
  * Calculates stitch and row counts for non-rectangular components
- * (Original logic preserved for cylindrical and circular components)
+ * Enhanced with US_7.2 shaping calculations for cylindrical components
  */
 function calculateNonRectangularComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
   const { gauge } = input;
@@ -445,20 +480,45 @@ function calculateNonRectangularComponent(component: any, input: any, craftType:
   const shapingInstructions: string[] = [];
   const errors: string[] = [];
   const warnings: string[] = [];
+  
+  // Calculate shaping if required (US_7.2)
+  const shapingResult = calculateComponentShaping(component, gauge);
+  let shapingSchedule = undefined;
+  
+  if (shapingResult?.success && shapingResult.schedule) {
+    shapingSchedule = shapingResult.schedule;
+    
+    // Add shaping warnings to component warnings
+    if (shapingResult.warnings) {
+      warnings.push(...shapingResult.warnings);
+    }
+  } else if (shapingResult?.error) {
+    // Add shaping errors to component errors
+    errors.push(`Shaping calculation failed: ${shapingResult.error}`);
+  }
 
   // Calculate based on component type and dimensions
   if (component.targetCircumference && component.targetLength) {
-    // Cylindrical component (sleeve)
+    // Cylindrical component (sleeve) - may have shaping
     stitchCount = Math.round((component.targetCircumference / 10) * gauge.stitchesPer10cm);
     rowCount = Math.round((component.targetLength / 10) * gauge.rowsPer10cm);
     
     shapingInstructions.push(`Cast on ${stitchCount} stitches`);
     shapingInstructions.push('Join in the round, being careful not to twist');
-    shapingInstructions.push(`Work in pattern for ${rowCount} rounds`);
+    
+    // Add shaping instructions if available
+    if (shapingSchedule?.hasShaping && shapingSchedule.shapingEvents.length > 0) {
+      for (const event of shapingSchedule.shapingEvents) {
+        shapingInstructions.push(event.instructionsTextSimple);
+      }
+    } else {
+      shapingInstructions.push(`Work in pattern for ${rowCount} rounds`);
+    }
+    
     shapingInstructions.push('Bind off all stitches');
     
   } else if (component.targetCircumference) {
-    // Circular component (neckband)
+    // Circular component (neckband) - typically no shaping
     stitchCount = Math.round((component.targetCircumference / 10) * gauge.stitchesPer10cm);
     rowCount = Math.round(2 * gauge.rowsPer10cm); // Default 2cm height
     
@@ -485,6 +545,7 @@ function calculateNonRectangularComponent(component: any, input: any, craftType:
     stitchCount,
     rowCount,
     shapingInstructions,
+    shapingSchedule, // Add shaping schedule to result (US_7.2)
     errors,
     warnings,
     metadata: {
@@ -496,7 +557,8 @@ function calculateNonRectangularComponent(component: any, input: any, craftType:
       calculatedDimensions: {
         actualCircumference: component.targetCircumference,
         actualLength: component.targetLength,
-      }
+      },
+      hasShaping: shapingSchedule?.hasShaping || false
     }
   };
 }
@@ -571,4 +633,42 @@ function assessDifficultyLevel(components: any[], stitchPattern: any): string {
  */
 function generateCalculationId(): string {
   return `calc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+/**
+ * Helper function to calculate shaping for components requiring linear shaping (US 7.2)
+ * Checks if a component has shaping requirements and calculates the shaping schedule
+ */
+function calculateComponentShaping(component: any, gauge: CalculationGaugeData) {
+  // Check if component has shaping requirements
+  const shapingConfig = component.attributes?.shaping;
+  if (!shapingConfig) {
+    return null; // No shaping configuration
+  }
+
+  // Extract shaping parameters from component configuration
+  const startingStitchCount = shapingConfig.startingStitchCount;
+  const targetStitchCount = shapingConfig.targetStitchCount;
+  const totalRowsForShaping = shapingConfig.totalRowsForShaping;
+  const stitchesPerShapingEvent = shapingConfig.stitchesPerShapingEvent || 2; // Default to 2 (symmetrical shaping)
+
+  // Validate that we have all required parameters
+  if (!startingStitchCount || !targetStitchCount || !totalRowsForShaping) {
+    return null; // Missing required shaping parameters
+  }
+
+  // Prepare shaping calculation input
+  const shapingInput: ShapingCalculationInput = {
+    startingStitchCount,
+    targetStitchCount,
+    totalRowsForShaping,
+    stitchesPerShapingEvent,
+    rowsPerUnit: gauge.rowsPer10cm,
+    unit: gauge.unit
+  };
+
+  // Calculate shaping
+  const shapingResult = calculateShaping(shapingInput);
+
+  return shapingResult;
 } 

@@ -3,6 +3,8 @@
  * Defines interfaces for the input data structure and API contract for the Core Pattern Calculation Engine
  */
 
+import { ShapingSchedule } from './shaping';
+
 /**
  * Version information for the calculation input schema
  */
@@ -163,6 +165,8 @@ export interface ComponentCalculationResult {
   rowCount: number;
   /** Shaping instructions */
   shapingInstructions?: string[];
+  /** Shaping schedule for this component (US 7.2) */
+  shapingSchedule?: ShapingSchedule;
   /** Additional calculation metadata */
   metadata?: Record<string, any>;
   /** Detailed calculation data (US_6.2) */
