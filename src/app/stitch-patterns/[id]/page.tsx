@@ -30,7 +30,7 @@ export default function StitchPatternDetailPage() {
   useEffect(() => {
     const loadPattern = async () => {
       if (!patternId) {
-        setError('No pattern ID provided');
+        setError(t('stitchLibrary.detail.noPatternId', 'No pattern ID provided'));
         setLoading(false);
         return;
       }
@@ -45,18 +45,18 @@ export default function StitchPatternDetailPage() {
           // TODO: Check if pattern is favorited by user
           // setIsFavorited(await checkIfFavorited(patternId));
         } else {
-          setError('Pattern not found');
+          setError(t('stitchLibrary.detail.patternNotFound', 'Pattern not found'));
         }
       } catch (err) {
-        console.error('Error loading pattern:', err);
-        setError('Failed to load pattern');
+        console.error(t('stitchLibrary.detail.errorLoading', 'Error loading pattern:'), err);
+        setError(t('stitchLibrary.detail.failedToLoad', 'Failed to load pattern'));
       } finally {
         setLoading(false);
       }
     };
 
     loadPattern();
-  }, [patternId]);
+  }, [patternId, t]);
 
   const handleBack = () => {
     router.back();

@@ -76,8 +76,8 @@ export default function DashboardPage() {
               >
                 <Squares2X2Icon className="h-8 w-8 text-indigo-600 mr-3" />
                 <div>
-                  <h3 className="font-medium text-indigo-900">{t('stitchPattern.title', 'Stitch Patterns')}</h3>
-                  <p className="text-sm text-indigo-700">{t('stitchPattern.subtitle', 'Choose your stitch pattern')}</p>
+                  <h3 className="font-medium text-indigo-900">{t('stitchPattern.title')}</h3>
+                  <p className="text-sm text-indigo-700">{t('stitchPattern.subtitle')}</p>
                 </div>
               </Link>
 
@@ -87,8 +87,8 @@ export default function DashboardPage() {
               >
                 <DocumentTextIcon className="h-8 w-8 text-teal-600 mr-3" />
                 <div>
-                  <h3 className="font-medium text-teal-900">{t('patternDefinition.title', 'Pattern Definition')}</h3>
-                  <p className="text-sm text-teal-700">{t('patternDefinition.subtitle', 'Create your pattern')}</p>
+                  <h3 className="font-medium text-teal-900">{t('patternDefinition.title')}</h3>
+                  <p className="text-sm text-teal-700">{t('patternDefinition.description')}</p>
                 </div>
               </Link>
             </div>

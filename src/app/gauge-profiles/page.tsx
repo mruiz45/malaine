@@ -88,8 +88,9 @@ export default function GaugeProfilesPage() {
       setViewMode('list');
       setSuccessMessage(t('gauge.messages.created_success'));
     } catch (err: any) {
+      // Console errors should not be translated - they're for developers
       console.error('Error creating gauge profile:', err);
-      if (err.message.includes('already exists')) {
+      if (err.message && err.message.toLowerCase().includes('exist')) {
         setError(t('gauge.messages.name_exists'));
       } else {
         setError(t('gauge.messages.create_error'));
@@ -119,8 +120,9 @@ export default function GaugeProfilesPage() {
       setEditingProfile(undefined);
       setSuccessMessage(t('gauge.messages.updated_success'));
     } catch (err: any) {
+      // Console errors should not be translated - they're for developers
       console.error('Error updating gauge profile:', err);
-      if (err.message.includes('already exists')) {
+      if (err.message && err.message.toLowerCase().includes('exist')) {
         setError(t('gauge.messages.name_exists'));
       } else {
         setError(t('gauge.messages.update_error'));
@@ -141,6 +143,7 @@ export default function GaugeProfilesPage() {
       setGaugeProfiles(prev => prev.filter(p => p.id !== profile.id));
       setSuccessMessage(t('gauge.messages.deleted_success'));
     } catch (err) {
+      // Console errors should not be translated - they're for developers
       console.error('Error deleting gauge profile:', err);
       setError(t('gauge.messages.delete_error'));
     }

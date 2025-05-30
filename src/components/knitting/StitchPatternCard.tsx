@@ -10,6 +10,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 import type { StitchPattern } from '@/types/stitchPattern';
 import { 
   getStitchPatternDisplayInfo, 
@@ -56,6 +57,7 @@ export default function StitchPatternCard({
   className = ''
 }: StitchPatternCardProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const displayInfo = getStitchPatternDisplayInfo(pattern);
   const difficultyInfo = pattern.difficulty_level 
     ? getDifficultyDisplayInfo(pattern.difficulty_level) 
@@ -191,7 +193,7 @@ export default function StitchPatternCard({
         <div className="flex flex-wrap gap-1 ml-2">
           {displayInfo.isBasic && (
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-              Basic
+              {t('stitchPattern.basic', 'Basic')}
             </span>
           )}
           {showCraftType && (
@@ -235,14 +237,14 @@ export default function StitchPatternCard({
       {/* Repeat Information */}
       {displayInfo.hasRepeatData && (
         <div className={`text-sm mb-3 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
-          <span className="font-medium">Repeat:</span> {displayInfo.repeatInfo}
+          <span className="font-medium">{t('stitchPattern.repeat', 'Repeat')}:</span> {displayInfo.repeatInfo}
         </div>
       )}
 
       {/* Common Uses (US_8.1) */}
       {pattern.common_uses && pattern.common_uses.length > 0 && (
         <div className={`text-sm mb-3 ${isSelected ? 'text-blue-600' : 'text-gray-500'}`}>
-          <span className="font-medium">Uses:</span> {pattern.common_uses.slice(0, 3).join(', ')}
+          <span className="font-medium">{t('stitchPattern.uses', 'Uses')}:</span> {pattern.common_uses.slice(0, 3).join(', ')}
           {pattern.common_uses.length > 3 && '...'}
         </div>
       )}
@@ -260,7 +262,7 @@ export default function StitchPatternCard({
           <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
-          <span className="text-sm font-medium">Selected</span>
+          <span className="text-sm font-medium">{t('common.selected', 'Selected')}</span>
         </div>
       )}
     </div>

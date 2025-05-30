@@ -7,9 +7,14 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { PdfTemplateData, SchematicsData } from '@/types/pdf';
 
+/**
+ * Page component for PDF pattern rendering
+ */
 export default function PdfRenderPage() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const [templateData, setTemplateData] = useState<PdfTemplateData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +24,7 @@ export default function PdfRenderPage() {
     try {
       const encodedData = searchParams?.get('data');
       if (!encodedData) {
-        setError('Aucune donnée de patron fournie');
+        setError(t('pattern.pdf.errors.no_data'));
         setLoading(false);
         return;
       }
@@ -28,16 +33,16 @@ export default function PdfRenderPage() {
       setTemplateData(parsedData);
       setLoading(false);
     } catch (err) {
-      console.error('Erreur lors du parsing des données:', err);
-      setError('Données de patron invalides');
+      console.error('Error parsing pattern data:', err);
+      setError(t('pattern.pdf.errors.invalid_data'));
       setLoading(false);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Chargement du patron...</div>
+        <div className="text-lg">{t('pattern.pdf.loading')}</div>
       </div>
     );
   }
@@ -45,7 +50,7 @@ export default function PdfRenderPage() {
   if (error || !templateData) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600 text-lg">{error || 'Erreur de chargement'}</div>
+        <div className="text-red-600 text-lg">{error || t('pattern.pdf.errors.load_error')}</div>
       </div>
     );
   }
@@ -64,6 +69,7 @@ export default function PdfRenderPage() {
  * Template principal pour le rendu PDF du patron
  */
 function PdfPatternTemplate({ data }: { data: PdfTemplateData }) {
+  const { t } = useTranslation();
   const { pattern, options, schematics, metadata } = data;
 
   return (
@@ -75,7 +81,7 @@ function PdfPatternTemplate({ data }: { data: PdfTemplateData }) {
             {metadata.title}
           </h1>
           <p className="text-center text-gray-600 mt-2">
-            Généré le {metadata.generatedAt}
+            {t('pattern.pdf.generated_on')} {metadata.generatedAt}
           </p>
         </header>
       )}
@@ -109,7 +115,7 @@ function PdfPatternTemplate({ data }: { data: PdfTemplateData }) {
       {/* Pied de page */}
       <footer className="print:hidden mt-12 pt-6 border-t-2 border-gray-300">
         <p className="text-center text-sm text-gray-500">
-          Patron généré par Malaine - Assistant Tricot & Crochet
+          {t('pattern.pdf.footer')}
         </p>
       </footer>
     </div>
@@ -120,28 +126,30 @@ function PdfPatternTemplate({ data }: { data: PdfTemplateData }) {
  * Section des informations générales du patron
  */
 function PatternInfoSection({ pattern }: { pattern: any }) {
+  const { t } = useTranslation();
+  
   return (
     <section className="pattern-info print:break-inside-avoid">
       <h2 className="text-2xl font-bold mb-4 border-b border-gray-400 pb-2">
-        Informations du Patron
+        {t('pattern.pdf.sections.pattern_info')}
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div>
-          <strong>Type de projet :</strong> {pattern.type || 'Non spécifié'}
+          <strong>{t('pattern.pdf.fields.project_type')}:</strong> {pattern.type || t('pattern.pdf.not_specified')}
         </div>
         <div>
-          <strong>Difficulté :</strong> {pattern.difficulty || 'Non spécifiée'}
+          <strong>{t('pattern.pdf.fields.difficulty')}:</strong> {pattern.difficulty || t('pattern.pdf.not_specified')}
         </div>
         <div>
-          <strong>Techniques utilisées :</strong> {pattern.techniques?.join(', ') || 'Non spécifiées'}
+          <strong>{t('pattern.pdf.fields.techniques')}:</strong> {pattern.techniques?.join(', ') || t('pattern.pdf.not_specified')}
         </div>
         <div>
-          <strong>Temps estimé :</strong> {pattern.estimatedTime || 'Non spécifié'}
+          <strong>{t('pattern.pdf.fields.estimated_time')}:</strong> {pattern.estimatedTime || t('pattern.pdf.not_specified')}
         </div>
       </div>
       {pattern.description && (
         <div className="mt-4">
-          <strong>Description :</strong>
+          <strong>{t('pattern.pdf.fields.description')}:</strong>
           <p className="mt-2 text-gray-700">{pattern.description}</p>
         </div>
       )}
@@ -153,21 +161,23 @@ function PatternInfoSection({ pattern }: { pattern: any }) {
  * Section des matériaux nécessaires
  */
 function MaterialsSection({ pattern }: { pattern: any }) {
+  const { t } = useTranslation();
+  
   return (
     <section className="materials print:break-inside-avoid">
       <h2 className="text-2xl font-bold mb-4 border-b border-gray-400 pb-2">
-        Matériaux Nécessaires
+        {t('pattern.pdf.sections.materials')}
       </h2>
       
       {/* Laines */}
       {pattern.yarn && (
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">Laine</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('pattern.pdf.materials.yarn')}</h3>
           <div className="ml-4">
-            <p><strong>Type :</strong> {pattern.yarn.type}</p>
-            <p><strong>Poids :</strong> {pattern.yarn.weight}</p>
-            <p><strong>Quantité :</strong> {pattern.yarn.quantity}</p>
-            {pattern.yarn.color && <p><strong>Couleur :</strong> {pattern.yarn.color}</p>}
+            <p><strong>{t('pattern.pdf.materials.yarn_type')}:</strong> {pattern.yarn.type}</p>
+            <p><strong>{t('pattern.pdf.materials.yarn_weight')}:</strong> {pattern.yarn.weight}</p>
+            <p><strong>{t('pattern.pdf.materials.yarn_quantity')}:</strong> {pattern.yarn.quantity}</p>
+            {pattern.yarn.color && <p><strong>{t('pattern.pdf.materials.yarn_color')}:</strong> {pattern.yarn.color}</p>}
           </div>
         </div>
       )}
@@ -175,7 +185,7 @@ function MaterialsSection({ pattern }: { pattern: any }) {
       {/* Aiguilles/Crochets */}
       {pattern.tools && (
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">Outils</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('pattern.pdf.materials.tools')}</h3>
           <ul className="ml-4 list-disc">
             {pattern.tools.map((tool: any, index: number) => (
               <li key={index}>{tool.name} - {tool.size}</li>
@@ -187,7 +197,7 @@ function MaterialsSection({ pattern }: { pattern: any }) {
       {/* Accessoires */}
       {pattern.accessories && pattern.accessories.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-lg font-semibold mb-2">Accessoires</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('pattern.pdf.materials.accessories')}</h3>
           <ul className="ml-4 list-disc">
             {pattern.accessories.map((accessory: string, index: number) => (
               <li key={index}>{accessory}</li>
@@ -203,25 +213,34 @@ function MaterialsSection({ pattern }: { pattern: any }) {
  * Section de l'échantillon/gauge
  */
 function GaugeSection({ pattern }: { pattern: any }) {
+  const { t } = useTranslation();
+  
   if (!pattern.gauge) return null;
 
   return (
     <section className="gauge print:break-inside-avoid">
       <h2 className="text-2xl font-bold mb-4 border-b border-gray-400 pb-2">
-        Échantillon
+        {t('pattern.pdf.sections.gauge')}
       </h2>
       <div className="bg-gray-50 p-4 rounded border">
-        <p className="font-semibold mb-2">Réalisez un échantillon de 10cm x 10cm :</p>
+        <p className="font-semibold mb-2">{t('pattern.pdf.gauge.instructions')}:</p>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <strong>Mailles :</strong> {pattern.gauge.stitches} mailles
+            <strong>{t('pattern.pdf.gauge.stitches')}:</strong> {pattern.gauge.stitches} {t('pattern.pdf.gauge.stitches_unit')}
           </div>
           <div>
-            <strong>Rangs :</strong> {pattern.gauge.rows} rangs
+            <strong>{t('pattern.pdf.gauge.rows')}:</strong> {pattern.gauge.rows} {t('pattern.pdf.gauge.rows_unit')}
           </div>
         </div>
+        {pattern.gauge.needleSize && (
+          <p className="mt-2">
+            <strong>{t('pattern.pdf.gauge.needle_size')}:</strong> {pattern.gauge.needleSize}
+          </p>
+        )}
         {pattern.gauge.notes && (
-          <p className="mt-2 text-sm italic">{pattern.gauge.notes}</p>
+          <p className="mt-2 text-sm text-gray-600">
+            <strong>{t('pattern.pdf.gauge.notes')}:</strong> {pattern.gauge.notes}
+          </p>
         )}
       </div>
     </section>

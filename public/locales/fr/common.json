@@ -5,11 +5,12 @@
     "home": "Accueil",
     "login": "Connexion",
     "signup": "Inscription",
-    "dashboard": "Tableau de bord",
-    "measurements": "Mensurations",
+    "dashboard": "Tableau de Bord",
+    "measurements": "Mesures",
     "tools": "Outils",
-    "showcase": "Galerie de Modèles",
-    "logout": "Déconnexion"
+    "showcase": "Galerie de Patrons",
+    "logout": "Déconnexion",
+    "toggleMenu": "Basculer le menu"
   },
   "home": {
     "welcome_message": "Bienvenue sur Malaine",
@@ -17,6 +18,11 @@
     "description": "Malaine vous aide à créer, personnaliser et réaliser vos projets de tricot et de crochet avec l'aide de l'IA.",
     "login_button": "Se connecter",
     "signup_button": "Créer un compte",
+    "profile": {
+      "title": "Profil",
+      "description": "Gérez les paramètres de votre compte",
+      "logged_in_as": "Connecté en tant que"
+    },
     "features": {
       "adapt_patterns": {
         "title": "Adaptez des patrons",
@@ -619,45 +625,97 @@
     }
   },
   "stitchPattern": {
-    "title": "Motifs de Points",
-    "subtitle": "Choisissez votre motif de point",
-    "description": "Choisissez parmi notre collection de motifs de points de base pour vos projets de tricot ou crochet. Chaque motif inclut des informations sur les répétitions de points et les caractéristiques qui aideront avec vos calculs d'échantillon.",
-    "selectPattern": "Sélectionner un Motif de Point",
-    "gaugeReminder": "N'oubliez pas de mesurer votre échantillon dans le motif de point sélectionné",
-    "gaugeImportant": "Important : Échantillon et Motifs de Points",
-    "gaugeNotice": "Votre échantillon (nombre de mailles et rangs par pouce/cm) peut varier considérablement entre différents motifs de points. Créez toujours un échantillon dans votre motif de point choisi avant de commencer votre projet.",
+    "title": "Motif de Points",
+    "subtitle": "Sélectionnez et gérez les motifs de points pour vos projets",
+    "selectPattern": "Sélectionner un Point",
+    "basic": "Basique",
+    "repeat": "Répétition",
+    "uses": "Utilisations",
+    "gaugeReminder": "N'oubliez pas de mesurer votre échantillon dans le point sélectionné",
+    "gaugeImportant": "Important : Échantillon et Points",
+    "gaugeNotice": "Votre échantillon (nombre de mailles et rangs par pouce/cm) peut varier considérablement entre différents points. Créez toujours un échantillon dans le point choisi avant de commencer votre projet.",
     "currentSelection": "Sélection Actuelle",
-    "selectedDetails": "Détails du Motif Sélectionné",
-    "repeatInfo": "Informations de Répétition",
-    "nextSteps": "Prochaines Étapes",
-    "step1": "Créer un échantillon dans ce motif de point",
+    "selectedDetails": "Détails du Point Sélectionné",
+    "nextSteps": "Étapes Suivantes",
+    "step1": "Créer un échantillon dans ce point",
     "step2": "Mesurer votre échantillon avec précision",
     "step3": "Utiliser ces informations pour les calculs de patron",
-    "searchPlaceholder": "Rechercher des motifs de points...",
-    "noSearchResults": "Aucun motif de point trouvé correspondant à votre recherche",
-    "noPatterns": "Aucun motif de point disponible",
-    "patternCount": "{{count}} motif disponible",
-    "patternCount_plural": "{{count}} motifs disponibles",
+    "searchPlaceholder": "Rechercher des points...",
+    "noSearchResults": "Aucun point trouvé correspondant à votre recherche",
+    "noPatterns": "Aucun point disponible",
+    "patternCount": "{{count}} point disponible",
+    "patternCount_plural": "{{count}} points disponibles",
+    "notFound": "Point Non Trouvé",
+    "notFoundDescription": "Le point demandé n'a pas pu être trouvé.",
+    "craftType": "Type d'Artisanat",
+    "category": "Catégorie",
+    "difficulty": "Difficulté",
+    "practiceNote": "Pratiquez le point sur un petit échantillon d'abord si vous ne le connaissez pas",
     "preview": {
       "swatchTitle": "Aperçu du Point",
-      "swatchAlt": "Aperçu d'échantillon de {{name}}",
+      "swatchAlt": "Aperçu de l'échantillon de {{name}}",
       "propertiesTitle": "Caractéristiques",
       "fabricBehavior": "Comportement du Tissu",
       "texture": "Texture",
       "reversible": "Réversible",
-      "stretchHorizontal": "Élasticité Horizontale",
-      "stretchVertical": "Élasticité Verticale",
+      "stretchHorizontal": "Étirement Horizontal",
+      "stretchVertical": "Étirement Vertical",
       "yarnConsumption": "Consommation de Laine",
       "notes": "Notes"
     }
   },
   "tools": {
+    "ease_advisor": {
+      "back_to_tools": "Retour aux Outils",
+      "page_title": "Conseiller de Sélection d'Aisance",
+      "about_ease": {
+        "title": "À Propos de l'Aisance",
+        "ease_term": "L'aisance",
+        "description": "est la différence entre vos mensurations corporelles et les mesures du vêtement fini. Elle détermine comment le vêtement s'ajustera et se sentira porté.",
+        "negative_ease": "Aisance Négative",
+        "negative_ease_desc": "Le vêtement est plus petit que les mensurations corporelles (tissus extensibles)",
+        "zero_ease": "Aisance Zéro",
+        "zero_ease_desc": "Le vêtement correspond exactement aux mensurations corporelles",
+        "positive_ease": "Aisance Positive",
+        "positive_ease_desc": "Le vêtement est plus grand que les mensurations corporelles"
+      },
+      "fit_guide": {
+        "title": "Guide d'Ajustement",
+        "very_close_fitting": "Très Ajusté",
+        "very_close_fitting_desc": "Aisance négative, ajustement moulant. Mieux avec des laines extensibles.",
+        "close_fitting": "Ajusté",
+        "close_fitting_desc": "Aisance zéro à minimale, ajusté mais confortable.",
+        "classic": "Classique",
+        "classic_desc": "Aisance légèrement positive, ajustement confortable traditionnel.",
+        "relaxed": "Décontracté",
+        "relaxed_desc": "Aisance positive modérée, ample et confortable.",
+        "oversized": "Surdimensionné",
+        "oversized_desc": "Aisance positive importante, très ample et fluide."
+      },
+      "yarn_weight": {
+        "title": "Impact du Poids de Laine",
+        "description": "Différents poids de laine affectent comment l'aisance se traduit dans le vêtement final :",
+        "fingering_sport": "Fingering/Sport",
+        "fingering_sport_desc": "Contrôle d'aisance plus précis, bon pour les vêtements ajustés",
+        "dk_worsted": "DK/Worsted",
+        "dk_worsted_desc": "Tombé et structure équilibrés, polyvalent pour la plupart des ajustements",
+        "bulky": "Bulky",
+        "bulky_desc": "Ajoute du volume, peut nécessiter moins d'aisance pour l'ajustement désiré"
+      },
+      "related_tools": {
+        "title": "Outils Connexes",
+        "measurements": {
+          "title": "Mensurations Corporelles",
+          "description": "Gérez vos mensurations corporelles pour un dimensionnement précis"
+        },
+        "ease_preferences": {
+          "title": "Préférences d'Aisance",
+          "description": "Sauvegardez et gérez vos préférences d'aisance personnelles"
+        }
+      }
+    },
     "title": "Outils",
     "subtitle": "Outils utiles pour vos projets de tricot et crochet",
-    "ease_advisor": {
-      "title": "Conseiller d'Aisance",
-      "description": "Obtenez des recommandations d'aisance personnalisées pour vos projets"
-    },
     "morphology_advisor": {
       "title": "Conseiller de Morphologie Corporelle",
       "description": "Obtenez des conseils pour adapter les patrons à votre morphologie"
@@ -818,6 +876,8 @@
         "values_found": "Valeurs trouvées :",
         "components_found": "Composants :",
         "warnings": "Avertissements :",
+        "parsing_failed": "Échec de l'analyse",
+        "unknown_error": "Erreur inconnue",
         "format_help": {
           "title": "Guide du Format de Texte",
           "description": "Utilisez ce format simple basé sur des mots-clés :",
@@ -840,16 +900,88 @@
           ]
         }
       }
+    },
+    "development": {
+      "title": "Outils de Développement",
+      "description": "Page temporaire pour tester tous les outils développés pour Malaine",
+      "note": {
+        "title": "Note :",
+        "content": "Cette page est temporaire et sera utilisée uniquement pendant le développement pour faciliter les tests des différents outils."
+      },
+      "status": {
+        "implemented": "Implémenté",
+        "coming_soon": "À venir"
+      },
+      "future_tools": {
+        "tool1": "Outil Futur #1",
+        "description1": "Prochain outil à développer selon les spécifications fonctionnelles.",
+        "tool2": "Outil Futur #2",
+        "description2": "Autre outil à développer selon les spécifications fonctionnelles.",
+        "tool3": "Outil Futur #3",
+        "description3": "Autre outil à développer selon les spécifications fonctionnelles."
+      },
+      "info": {
+        "title": "Informations de Développement",
+        "implemented_tools": "Outils Implémentés",
+        "architecture": "Architecture",
+        "tools": {
+          "reverse_gauge": "Calculateur d'Échantillon Inversé (US_2.1)",
+          "yarn_estimator": "Estimateur de Quantité de Laine (US_2.2)",
+          "ease_advisor": "Conseiller de Sélection d'Aisance (US_3.2)",
+          "pattern_resizer": "Redimensionnement de Patron Existant (US_10.1)",
+          "morphology_advisor": "Conseiller de Morphologie Corporelle (US_3.1)",
+          "next_tool": "Prochain outil selon spécifications"
+        },
+        "arch": {
+          "reusable_components": "Composants réutilisables",
+          "business_logic": "Services avec logique métier",
+          "api_routes": "API routes Next.js",
+          "unit_tests": "Tests unitaires avec Jest",
+          "i18n": "Internationalisation (FR/EN)"
+        }
+      },
+      "quick_links": {
+        "title": "Liens Rapides",
+        "dashboard": "Tableau de Bord",
+        "gauge_profiles": "Profils d'Échantillon",
+        "measurements": "Mensurations"
+      }
+    },
+    "pattern_resizer": {
+      "title": "Redimensionnement de Patron Existant",
+      "description": "Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées. Redimensionnez les nombres de mailles et mesures selon vos spécifications."
+    },
+    "yarn_quantity_estimator": {
+      "title": "Estimateur de Quantité de Laine",
+      "description": "Estimez la quantité de laine nécessaire pour votre projet basée sur l'échantillon, les spécifications de laine et le type de projet."
     }
   },
   "common": {
     "search": "Rechercher",
     "hideSearch": "Masquer la Recherche",
-    "searching": "Recherche...",
+    "searching": "Recherche en cours...",
     "clear": "Effacer",
+    "loading": "Chargement...",
+    "all": "Tous",
+    "filters": "Filtres",
+    "clearAll": "Tout Effacer",
+    "clearFilters": "Effacer les Filtres",
+    "copy": "Copier",
+    "print": "Imprimer",
+    "retry": "Réessayer",
+    "gridView": "Vue Grille",
+    "listView": "Vue Liste",
     "generating": "Génération...",
-    "downloaded": "Téléchargé!",
-    "error": "Erreur"
+    "downloaded": "Téléchargé !",
+    "error": "Erreur",
+    "back": "Retour",
+    "backToLibrary": "Retour à la Bibliothèque",
+    "favorited": "Ajouté aux favoris",
+    "addToFavorites": "Ajouter aux Favoris",
+    "yes": "Oui",
+    "no": "Non",
+    "selected": "Sélectionné",
+    "templateNotFound": "Modèle non trouvé"
   },
   "garmentType": {
     "selectType": "Sélectionner le Type de Vêtement",
@@ -1101,52 +1233,56 @@
     }
   },
   "morphology_advisor": {
-    "tool_title": "Conseiller d'Adaptation Morphologique",
+    "tool_title": "Conseiller de Morphologie Corporelle",
     "tool_description": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques pour un meilleur ajustement.",
-    "configuration_title": "Sélectionnez Vos Caractéristiques Corporelles",
-    "select_characteristics": "Sélectionner les Caractéristiques Morphologiques",
-    "select_characteristics_description": "Choisissez les caractéristiques qui décrivent le mieux votre morphologie pour recevoir des conseils d'ajustement personnalisés.",
-    "get_advice_button": "Obtenir des Conseils Morphologiques",
-    "getting_advice": "Obtention des conseils...",
-    "advice_title": "Vos Conseils Morphologiques",
-    "error_title": "Erreur",
-    "error_getting_advice": "Échec de l'obtention des conseils morphologiques. Veuillez réessayer.",
-    "no_results_message": "Aucun conseil trouvé pour les caractéristiques sélectionnées. Veuillez essayer différentes sélections.",
-    "selected_count": "{{count}} caractéristique sélectionnée",
-    "selected_count_plural": "{{count}} caractéristiques sélectionnées",
-    "categories": {
-      "torso": "Torse",
-      "shoulders": "Épaules",
-      "arms": "Bras",
-      "posture": "Posture"
+    "page_title": "Conseiller d'Adaptation Morphologique",
+    "page_subtitle": "Conseils personnalisés pour adapter les patrons à votre morphologie",
+    "about": {
+      "title": "À propos de cet outil",
+      "description": "Cet outil vous aide à comprendre comment ajuster les mesures clés ou les éléments de patron pour mieux convenir à votre morphologie spécifique. Sélectionnez vos caractéristiques corporelles pour recevoir des conseils d'ajustement personnalisés."
     },
-    "characteristics": {
-      "full_bust": "Poitrine Généreuse",
-      "full_bust_description": "Mesure de poitrine plus importante nécessitant une mise en forme supplémentaire",
-      "sway_back": "Dos Cambré",
-      "sway_back_description": "Le bas du dos se courbe vers l'intérieur plus que la moyenne",
-      "broad_shoulders": "Épaules Larges",
-      "broad_shoulders_description": "Largeur d'épaules plus importante que la moyenne proportionnellement",
-      "sloping_shoulders": "Épaules Tombantes",
-      "sloping_shoulders_description": "Épaules qui tombent vers le bas plus que la moyenne",
-      "long_torso": "Torse Long",
-      "long_torso_description": "Torse plus long que la moyenne par rapport à la taille",
-      "short_torso": "Torse Court",
-      "short_torso_description": "Torse plus court que la moyenne par rapport à la taille",
-      "long_arms": "Bras Longs",
-      "long_arms_description": "Bras plus longs que la moyenne nécessitant des manches plus longues",
-      "short_arms": "Bras Courts",
-      "short_arms_description": "Bras plus courts que la moyenne nécessitant des manches plus courtes"
+    "morphological_fitting": {
+      "title": "Ajustement Morphologique",
+      "concept": "L'ajustement morphologique",
+      "description": "consiste à adapter un patron standard aux particularités de votre corps pour obtenir un meilleur ajustement.",
+      "full_bust": "Poitrine généreuse",
+      "full_bust_desc": "Nécessite souvent plus de tissu et de mise en forme",
+      "broad_shoulders": "Épaules larges",
+      "broad_shoulders_desc": "Peut nécessiter plus d'aisance dans le haut",
+      "long_short_torso": "Torse long/court",
+      "long_short_torso_desc": "Ajustements de longueur nécessaires",
+      "particular_posture": "Posture particulière",
+      "particular_posture_desc": "Adaptations spécifiques requises"
     },
-    "fitting_implications": "Implications d'Ajustement",
-    "measurement_focus": "Mesures Clés",
-    "ease_considerations": "Considérations d'Aisance",
-    "adjustment_suggestions": "Suggestions d'Ajustement",
-    "visual_guide": "Guide Visuel",
-    "related_information": "Informations Connexes",
-    "related_measurements_link": "Vérifiez vos mesures corporelles pour plus de précision",
-    "related_ease_link": "Utilisez le Conseiller d'Aisance pour des recommandations d'aisance personnalisées",
-    "pattern_selection_tips": "Considérez ces facteurs lors de la sélection de patrons"
+    "fitting_tips": {
+      "title": "Conseils d'Ajustement",
+      "accurate_measurements": "Prenez vos mesures avec précision",
+      "accurate_measurements_desc": "Des mesures précises sont la base de tout bon ajustement.",
+      "make_swatch": "Faites un échantillon",
+      "make_swatch_desc": "Testez toujours votre échantillon avant de commencer le projet.",
+      "adjust_gradually": "Ajustez progressivement",
+      "adjust_gradually_desc": "Commencez par de petits ajustements et testez au fur et à mesure.",
+      "document_changes": "Documentez vos modifications",
+      "document_changes_desc": "Notez les ajustements qui fonctionnent pour vos futurs projets."
+    },
+    "common_adjustments": {
+      "title": "Ajustements Courants",
+      "bust_adjustment": "Ajustement de poitrine (FBA)",
+      "bust_adjustment_desc": "Ajouter du tissu et de la mise en forme pour une poitrine généreuse.",
+      "shoulder_adjustment": "Ajustement d'épaules",
+      "shoulder_adjustment_desc": "Modifier la largeur ou la pente des épaules selon votre morphologie.",
+      "length_adjustment": "Ajustement de longueur",
+      "length_adjustment_desc": "Raccourcir ou allonger le torse, les manches selon vos proportions.",
+      "waist_adjustment": "Ajustement de taille",
+      "waist_adjustment_desc": "Adapter la forme de la taille à votre silhouette naturelle."
+    },
+    "related_tools": {
+      "title": "Outils Complémentaires",
+      "measurements_management": "Gestion des Mesures",
+      "measurements_management_desc": "Enregistrez et gérez vos mesures corporelles",
+      "ease_advisor": "Conseiller d'Aisance",
+      "ease_advisor_desc": "Obtenez des recommandations d'aisance personnalisées"
+    }
   },
   "accessory": {
     "title": "Définition d'Accessoire",
@@ -1242,8 +1378,254 @@
     "patternStitches": "Mailles de motif",
     "stockinetteStitches": "Mailles de jersey"
   },
+  "stitchLibrary": {
+    "title": "Bibliothèque de Points",
+    "description": "Explorez notre collection complète de points pour le tricot et le crochet. Parcourez par catégorie, recherchez par mots-clés, ou filtrez par niveau de difficulté pour trouver le point parfait pour votre projet.",
+    "helpTitle": "Utilisation de la Bibliothèque de Points",
+    "browsingTitle": "Navigation des Points",
+    "browsingTip1": "Cliquez sur les catégories pour voir les points de ce groupe",
+    "browsingTip2": "Utilisez la barre de recherche pour trouver des points par nom ou mots-clés",
+    "browsingTip3": "Filtrez par type d'artisanat (tricot/crochet) et niveau de difficulté",
+    "browsingTip4": "Basculez entre les vues grille et liste pour différentes présentations",
+    "patternsTitle": "Informations sur les Points",
+    "patternsTip1": "Chaque point affiche le niveau de difficulté et les utilisations courantes",
+    "patternsTip2": "Cliquez sur un point pour voir les instructions détaillées",
+    "patternsTip3": "Les instructions incluent un guide étape par étape",
+    "patternsTip4": "Copiez ou imprimez les instructions pour une utilisation hors ligne",
+    "detail": {
+      "noPatternId": "Aucun ID de point fourni",
+      "patternNotFound": "Point non trouvé",
+      "errorLoading": "Erreur lors du chargement du point :",
+      "failedToLoad": "Échec du chargement du point"
+    }
+  },
   "pattern": {
     "downloadPdf": "Télécharger PDF",
-    "downloadPdfTooltip": "Télécharger le patron en format PDF"
+    "downloadPdfTooltip": "Télécharger le patron en format PDF",
+    "pdf": {
+      "loading": "Chargement du patron...",
+      "generated_on": "Généré le",
+      "footer": "Patron généré par Malaine - Assistant Tricot & Crochet",
+      "not_specified": "Non spécifié",
+      "errors": {
+        "no_data": "Aucune donnée de patron fournie",
+        "invalid_data": "Données de patron invalides",
+        "load_error": "Erreur de chargement"
+      },
+      "sections": {
+        "pattern_info": "Informations du Patron",
+        "materials": "Matériaux Nécessaires",
+        "gauge": "Échantillon"
+      },
+      "fields": {
+        "project_type": "Type de projet",
+        "difficulty": "Difficulté",
+        "techniques": "Techniques utilisées",
+        "estimated_time": "Temps estimé",
+        "description": "Description"
+      },
+      "materials": {
+        "yarn": "Laine",
+        "yarn_type": "Type",
+        "yarn_weight": "Poids",
+        "yarn_quantity": "Quantité",
+        "yarn_color": "Couleur",
+        "tools": "Outils",
+        "accessories": "Accessoires"
+      },
+      "gauge": {
+        "instructions": "Réalisez un échantillon de 10cm x 10cm",
+        "stitches": "Mailles",
+        "stitches_unit": "mailles",
+        "rows": "Rangs",
+        "rows_unit": "rangs",
+        "needle_size": "Taille aiguille",
+        "notes": "Notes"
+      }
+    }
+  },
+  "metadata": {
+    "app": {
+      "title": "Malaine - Assistant Tricot/Crochet",
+      "description": "Votre assistant intelligent pour vos projets de tricot et crochet"
+    },
+    "library": {
+      "title": "Bibliothèque de Motifs | Malaine",
+      "description": "Parcourez et explorez notre collection complète de motifs de tricot et crochet. Trouvez le motif parfait pour votre projet.",
+      "keywords": "motifs de mailles, tricot, crochet, bibliothèque, patrons, techniques"
+    },
+    "libraryPattern": {
+      "title": "Motif de Mailles | Malaine",
+      "description": "Instructions détaillées et informations sur les motifs de mailles."
+    }
+  },
+  "testPdf": {
+    "title": "Test Export PDF - US_9.2",
+    "description": "Cette page démontre la fonctionnalité d'export PDF implémentée pour la US_9.2. Vous pouvez tester l'export en cliquant sur les boutons \"Télécharger PDF\" ci-dessous.",
+    "note": {
+      "title": "Note",
+      "content": "Cette page utilise des données d'exemple. En production, elle serait intégrée dans le vrai PatternViewer de US_9.1."
+    },
+    "technical": {
+      "title": "Informations Techniques - US_9.2",
+      "features": {
+        "title": "Fonctionnalités Implémentées",
+        "export_button": "Bouton d'export PDF dans PatternViewer",
+        "server_generation": "Génération PDF côté serveur avec Puppeteer",
+        "print_optimized": "Page HTML optimisée pour l'impression",
+        "headers_footers": "Headers et footers avec pagination",
+        "user_feedback": "Feedback utilisateur et gestion d'erreurs",
+        "future_support": "Support pour les diagrammes futurs (US_9.3)"
+      },
+      "architecture": {
+        "title": "Architecture Technique",
+        "frontend": "Frontend",
+        "frontend_desc": "Composant React avec hooks",
+        "api": "API",
+        "api_desc": "Route Next.js App Router",
+        "pdf": "PDF",
+        "pdf_desc": "Puppeteer + HTML/CSS",
+        "auth": "Auth",
+        "auth_desc": "Session Supabase",
+        "styles": "Styles",
+        "styles_desc": "Tailwind CSS print media",
+        "i18n": "i18n",
+        "i18n_desc": "Support français/anglais"
+      }
+    },
+    "future": {
+      "title": "Préparation pour US_9.3",
+      "content": "L'architecture inclut déjà le support pour les diagrammes schématiques de US_9.3. Quand cette fonctionnalité sera implémentée, elle s'intégrera automatiquement dans l'export PDF via les interfaces SchematicsData et l'option includeSchematics."
+    }
+  },
+  "testSchematics": {
+    "title": "Test de Génération de Schémas (US_9.3)",
+    "acceptanceCriteria": {
+      "title": "Validation des Critères d'Acceptation"
+    },
+    "testCases": {
+      "title": "Cas de Test :",
+      "ac1": "AC1 : Panneau arrière rectangulaire (50cm × 60cm) avec dimensions étiquetées",
+      "ac2": "AC2 : Manche effilée (20cm → 30cm largeur, 45cm longueur) en trapèze",
+      "ac3": "AC3 : Les schémas sont proportionnels aux dimensions",
+      "ac4": "AC4 : Les étiquettes sont lisibles",
+      "ac5": "AC5 : Schémas pour toutes les pièces principales du vêtement"
+    },
+    "components": {
+      "backPanel": "Panneau Arrière",
+      "frontPanel": "Panneau Avant",
+      "sleeve": "Manche"
+    },
+    "generating": "Génération en cours...",
+    "generateButton": "Générer les Schémas de Test",
+    "results": {
+      "title": "Schémas Générés"
+    },
+    "validation": {
+      "shape": "Forme",
+      "generated": "Généré",
+      "dimensions": "Dimensions"
+    },
+    "dimensions": {
+      "sleeve": "20cm (poignet) → 30cm (haut du bras), 45cm longueur",
+      "panel": "50cm × 60cm"
+    },
+    "rawSvg": {
+      "title": "Sortie SVG Brute (pour débogage)",
+      "componentSvg": "SVG de {{component}} :"
+    },
+    "errors": {
+      "generating": "Erreur lors de la génération des schémas de test :",
+      "failed": "Erreur lors de la génération des schémas : ",
+      "unknown": "Erreur inconnue"
+    }
+  },
+  "stitchPatternDemo": {
+    "title": "Démo d'Intégration de Motif de Points",
+    "description": "Démonstration de US_8.3 : Intégration complexe de motifs de points dans le calcul de patron. Cette démo montre comment le système génère des instructions détaillées rang par rang avec des motifs de câbles et côtes intégrés, incluant les mailles de lisière et le suivi des motifs.",
+    "sampleData": {
+      "patternName": "Câbles et Côtes",
+      "gaugeName": "Échantillon Poids Peigné",
+      "yarnName": "Laine Peignée d'Exemple",
+      "patternFullName": "Motif Câbles et Côtes",
+      "garmentName": "Écharpe à Câbles",
+      "componentName": "Panneau Principal d'Écharpe"
+    },
+    "config": {
+      "title": "Configuration de la Démo :",
+      "component": "Composant",
+      "componentDetails": "écharpe à câbles 20cm × 160cm",
+      "pattern": "Motif",
+      "patternDetails": "Câbles et Côtes (répétition 16 m × 8 rgs)",
+      "integration": "Intégration",
+      "integrationDetails": "4 répétitions complètes avec 4 mailles de lisière de chaque côté",
+      "gauge": "Échantillon",
+      "gaugeDetails": "20 m × 28 rgs par 10cm",
+      "totalStitches": "Total de Mailles",
+      "totalStitchesDetails": "96 (ajusté pour la compatibilité du motif)"
+    },
+    "calculating": "Calcul en cours...",
+    "runDemo": "Lancer la Démo de Motif de Points",
+    "success": {
+      "title": "Calcul Réussi !",
+      "message": "Patron calculé avec intégration de motif de points. Détails ci-dessous."
+    },
+    "results": {
+      "noInstructions": "Aucune instruction détaillée de motif générée.",
+      "patternInstructions": "Instructions de Motif (US_8.3)",
+      "step": "Étape",
+      "patternRow": "Rang du Motif",
+      "row": "Rang",
+      "stitches": "m",
+      "shapingRow": "Rang de Façonnage"
+    },
+    "componentDetails": {
+      "basicCalculations": "Calculs de Base",
+      "stitchCount": "Nombre de Mailles",
+      "rowCount": "Nombre de Rangs",
+      "patternIntegration": "Intégration de Motif",
+      "shapingInfo": "Informations de Façonnage",
+      "hasShaping": "A du Façonnage",
+      "calculationType": "Type de Calcul"
+    },
+    "warnings": {
+      "title": "Avertissements"
+    },
+    "errors": {
+      "title": "Erreurs",
+      "calculationFailed": "Échec du calcul",
+      "requestFailed": "Échec de la requête : "
+    }
+  },
+  "patternViewer": {
+    "loading": "Chargement de votre patron...",
+    "retry": "Réessayer",
+    "goBack": "Retour",
+    "errors": {
+      "title": "Erreur de Chargement du Patron",
+      "noSessionId": "Aucun ID de session fourni",
+      "loadFailed": "Échec du chargement du patron",
+      "sessionNotFound": "Session non trouvée ou non accessible",
+      "unauthorized": "Veuillez vous connecter pour voir ce patron",
+      "noPattern": "Aucune donnée de patron disponible"
+    },
+    "schematicLoadError": "Échec du chargement des schémas",
+    "schematicSessionNotFound": "Session de patron non trouvée ou vous n'y avez pas accès",
+    "schematicSessionMissing": "Session de patron non trouvée",
+    "schematicUnauthorized": "Veuillez vous connecter pour voir les schémas"
+  },
+  "userRole": {
+    "title": "Informations Utilisateur",
+    "email": "Email",
+    "role": "Rôle",
+    "status": "Statut",
+    "authenticated": "Authentifié",
+    "adminAccess": "Accès Administrateur",
+    "notSignedIn": "Vous n'êtes pas connecté. Votre rôle est",
+    "roles": {
+      "guest": "invité",
+      "user": "utilisateur",
+      "admin": "administrateur"
+    }
   }
 }

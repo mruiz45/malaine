@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ColorSource, ColorSchemeTemplate, TemplateSection } from '@/types/colorScheme';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Props for template components
@@ -185,21 +186,21 @@ export function GarmentOutlineTemplate({
 /**
  * Template definitions with their sections
  */
-export const COLOR_SCHEME_TEMPLATES: ColorSchemeTemplate[] = [
+export const getColorSchemeTemplates = (t: (key: string, defaultValue?: string) => string): ColorSchemeTemplate[] => [
   {
     type: 'stripes',
-    name: 'Simple Stripes',
-    description: 'Alternating stripe pattern with 2 colors',
+    name: t('colorScheme.templates.stripes.name', 'Simple Stripes'),
+    description: t('colorScheme.templates.stripes.description', 'Alternating stripe pattern with 2 colors'),
     sections: [
       {
         id: 'color_0',
-        name: 'Color 1',
+        name: t('colorScheme.sections.color_0', 'Color 1'),
         svg_element: 'stripe_even',
         default_color: '#E5E7EB'
       },
       {
         id: 'color_1',
-        name: 'Color 2',
+        name: t('colorScheme.sections.color_1', 'Color 2'),
         svg_element: 'stripe_odd',
         default_color: '#D1D5DB'
       }
@@ -208,24 +209,24 @@ export const COLOR_SCHEME_TEMPLATES: ColorSchemeTemplate[] = [
   },
   {
     type: 'blocks',
-    name: 'Color Blocks',
-    description: 'Three color blocks side by side',
+    name: t('colorScheme.templates.blocks.name', 'Color Blocks'),
+    description: t('colorScheme.templates.blocks.description', 'Three color blocks side by side'),
     sections: [
       {
         id: 'block_0',
-        name: 'Block 1',
+        name: t('colorScheme.sections.block_0', 'Block 1'),
         svg_element: 'block_0',
         default_color: '#E5E7EB'
       },
       {
         id: 'block_1',
-        name: 'Block 2',
+        name: t('colorScheme.sections.block_1', 'Block 2'),
         svg_element: 'block_1',
         default_color: '#D1D5DB'
       },
       {
         id: 'block_2',
-        name: 'Block 3',
+        name: t('colorScheme.sections.block_2', 'Block 3'),
         svg_element: 'block_2',
         default_color: '#9CA3AF'
       }
@@ -234,30 +235,30 @@ export const COLOR_SCHEME_TEMPLATES: ColorSchemeTemplate[] = [
   },
   {
     type: 'garment_outline',
-    name: 'Sweater Outline',
-    description: 'Simple sweater shape with different areas',
+    name: t('colorScheme.templates.garment_outline.name', 'Sweater Outline'),
+    description: t('colorScheme.templates.garment_outline.description', 'Simple sweater shape with different areas'),
     sections: [
       {
         id: 'body',
-        name: 'Body',
+        name: t('colorScheme.sections.body', 'Body'),
         svg_element: 'garment_body',
         default_color: '#E5E7EB'
       },
       {
         id: 'sleeves',
-        name: 'Sleeves',
+        name: t('colorScheme.sections.sleeves', 'Sleeves'),
         svg_element: 'garment_sleeves',
         default_color: '#D1D5DB'
       },
       {
         id: 'neckline',
-        name: 'Neckline',
+        name: t('colorScheme.sections.neckline', 'Neckline'),
         svg_element: 'garment_neckline',
         default_color: '#9CA3AF'
       },
       {
         id: 'hem',
-        name: 'Hem',
+        name: t('colorScheme.sections.hem', 'Hem'),
         svg_element: 'garment_hem',
         default_color: '#6B7280'
       }
@@ -281,6 +282,8 @@ export function TemplateRenderer({
   height, 
   onSectionClick 
 }: TemplateRendererProps) {
+  const { t } = useTranslation();
+
   switch (templateType) {
     case 'stripes':
       return (
@@ -312,7 +315,7 @@ export function TemplateRenderer({
     default:
       return (
         <div className="w-full h-48 bg-gray-100 border border-gray-200 rounded flex items-center justify-center">
-          <span className="text-gray-500">Template not found</span>
+          <span className="text-gray-500">{t('common.templateNotFound', 'Template not found')}</span>
         </div>
       );
   }

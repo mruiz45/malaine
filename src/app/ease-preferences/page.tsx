@@ -86,7 +86,7 @@ export default function EasePreferencesPage() {
       setSuccessMessage(t('ease.messages.created_success'));
     } catch (err: any) {
       console.error('Error creating ease preference:', err);
-      if (err.message.includes('already exists')) {
+      if (err.message && err.message.toLowerCase().includes('exist')) {
         setError(t('ease.messages.name_exists'));
       } else {
         setError(t('ease.messages.create_error'));
@@ -117,7 +117,7 @@ export default function EasePreferencesPage() {
       setSuccessMessage(t('ease.messages.updated_success'));
     } catch (err: any) {
       console.error('Error updating ease preference:', err);
-      if (err.message.includes('already exists')) {
+      if (err.message && err.message.toLowerCase().includes('exist')) {
         setError(t('ease.messages.name_exists'));
       } else {
         setError(t('ease.messages.update_error'));

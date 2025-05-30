@@ -72,17 +72,17 @@ export default function ComponentInstructionsSection({
     } catch (error) {
       console.error('Error loading schematics:', error);
       
-      let errorMessage = 'Failed to load schematics';
+      let errorMessage = t('patternViewer.schematicLoadError', 'Failed to load schematics');
       
       if (error instanceof Error) {
         if (error.message.includes('404')) {
           if (error.message.includes('Pattern session not found or not accessible')) {
-            errorMessage = 'Pattern session not found or you don\'t have access to it';
+            errorMessage = t('patternViewer.schematicSessionNotFound', 'Pattern session not found or you don\'t have access to it');
           } else {
-            errorMessage = 'Pattern session not found';
+            errorMessage = t('patternViewer.schematicSessionMissing', 'Pattern session not found');
           }
         } else if (error.message.includes('401')) {
-          errorMessage = 'Please log in to view schematics';
+          errorMessage = t('patternViewer.schematicUnauthorized', 'Please log in to view schematics');
         } else {
           errorMessage = error.message;
         }

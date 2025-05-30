@@ -12,7 +12,7 @@ import {
   ColorScheme,
   DEFAULT_COLOR_PALETTES
 } from '@/types/colorScheme';
-import { TemplateRenderer, COLOR_SCHEME_TEMPLATES } from './ColorSchemeTemplates';
+import { TemplateRenderer, getColorSchemeTemplates } from './ColorSchemeTemplates';
 
 /**
  * Simplified yarn profile interface for the simulator
@@ -65,10 +65,9 @@ export default function ColorSchemeSimulator({
     }
   }, [initialColorScheme]);
 
-  /**
-   * Get current template definition
-   */
-  const currentTemplate = COLOR_SCHEME_TEMPLATES.find(t => t.type === state.templateType);
+  // Get templates with translations
+  const colorSchemeTemplates = getColorSchemeTemplates((key: string, defaultValue?: string) => t(key, defaultValue || ''));
+  const currentTemplate = colorSchemeTemplates.find(template => template.type === state.templateType);
 
   /**
    * Handle template type change
@@ -313,7 +312,7 @@ export default function ColorSchemeSimulator({
                   {t('colorScheme.template', 'Preview Template')}
                 </label>
                 <div className="grid grid-cols-1 gap-3">
-                  {COLOR_SCHEME_TEMPLATES.map((template) => (
+                  {colorSchemeTemplates.map((template) => (
                     <button
                       key={template.type}
                       onClick={() => handleTemplateChange(template.type)}

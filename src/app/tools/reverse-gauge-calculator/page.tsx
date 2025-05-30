@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReverseGaugeCalculator } from '@/components/tools';
 
 /**
@@ -8,16 +9,18 @@ import { ReverseGaugeCalculator } from '@/components/tools';
  * Demonstrates the standalone usage of the ReverseGaugeCalculator component
  */
 export default function ReverseGaugeCalculatorPage() {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Reverse Gauge Calculator
+            {t('tools.reverse_gauge_calculator.title', 'Reverse Gauge Calculator')}
           </h1>
           <p className="text-lg text-gray-600">
-            A powerful tool to help you work with gauge discrepancies and calculate adjustments for your knitting and crochet projects.
+            {t('tools.reverse_gauge_calculator.description', 'A powerful tool to help you work with gauge discrepancies and calculate adjustments for your knitting and crochet projects.')}
           </p>
         </div>
 
@@ -28,24 +31,21 @@ export default function ReverseGaugeCalculatorPage() {
           </h2>
           <div className="space-y-3 text-blue-800">
             <div>
-              <strong>Scenario A - Target Dimension to Stitches/Rows:</strong>
+              <strong>{t('tools.reverse_gauge_calculator.scenarios.target_to_stitches.title', 'Target Dimension → Stitches/Rows')}</strong>
               <p className="text-sm">
-                You know the dimension you want (e.g., 50cm wide) and your gauge. 
-                The tool calculates how many stitches or rows you need.
+                {t('tools.reverse_gauge_calculator.scenarios.target_to_stitches.description', 'Calculate how many stitches or rows you need for a specific dimension with your gauge')}
               </p>
             </div>
             <div>
-              <strong>Scenario B - Stitches/Rows to Dimension:</strong>
+              <strong>{t('tools.reverse_gauge_calculator.scenarios.stitches_to_dimension.title', 'Stitches/Rows → Dimension')}</strong>
               <p className="text-sm">
-                You have a specific number of stitches or rows (e.g., from a pattern) and your gauge. 
-                The tool calculates the resulting dimension.
+                {t('tools.reverse_gauge_calculator.scenarios.stitches_to_dimension.description', 'Calculate the resulting dimension when using a specific number of stitches or rows with your gauge')}
               </p>
             </div>
             <div>
-              <strong>Scenario C - Pattern vs Your Gauge Comparison:</strong>
+              <strong>{t('tools.reverse_gauge_calculator.scenarios.gauge_comparison.title', 'Pattern vs User Gauge Comparison')}</strong>
               <p className="text-sm">
-                You have both the pattern&apos;s gauge and your actual gauge. 
-                The tool shows how the dimensions will differ and what adjustments you need.
+                {t('tools.reverse_gauge_calculator.scenarios.gauge_comparison.description', 'Compare pattern gauge with your gauge and get adjustments needed')}
               </p>
             </div>
           </div>
@@ -68,21 +68,21 @@ export default function ReverseGaugeCalculatorPage() {
             <div className="border border-gray-200 rounded-lg p-4">
               <h3 className="font-medium text-gray-900 mb-2">Sweater Width Adjustment</h3>
               <p className="text-sm text-gray-600">
-                Your gauge is tighter than the pattern. Use Scenario C to see how much narrower 
+                Your gauge is tighter than the pattern. Use the comparison tool to see how much narrower 
                 your sweater will be and how many extra stitches to cast on.
               </p>
             </div>
             <div className="border border-gray-200 rounded-lg p-4">
               <h3 className="font-medium text-gray-900 mb-2">Custom Scarf Length</h3>
               <p className="text-sm text-gray-600">
-                You want a 180cm scarf. Use Scenario A to calculate exactly how many rows 
+                You want a specific scarf length. Use the dimension calculator to find exactly how many rows 
                 you need with your specific gauge.
               </p>
             </div>
             <div className="border border-gray-200 rounded-lg p-4">
               <h3 className="font-medium text-gray-900 mb-2">Pattern Adaptation</h3>
               <p className="text-sm text-gray-600">
-                Converting a pattern from one yarn weight to another. Use Scenario B to see 
+                Converting a pattern from one yarn weight to another. Use the stitch calculator to see 
                 the final dimensions with your new gauge.
               </p>
             </div>

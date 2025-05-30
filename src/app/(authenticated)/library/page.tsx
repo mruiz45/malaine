@@ -7,12 +7,9 @@
 import React from 'react';
 import { Metadata } from 'next';
 import StitchLibraryBrowser from '@/components/knitting/StitchLibraryBrowser';
+import { generateLibraryMetadata } from '@/utils/metadata';
 
-export const metadata: Metadata = {
-  title: 'Stitch Pattern Library | Malaine',
-  description: 'Browse and explore our comprehensive collection of knitting and crochet stitch patterns. Find the perfect pattern for your project.',
-  keywords: ['stitch patterns', 'knitting', 'crochet', 'library', 'patterns', 'techniques']
-};
+export const metadata: Metadata = generateLibraryMetadata();
 
 /**
  * Stitch Pattern Library Page Component

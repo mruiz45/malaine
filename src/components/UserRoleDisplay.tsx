@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createClient } from '@supabase/supabase-js';
 
 // Create Supabase client
@@ -9,6 +10,7 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export default function UserRoleDisplay() {
+  const { t } = useTranslation();
   const [user, setUser] = useState<any>(null);
   const [role, setRole] = useState<'guest' | 'user' | 'admin'>('guest');
   const [loading, setLoading] = useState(true);
@@ -57,23 +59,23 @@ export default function UserRoleDisplay() {
   }, []);
   
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('common.loading', 'Loading...')}</div>;
   }
   
   return (
     <div className="role-display">
-      <h2>User Information</h2>
+      <h2>{t('userRole.title', 'User Information')}</h2>
       {user ? (
         <>
-          <p>Email: {user.email}</p>
-          <p>Role: <strong>{role}</strong></p>
-          <p>Status: <strong>Authenticated</strong></p>
+          <p>{t('userRole.email', 'Email')}: {user.email}</p>
+          <p>{t('userRole.role', 'Role')}: <strong>{t(`userRole.roles.${role}`, role)}</strong></p>
+          <p>{t('userRole.status', 'Status')}: <strong>{t('userRole.authenticated', 'Authenticated')}</strong></p>
           {role === 'admin' && (
-            <p className="admin-badge">Administrator Access</p>
+            <p className="admin-badge">{t('userRole.adminAccess', 'Administrator Access')}</p>
           )}
         </>
       ) : (
-        <p>You are not signed in. Your role is: <strong>guest</strong></p>
+        <p>{t('userRole.notSignedIn', 'You are not signed in. Your role is')}: <strong>{t('userRole.roles.guest', 'guest')}</strong></p>
       )}
       <style jsx>{`
         .role-display {

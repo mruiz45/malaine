@@ -126,12 +126,12 @@ export default function PatternTextParser({
         // Call success callback
         onParseSuccess(originalGauge, originalPatternValues);
       } else {
-        setErrors([result.error || 'Parsing failed']);
+        setErrors([result.error || t('tools.pattern_resizer.text_parser.parsing_failed', 'Parsing failed')]);
       }
 
     } catch (error) {
       console.error('Parse error:', error);
-      setErrors([error instanceof Error ? error.message : 'Unknown error occurred']);
+      setErrors([error instanceof Error ? error.message : t('tools.pattern_resizer.text_parser.unknown_error', 'Unknown error occurred')]);
     } finally {
       setIsParsing(false);
     }

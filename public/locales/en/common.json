@@ -9,7 +9,8 @@
     "measurements": "Measurements",
     "tools": "Tools",
     "showcase": "Pattern Gallery",
-    "logout": "Logout"
+    "logout": "Logout",
+    "toggleMenu": "Toggle menu"
   },
   "home": {
     "welcome_message": "Welcome to Malaine",
@@ -17,6 +18,11 @@
     "description": "Malaine helps you create, customize, and complete your knitting and crochet projects with the help of AI.",
     "login_button": "Sign In",
     "signup_button": "Create Account",
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your account settings",
+      "logged_in_as": "Logged in as"
+    },
     "features": {
       "adapt_patterns": {
         "title": "Adapt Patterns",
@@ -481,10 +487,12 @@
     }
   },
   "stitchPattern": {
-    "title": "Stitch Patterns",
-    "subtitle": "Choose your stitch pattern",
-    "description": "Choose from our collection of basic stitch patterns for your knitting or crochet projects. Each pattern includes information about stitch repeats and characteristics that will help with your gauge calculations.",
+    "title": "Stitch Pattern",
+    "subtitle": "Select and manage stitch patterns for your projects",
     "selectPattern": "Select Stitch Pattern",
+    "basic": "Basic",
+    "repeat": "Repeat",
+    "uses": "Uses",
     "gaugeReminder": "Remember to measure your gauge in the selected stitch pattern",
     "gaugeImportant": "Important: Gauge and Stitch Patterns",
     "gaugeNotice": "Your gauge (number of stitches and rows per inch/cm) can vary significantly between different stitch patterns. Always create a gauge swatch in your chosen stitch pattern before starting your project.",
@@ -500,6 +508,18 @@
     "noPatterns": "No stitch patterns available",
     "patternCount": "{{count}} pattern available",
     "patternCount_plural": "{{count}} patterns available",
+    "notFound": "Pattern Not Found",
+    "notFoundDescription": "The requested stitch pattern could not be found.",
+    "craftType": "Craft Type",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "commonUses": "Common Uses",
+    "keywords": "Keywords",
+    "importantNotes": "Important Notes",
+    "gaugeNote": "Always create a gauge swatch before starting your project",
+    "tensionNote": "Your tension may affect the appearance of the pattern",
+    "yarnNote": "Different yarn weights will produce different results",
+    "practiceNote": "Practice the pattern on a small swatch first if you're unfamiliar with it",
     "preview": {
       "swatchTitle": "Stitch Preview",
       "swatchAlt": "Swatch preview of {{name}}",
@@ -511,9 +531,62 @@
       "stretchVertical": "Vertical Stretch",
       "yarnConsumption": "Yarn Consumption",
       "notes": "Notes"
-    }
+    },
+    "favorited": "Favorited",
+    "addToFavorites": "Add to Favorites",
+    "yes": "Yes",
+    "no": "No"
   },
   "tools": {
+    "ease_advisor": {
+      "back_to_tools": "Back to Tools",
+      "page_title": "Ease Selection Advisor",
+      "about_ease": {
+        "title": "About Ease",
+        "ease_term": "Ease",
+        "description": "is the difference between your body measurements and the finished garment measurements. It determines how the garment will fit and feel when worn.",
+        "negative_ease": "Negative Ease",
+        "negative_ease_desc": "Garment is smaller than body measurements (stretchy fabrics)",
+        "zero_ease": "Zero Ease",
+        "zero_ease_desc": "Garment matches body measurements exactly",
+        "positive_ease": "Positive Ease",
+        "positive_ease_desc": "Garment is larger than body measurements"
+      },
+      "fit_guide": {
+        "title": "Fit Guide",
+        "very_close_fitting": "Very Close-fitting",
+        "very_close_fitting_desc": "Negative ease, body-hugging fit. Best with stretchy yarns.",
+        "close_fitting": "Close-fitting",
+        "close_fitting_desc": "Zero to minimal ease, fitted but comfortable.",
+        "classic": "Classic",
+        "classic_desc": "Slight positive ease, traditional comfortable fit.",
+        "relaxed": "Relaxed",
+        "relaxed_desc": "Moderate positive ease, loose and comfortable.",
+        "oversized": "Oversized",
+        "oversized_desc": "Significant positive ease, very loose and flowing."
+      },
+      "yarn_weight": {
+        "title": "Yarn Weight Impact",
+        "description": "Different yarn weights affect how ease translates to the final garment:",
+        "fingering_sport": "Fingering/Sport",
+        "fingering_sport_desc": "More precise ease control, good for fitted garments",
+        "dk_worsted": "DK/Worsted",
+        "dk_worsted_desc": "Balanced drape and structure, versatile for most fits",
+        "bulky": "Bulky",
+        "bulky_desc": "Adds volume, may require less ease for desired fit"
+      },
+      "related_tools": {
+        "title": "Related Tools",
+        "measurements": {
+          "title": "Body Measurements",
+          "description": "Manage your body measurements for accurate sizing"
+        },
+        "ease_preferences": {
+          "title": "Ease Preferences",
+          "description": "Save and manage your personal ease preferences"
+        }
+      }
+    },
     "reverse_gauge_calculator": {
       "title": "Reverse Gauge Calculator",
       "description": "Calculate required stitches/rows for target dimensions, resulting dimensions from stitch counts, or compare pattern gauge vs user gauge",
@@ -705,10 +778,6 @@
         "no_estimation": "No estimation available"
       }
     },
-    "ease_advisor": {
-      "title": "Ease Advisor",
-      "description": "Get personalized ease recommendations for your projects"
-    },
     "morphology_advisor": {
       "title": "Body Morphology Advisor",
       "description": "Get advice on adapting patterns to your body shape"
@@ -854,7 +923,7 @@
       },
       "text_parser": {
         "title": "Import from Text",
-        "description": "Paste your pattern text using the structured format below. The parser will extract gauge and measurement values automatically.",
+        "description": "Paste your pattern text using the structured format below. The parser will automatically extract gauge and measurement values.",
         "unit": "Unit",
         "text_label": "Pattern Text",
         "placeholder": "Paste your structured pattern text here...\n\nExample:\nPATTERN_NAME: My Pattern\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
@@ -869,6 +938,8 @@
         "values_found": "Values found:",
         "components_found": "Components:",
         "warnings": "Warnings:",
+        "parsing_failed": "Parsing failed",
+        "unknown_error": "Unknown error occurred",
         "format_help": {
           "title": "Text Format Guide",
           "description": "Use this simple keyword-based format:",
@@ -876,7 +947,7 @@
             "pattern_name": "PATTERN_NAME: Your pattern name",
             "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: number (or _PER_4IN for inches)",
             "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: number (or _PER_4IN for inches)",
-            "component": "COMPONENT: ComponentName (optional, to group values)",
+            "component": "COMPONENT: ComponentName (optional, for grouping values)",
             "cast_on": "CAST_ON: number of stitches",
             "rows": "ROWS_TOTAL: number of rows",
             "width": "FINISHED_WIDTH_CM: measurement (or _IN for inches)",
@@ -884,12 +955,138 @@
           },
           "example_title": "Example for Body Panel:",
           "tips": [
-            "Use keywords exactly as shown (case-insensitive)",
-            "One value per line in format KEYWORD: value",
+            "Use keywords exactly as shown (case insensitive)",
+            "One value per line in KEYWORD: value format",
             "Comments start with // or #",
-            "Unit suffixes (_CM or _IN) help with automatic detection"
+            "Unit suffixes (_CM or _IN) help automatic detection"
           ]
         }
+      }
+    },
+    "development": {
+      "title": "Development Tools",
+      "description": "Temporary page to test all tools developed for Malaine",
+      "note": {
+        "title": "Note:",
+        "content": "This page is temporary and will be used only during development to facilitate testing of the different tools."
+      },
+      "status": {
+        "implemented": "Implemented",
+        "coming_soon": "Coming Soon"
+      },
+      "future_tools": {
+        "tool1": "Future Tool #1",
+        "description1": "Next tool to be developed according to functional specifications.",
+        "tool2": "Future Tool #2",
+        "description2": "Another tool to be developed according to functional specifications.",
+        "tool3": "Future Tool #3",
+        "description3": "Another tool to be developed according to functional specifications."
+      },
+      "info": {
+        "title": "Development Information",
+        "implemented_tools": "Implemented Tools",
+        "architecture": "Architecture",
+        "tools": {
+          "reverse_gauge": "Reverse Gauge Calculator (US_2.1)",
+          "yarn_estimator": "Yarn Quantity Estimator (US_2.2)",
+          "ease_advisor": "Ease Selection Advisor (US_3.2)",
+          "pattern_resizer": "Existing Pattern Resizer (US_10.1)",
+          "morphology_advisor": "Body Morphology Advisor (US_3.1)",
+          "next_tool": "Next tool according to specifications"
+        },
+        "arch": {
+          "reusable_components": "Reusable components",
+          "business_logic": "Services with business logic",
+          "api_routes": "Next.js API routes",
+          "unit_tests": "Unit tests with Jest",
+          "i18n": "Internationalization (FR/EN)"
+        }
+      },
+      "quick_links": {
+        "title": "Quick Links",
+        "dashboard": "Dashboard",
+        "gauge_profiles": "Gauge Profiles",
+        "measurements": "Measurements"
+      }
+    },
+    "pattern_resizer": {
+      "title": "Existing Pattern Resizer",
+      "description": "Adapt existing pattern numbers to your gauge and desired dimensions. Rescale stitch counts and measurements for your specifications."
+    },
+    "yarn_quantity_estimator": {
+      "title": "Yarn Quantity Estimator",
+      "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type."
+    },
+    "reverse_gauge_calculator": {
+      "title": "Reverse Gauge Calculator",
+      "description": "Calculate required stitches/rows for target dimensions, resulting dimensions from stitch counts, or compare pattern gauge vs user gauge",
+      "scenario_selection": "Choose Your Calculation Scenario",
+      "calculate": "Calculate",
+      "calculating": "Calculating...",
+      "reset": "Reset",
+      "scenarios": {
+        "target_to_stitches": {
+          "title": "Target Dimension → Stitches/Rows",
+          "description": "Calculate how many stitches or rows you need for a specific dimension with your gauge"
+        },
+        "stitches_to_dimension": {
+          "title": "Stitches/Rows → Dimension",
+          "description": "Calculate the resulting dimension when using a specific number of stitches or rows with your gauge"
+        },
+        "gauge_comparison": {
+          "title": "Pattern vs User Gauge Comparison",
+          "description": "Compare pattern gauge with your gauge and get adjustments needed"
+        }
+      },
+      "form": {
+        "your_gauge": "Your Gauge",
+        "pattern_gauge": "Pattern Gauge",
+        "stitches": "Stitches",
+        "rows": "Rows",
+        "unit_dimension": "Unit Dimension",
+        "unit": "Unit",
+        "target_dimension": "Target Dimension",
+        "dimension_unit": "Dimension Unit",
+        "calculate_for": "Calculate for",
+        "stitch_or_row_count": "Stitch or Row Count",
+        "calculate_dimension_for": "Calculate dimension for",
+        "pattern_stitch_row_count": "Pattern Stitch/Row Count",
+        "calculate_component_for": "Calculate component for",
+        "width": "Width",
+        "height": "Height"
+      },
+      "results": {
+        "title": "Calculation Results",
+        "scenario_a": {
+          "title": "Target Dimension → Required Stitches/Rows"
+        },
+        "scenario_b": {
+          "title": "Stitches/Rows → Resulting Dimension"
+        },
+        "scenario_c": {
+          "title": "Gauge Comparison"
+        },
+        "target_dimension": "Target Dimension",
+        "calculating_for": "Calculating for",
+        "required_count": "Required Count",
+        "stitches_needed": "stitches needed",
+        "rows_needed": "rows needed",
+        "stitches_used": "Stitches Used",
+        "rows_used": "Rows Used",
+        "resulting_dimension": "Resulting Dimension",
+        "final_width": "final width",
+        "final_height": "final height",
+        "pattern_count": "Pattern Count",
+        "original_pattern_dimension": "Original Pattern Dimension",
+        "with_pattern_gauge": "With pattern gauge",
+        "with_your_gauge": "With Your Gauge",
+        "with_your_gauge_detail": "With your gauge",
+        "difference": "difference",
+        "adjustment_needed": "Adjustment Needed",
+        "to_achieve_original_dimension": "to achieve original dimension",
+        "gauges_match": "Gauges match!",
+        "no_adjustment_needed": "No adjustment needed",
+        "gauge_used": "Gauge used"
       }
     }
   },
@@ -955,101 +1152,303 @@
     "search": "Search",
     "hideSearch": "Hide Search",
     "searching": "Searching...",
-    "clear": "Clear"
+    "clear": "Clear",
+    "loading": "Loading...",
+    "all": "All",
+    "filters": "Filters",
+    "clearAll": "Clear All",
+    "clearFilters": "Clear Filters",
+    "copy": "Copy",
+    "print": "Print",
+    "retry": "Try Again",
+    "gridView": "Grid View",
+    "listView": "List View",
+    "generating": "Generating...",
+    "downloaded": "Downloaded!",
+    "error": "Error",
+    "back": "Back",
+    "backToLibrary": "Back to Library",
+    "favorited": "Added to favorites",
+    "addToFavorites": "Add to Favorites",
+    "yes": "Yes",
+    "no": "No",
+    "selected": "Selected",
+    "templateNotFound": "Template not found"
   },
-  "garmentType": {
-    "selectType": "Select Garment Type",
-    "selectTypeDescription": "Choose the type of garment you want to create. This will determine the available options and tools for your pattern.",
-    "noTypesAvailable": "No garment types available",
-    "components": "Components",
-    "difficulty": {
-      "beginner": "Beginner",
-      "intermediate": "Intermediate", 
-      "advanced": "Advanced"
-    },
-    "title": "Garment Type",
-    "sweater": "Sweater",
-    "cardigan": "Cardigan", 
-    "vest": "Vest",
-    "beanie": "Beanie",
-    "scarf": "Scarf",
-    "cowl": "Cowl",
-    "socks": "Socks",
-    "shawl": "Shawl",
-    "poncho": "Poncho"
+  "error": {
+    "categoriesLoadFailed": "Failed to load categories",
+    "patternsLoadFailed": "Failed to load patterns"
   },
-  "sweaterStructure": {
-    "title": "Sweater Structure",
-    "description": "Choose the construction method and body shape for your sweater. These choices will influence the pattern calculations and available options.",
-    "constructionMethod": "Construction Method",
-    "bodyShape": "Body Shape",
-    "notApplicable": "Garment structure options are only available for sweaters and cardigans. Please select a compatible garment type first.",
-    "helpText": "Your construction method choice affects which body shapes are available. Some combinations work better together for optimal fit and construction ease.",
-    "difficulty": {
-      "beginner": "Beginner",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced"
-    },
-    "fitType": {
-      "loose": "Loose",
-      "fitted": "Fitted",
-      "oversized": "Oversized"
+  "stitchIntegration": {
+    "title": "Stitch Pattern Integration Advisor",
+    "subtitle": "Plan how your stitch pattern fits into your garment component",
+    "description": "Plan how your stitch patterns fit into your garment components with precise calculations",
+    "openTool": "Open Integration Tool",
+    "toolFeatures": "Tool Features",
+    "feature1": "Calculate exact pattern repeats for each component",
+    "feature2": "Handle remaining stitches with smart suggestions",
+    "feature3": "Manage edge stitches and centering",
+    "feature4": "Visual preview of stitch distribution",
+    "selectComponent": "Select Garment Component",
+    "chooseComponent": "Choose a component...",
+    "selectPattern": "Select Stitch Pattern",
+    "choosePattern": "Choose a stitch pattern...",
+    "targetStitchCount": "Target Stitch Count",
+    "edgeStitches": "Edge Stitches (each side)",
+    "analyze": "Analyze Integration",
+    "analyzing": "Analyzing...",
+    "analysisResults": "Analysis Results",
+    "integrationOptions": "Integration Options",
+    "selectedOption": "Selected Option",
+    "integrationSummary": "Integration Summary",
+    "component": "Component",
+    "pattern": "Pattern",
+    "finalStitchCount": "Final Stitch Count",
+    "applyIntegration": "Apply Integration",
+    "applying": "Applying...",
+    "integrationComplete": "Integration Complete!",
+    "successMessage": "The stitch pattern has been successfully integrated into your component.",
+    "appliedIntegration": "Applied Integration",
+    "newIntegration": "New Integration",
+    "error": "Integration Error",
+    "stitchDistribution": "Stitch Distribution Visualization",
+    "visualizationHelp": "This shows how your stitches will be distributed across the component width",
+    "visualizationUnavailable": "Visualization unavailable for current parameters",
+    "patternRepeats": "Pattern Repeats",
+    "stockinette": "Stockinette",
+    "calculationDetails": "Calculation Details",
+    "totalStitches": "Total stitches",
+    "edgeStitchesTotal": "Edge stitches",
+    "patternStitches": "Pattern stitches",
+    "stockinetteStitches": "Stockinette stitches"
+  },
+  "pattern": {
+    "downloadPdf": "Download PDF",
+    "downloadPdfTooltip": "Download the pattern as a PDF file",
+    "pdf": {
+      "loading": "Loading pattern...",
+      "generated_on": "Generated on",
+      "footer": "Pattern generated by Malaine - Knitting & Crochet Assistant",
+      "not_specified": "Not specified",
+      "errors": {
+        "no_data": "No pattern data provided",
+        "invalid_data": "Invalid pattern data",
+        "load_error": "Loading error"
+      },
+      "sections": {
+        "pattern_info": "Pattern Information",
+        "materials": "Required Materials",
+        "gauge": "Gauge"
+      },
+      "fields": {
+        "project_type": "Project type",
+        "difficulty": "Difficulty",
+        "techniques": "Techniques used",
+        "estimated_time": "Estimated time",
+        "description": "Description"
+      },
+      "materials": {
+        "yarn": "Yarn",
+        "yarn_type": "Type",
+        "yarn_weight": "Weight",
+        "yarn_quantity": "Quantity",
+        "yarn_color": "Color",
+        "tools": "Tools",
+        "accessories": "Accessories"
+      },
+      "gauge": {
+        "instructions": "Create a 10cm x 10cm gauge swatch",
+        "stitches": "Stitches",
+        "stitches_unit": "stitches",
+        "rows": "Rows",
+        "rows_unit": "rows",
+        "needle_size": "Needle size",
+        "notes": "Notes"
+      }
     }
   },
-  "neckline": {
-    "title": "Neckline Style",
-    "description": "Choose the neckline style for your garment. Each style has different parameters you can customize to achieve the perfect fit and look.",
-    "selectStyle": "Select Neckline Style",
-    "parameters": "Neckline Parameters",
-    "notApplicable": "Neckline options are only available for garments with defined necklines like sweaters and cardigans. Please select a compatible garment type first.",
-    "helpText": "The neckline parameters will be used to calculate the exact shaping instructions for your pattern. Adjust these values to achieve your desired fit and style.",
-    "styles": {
-      "round": {
-        "name": "Round Neck",
-        "description": "Classic round neckline, comfortable and versatile for everyday wear."
+  "showcase": {
+    "title": "Pattern Gallery",
+    "subtitle": "Discover inspiring knitting and crochet patterns",
+    "search": "Search patterns...",
+    "filters": "Filters",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "allCategories": "All Categories",
+    "allDifficulties": "All Difficulties",
+    "clearFilters": "Clear Filters",
+    "noImage": "Preview Available",
+    "addedOn": "Added",
+    "viewPattern": "View Pattern",
+    "loading": "Loading patterns...",
+    "loadMore": "Load More Patterns",
+    "retry": "Try Again",
+    "backToGallery": "Back to Gallery",
+    "resultsCount": "Showing {{count}} of {{total}} patterns",
+    "noPatterns": "No Patterns Found",
+    "noResultsFiltered": "Try adjusting your filters or search terms",
+    "noResultsEmpty": "No patterns have been added to the showcase yet",
+    "error": "Error Loading Patterns",
+    "errors": {
+      "title": "Pattern Load Error",
+      "noPatternId": "No pattern ID provided",
+      "patternNotFound": "Pattern not found or not available",
+      "invalidPattern": "Invalid pattern ID",
+      "loadFailed": "Failed to load pattern",
+      "noPattern": "No pattern data available"
+    }
+  },
+  "metadata": {
+    "app": {
+      "title": "Malaine - Knitting/Crochet Assistant",
+      "description": "Your smart assistant for knitting and crochet projects"
+    },
+    "library": {
+      "title": "Stitch Pattern Library | Malaine",
+      "description": "Browse and explore our comprehensive collection of knitting and crochet stitch patterns. Find the perfect pattern for your project.",
+      "keywords": "stitch patterns, knitting, crochet, library, patterns, techniques"
+    },
+    "libraryPattern": {
+      "title": "Stitch Pattern | Malaine",
+      "description": "Detailed stitch pattern instructions and information."
+    }
+  },
+  "testPdf": {
+    "title": "PDF Export Test - US_9.2",
+    "description": "This page demonstrates the PDF export functionality implemented for US_9.2. You can test the export by clicking the \"Download PDF\" buttons below.",
+    "note": {
+      "title": "Note",
+      "content": "This page uses sample data. In production, it would be integrated into the real PatternViewer from US_9.1."
+    },
+    "technical": {
+      "title": "Technical Information - US_9.2",
+      "features": {
+        "title": "Implemented Features",
+        "export_button": "PDF export button in PatternViewer",
+        "server_generation": "Server-side PDF generation with Puppeteer",
+        "print_optimized": "HTML page optimized for printing",
+        "headers_footers": "Headers and footers with pagination",
+        "user_feedback": "User feedback and error handling",
+        "future_support": "Support for future diagrams (US_9.3)"
       },
-      "v_neck": {
-        "name": "V-Neck",
-        "description": "Elegant V-shaped neckline that elongates the neck and creates a flattering silhouette."
-      },
-      "boat_neck": {
-        "name": "Boat Neck",
-        "description": "Wide, horizontal neckline that sits off the shoulders for a sophisticated look."
-      },
-      "square_neck": {
-        "name": "Square Neck",
-        "description": "Modern square-shaped neckline with clean, geometric lines."
-      },
-      "turtleneck": {
-        "name": "Turtleneck",
-        "description": "High collar that folds over, providing warmth and a classic look."
-      },
-      "scoop": {
-        "name": "Scoop Neck",
-        "description": "Curved neckline that dips lower than a round neck for a feminine touch."
-      },
-      "cowl": {
-        "name": "Cowl Neck",
-        "description": "Draped neckline that creates soft folds for a relaxed, cozy appearance."
+      "architecture": {
+        "title": "Technical Architecture",
+        "frontend": "Frontend",
+        "frontend_desc": "React component with hooks",
+        "api": "API",
+        "api_desc": "Next.js App Router route",
+        "pdf": "PDF",
+        "pdf_desc": "Puppeteer + HTML/CSS",
+        "auth": "Auth",
+        "auth_desc": "Supabase session",
+        "styles": "Styles",
+        "styles_desc": "Tailwind CSS print media",
+        "i18n": "i18n",
+        "i18n_desc": "French/English support"
       }
     },
-    "params": {
-      "depth": "Depth",
-      "widthAtShoulder": "Width at Shoulder",
-      "widthAtCenter": "Width at Center",
-      "angle": "Angle"
+    "future": {
+      "title": "Preparation for US_9.3",
+      "content": "The architecture already includes support for schematic diagrams from US_9.3. When this functionality is implemented, it will automatically integrate into PDF export via the SchematicsData interfaces and the includeSchematics option."
+    }
+  },
+  "testSchematics": {
+    "title": "Schematic Generation Test (US_9.3)",
+    "acceptanceCriteria": {
+      "title": "Acceptance Criteria Validation"
     },
-    "difficulty": {
-      "beginner": "Beginner",
-      "intermediate": "Intermediate",
-      "advanced": "Advanced"
+    "testCases": {
+      "title": "Test Cases:",
+      "ac1": "AC1: Rectangular back panel (50cm × 60cm) with labeled dimensions",
+      "ac2": "AC2: Tapered sleeve (20cm → 30cm width, 45cm length) as trapezoid",
+      "ac3": "AC3: Schematics are proportional to dimensions",
+      "ac4": "AC4: Labels are legible",
+      "ac5": "AC5: Schematics for all major garment pieces"
+    },
+    "components": {
+      "backPanel": "Back Panel",
+      "frontPanel": "Front Panel",
+      "sleeve": "Sleeve"
+    },
+    "generating": "Generating...",
+    "generateButton": "Generate Test Schematics",
+    "results": {
+      "title": "Generated Schematics"
     },
     "validation": {
-      "error": "Please correct the parameter values above.",
-      "depthRange": "Depth must be between 1 and 30 cm",
-      "widthRange": "Width must be between 1 and 50 cm",
-      "centerWidthRange": "Center width must be between 1 and 40 cm",
-      "angleRange": "Angle must be between 1 and 90 degrees"
+      "shape": "Shape",
+      "generated": "Generated",
+      "dimensions": "Dimensions"
+    },
+    "dimensions": {
+      "sleeve": "20cm (cuff) → 30cm (upper arm), 45cm length",
+      "panel": "50cm × 60cm"
+    },
+    "rawSvg": {
+      "title": "Raw SVG Output (for debugging)",
+      "componentSvg": "{{component}} SVG:"
+    },
+    "errors": {
+      "generating": "Error generating test schematics:",
+      "failed": "Error generating schematics: ",
+      "unknown": "Unknown error"
+    }
+  },
+  "stitchPatternDemo": {
+    "title": "Stitch Pattern Integration Demo",
+    "description": "Demonstration of US_8.3: Complex stitch pattern integration in pattern calculation. This demo shows how the system generates detailed row-by-row instructions with integrated cable and ribbing patterns, including edge stitches and pattern tracking.",
+    "sampleData": {
+      "patternName": "Cable and Ribbing",
+      "gaugeName": "Worsted Weight Gauge",
+      "yarnName": "Sample Worsted Yarn",
+      "patternFullName": "Cable and Ribbing Pattern",
+      "garmentName": "Cabled Scarf",
+      "componentName": "Main Scarf Panel"
+    },
+    "config": {
+      "title": "Demo Configuration:",
+      "component": "Component",
+      "componentDetails": "20cm × 160cm cabled scarf",
+      "pattern": "Pattern",
+      "patternDetails": "Cable and Ribbing (16 st × 8 row repeat)",
+      "integration": "Integration",
+      "integrationDetails": "4 full pattern repeats with 4 edge stitches each side",
+      "gauge": "Gauge",
+      "gaugeDetails": "20 sts × 28 rows per 10cm",
+      "totalStitches": "Total Stitches",
+      "totalStitchesDetails": "96 (adjusted for pattern compatibility)"
+    },
+    "calculating": "Calculating...",
+    "runDemo": "Run Stitch Pattern Demo",
+    "success": {
+      "title": "Calculation Successful!",
+      "message": "Pattern calculated with stitch pattern integration. Details below."
+    },
+    "results": {
+      "noInstructions": "No detailed pattern instructions generated.",
+      "patternInstructions": "Pattern Instructions (US_8.3)",
+      "step": "Step",
+      "patternRow": "Pattern Row",
+      "row": "Row",
+      "stitches": "sts",
+      "shapingRow": "Shaping Row"
+    },
+    "componentDetails": {
+      "basicCalculations": "Basic Calculations",
+      "stitchCount": "Stitch Count",
+      "rowCount": "Row Count",
+      "patternIntegration": "Pattern Integration",
+      "shapingInfo": "Shaping Information",
+      "hasShaping": "Has Shaping",
+      "calculationType": "Calculation Type"
+    },
+    "warnings": {
+      "title": "Warnings"
+    },
+    "errors": {
+      "title": "Errors",
+      "calculationFailed": "Calculation failed",
+      "requestFailed": "Request failed: "
     }
   },
   "patternDefinition": {
@@ -1113,7 +1512,7 @@
       "sections": {
         "foundations": "Pattern Foundations",
         "garmentOverview": "Garment Overview",
-        "components": "Component Breakdown",
+        "components": "Component Details",
         "colorScheme": "Color Scheme",
         "morphologyNotes": "Morphology Notes"
       },
@@ -1125,7 +1524,7 @@
         "stitchPattern": "Stitch Pattern",
         "gaugeDetails": "{{stitches}} sts, {{rows}} rows per {{unit}}",
         "easeDetails": "{{type}} ({{value}}{{unit}})",
-        "yarnDetails": "{{name}} - {{weight}} weight, {{fiber}}",
+        "yarnDetails": "{{name}} - {{weight}}, {{fiber}}",
         "measurementSet": "Measurement set: {{name}}",
         "keyMeasurements": "Key measurements: {{measurements}}"
       },
@@ -1157,7 +1556,7 @@
         "status": "Completion Status",
         "sectionsCompleted": "{{completed}} of {{total}} sections completed",
         "missingSections": "Missing sections: {{sections}}",
-        "allComplete": "All sections completed!"
+        "allComplete": "All sections are completed!"
       },
       "notDefined": "Not yet defined",
       "generatedAt": "Generated on {{date}} at {{time}}",
@@ -1173,339 +1572,56 @@
       }
     }
   },
-  "sleeve": {
-    "title": "Sleeve Style and Length",
-    "description": "Choose the style, length, and cuff options for your sleeves. Available options depend on your selected construction method.",
-    "style": {
-      "title": "Sleeve Style"
-    },
-    "length": {
-      "title": "Sleeve Length",
-      "typical": "Typical: {{length}}cm",
-      "custom": {
-        "label": "Custom Length (cm)",
-        "help": "Enter the desired sleeve length from shoulder to wrist in centimeters."
-      }
-    },
-    "cuff": {
-      "title": "Cuff Style",
-      "parameters": {
-        "title": "Cuff Parameters",
-        "cuff_depth_cm": "Cuff Depth",
-        "fold_depth_cm": "Fold Depth",
-        "flare_width_cm": "Flare Width",
-        "band_width_cm": "Band Width"
-      }
-    },
-    "summary": {
-      "title": "Sleeve Configuration Summary",
-      "style": "Style:",
-      "length": "Length:",
-      "cuff": "Cuff:"
-    },
-    "constructionRequired": {
-      "title": "Construction Method Required",
-      "description": "Please select a construction method first to see available sleeve options."
-    },
-    "noOptions": {
-      "title": "No Sleeve Options Available",
-      "description": "No sleeve options are available for the selected construction method."
-    },
-    "notApplicable": "Sleeve options are only available for garments with sleeves like sweaters and cardigans. Please select a compatible garment type first.",
-    "error": {
-      "title": "Error Loading Sleeve Options"
-    }
-  },
-  "colorScheme": {
-    "title": "Color Scheme Simulator",
-    "description": "Visualize how different yarn colors work together in your pattern",
-    "openSimulator": "Open Color Simulator",
-    "savedScheme": "Saved Color Scheme",
-    "edit": "Edit",
-    "schemeName": "Scheme Name",
-    "schemeNamePlaceholder": "My Color Scheme",
-    "template": "Preview Template",
-    "colorSource": "Color Source",
-    "yarnProfiles": "Yarn Profiles",
-    "colorPalette": "Color Palette",
-    "noYarnColors": "No yarn profiles with colors available",
-    "selectedColors": "Selected Colors",
-    "colors": "colors",
-    "preview": "Color Preview",
-    "clickToAssign": "Click on sections to assign colors",
-    "selectColorsPrompt": "Select at least 2 colors to see preview",
-    "sections": "Sections",
-    "saveScheme": "Save Scheme",
-    "saved": "Color scheme saved",
-    "minColorsRequired": "Please select at least 2 colors",
-    "saveError": "Failed to save color scheme",
-    "templates": {
-      "stripes": {
-        "name": "Simple Stripes",
-        "description": "Alternating stripe pattern with 2 colors"
-      },
-      "blocks": {
-        "name": "Color Blocks", 
-        "description": "Three color blocks side by side"
-      },
-      "garment_outline": {
-        "name": "Sweater Outline",
-        "description": "Simple sweater shape with different areas"
-      }
-    },
-    "sections": {
-      "color_0": "Color 1",
-      "color_1": "Color 2",
-      "block_0": "Block 1",
-      "block_1": "Block 2", 
-      "block_2": "Block 3",
-      "body": "Body",
-      "sleeves": "Sleeves",
-      "neckline": "Neckline",
-      "hem": "Hem"
-    }
-  },
-  "morphology_advisor": {
-    "tool_title": "Body Morphology Adaptation Advisor",
-    "tool_description": "Get personalized advice on adapting patterns to your specific body characteristics for a better fit.",
-    "configuration_title": "Select Your Body Characteristics",
-    "select_characteristics": "Select Morphology Characteristics",
-    "select_characteristics_description": "Choose the characteristics that best describe your body shape to receive tailored fitting advice.",
-    "get_advice_button": "Get Morphology Advice",
-    "getting_advice": "Getting advice...",
-    "advice_title": "Your Morphology Advice",
-    "error_title": "Error",
-    "error_getting_advice": "Failed to get morphology advice. Please try again.",
-    "no_results_message": "No advice found for the selected characteristics. Please try different selections.",
-    "selected_count": "{{count}} characteristic selected",
-    "selected_count_plural": "{{count}} characteristics selected",
-    "categories": {
-      "torso": "Torso",
-      "shoulders": "Shoulders", 
-      "arms": "Arms",
-      "posture": "Posture"
-    },
-    "characteristics": {
-      "full_bust": "Full Bust",
-      "full_bust_description": "Larger bust measurement requiring additional shaping",
-      "sway_back": "Sway Back",
-      "sway_back_description": "Lower back curves inward more than average",
-      "broad_shoulders": "Broad Shoulders",
-      "broad_shoulders_description": "Shoulder width wider than average proportionally",
-      "sloping_shoulders": "Sloping Shoulders",
-      "sloping_shoulders_description": "Shoulders that slope downward more than average",
-      "long_torso": "Long Torso",
-      "long_torso_description": "Torso longer than average in proportion to height",
-      "short_torso": "Short Torso",
-      "short_torso_description": "Torso shorter than average in proportion to height",
-      "long_arms": "Long Arms",
-      "long_arms_description": "Arms longer than average requiring longer sleeves",
-      "short_arms": "Short Arms",
-      "short_arms_description": "Arms shorter than average requiring shorter sleeves"
-    },
-    "fitting_implications": "Fitting Implications",
-    "measurement_focus": "Key Measurements",
-    "ease_considerations": "Ease Considerations",
-    "adjustment_suggestions": "Adjustment Suggestions",
-    "visual_guide": "Visual Guide",
-    "related_information": "Related Information",
-    "related_measurements_link": "Review your body measurements for accuracy",
-    "related_ease_link": "Use the Ease Advisor for personalized ease recommendations",
-    "pattern_selection_tips": "Consider these factors when selecting patterns"
-  },
-  "accessory": {
-    "title": "Accessory Definition",
-    "notApplicable": "Accessory definition is only available for accessory garment types like beanies, hats, scarves, and cowls. Please select a compatible garment type first.",
-    "selectType": "Please select an accessory garment type to continue."
-  },
-  "beanie": {
-    "defineParameters": "Define Beanie Parameters",
-    "defineParametersDescription": "Set the dimensions and style options for your beanie or hat.",
-    "headCircumference": "Head Circumference",
-    "useMeasurementSet": "Use Measurement Set",
-    "selectMeasurementSet": "Select a measurement set...",
-    "targetCircumference": "Target Head Circumference (cm)",
-    "circumferenceHelp": "Typical adult range: 54-60 cm",
-    "hatHeight": "Hat Height (cm)",
-    "heightHelp": "From crown to brim edge",
-    "styleOptions": "Style Options",
-    "crownStyle": "Crown Style",
-    "brimStyle": "Brim Style",
-    "brimDepth": "Brim Depth (cm)",
-    "summary": "Beanie Summary",
-    "circumference": "Circumference",
-    "height": "Height",
-    "crown": "Crown",
-    "brim": "Brim"
-  },
-  "scarfCowl": {
-    "defineParameters": "Define Scarf/Cowl Parameters",
-    "defineParametersDescription": "Set the type and dimensions for your scarf or cowl accessory.",
-    "accessoryType": "Accessory Type",
-    "scarf": "Scarf",
-    "scarfDescription": "A rectangular piece worn around the neck",
-    "cowl": "Cowl",
-    "cowlDescription": "A circular neck warmer, typically worked in the round",
-    "workStyle": "Work Style",
-    "flat": "Flat Knitting",
-    "flatDescription": "Worked back and forth in rows",
-    "inTheRound": "Circular Knitting",
-    "inTheRoundDescription": "Worked continuously in rounds",
-    "dimensions": "Dimensions",
-    "width": "Width (cm)",
-    "widthHelp": "Typical range: 15-25 cm",
-    "length": "Length (cm)",
-    "lengthHelp": "Typical range: 120-180 cm",
-    "circumference": "Circumference (cm)",
-    "circumferenceHelp": "Typical range: 50-70 cm",
-    "height": "Height (cm)",
-    "heightHelp": "Typical range: 20-30 cm",
-    "summary": "Summary",
-    "type": "Type",
-    "construction": "Construction"
-  },
   "stitchLibrary": {
     "title": "Stitch Pattern Library",
-    "subtitle": "Discover and explore stitch patterns for your projects",
-    "categories": "Categories",
-    "searchPlaceholder": "Search stitch patterns, techniques, or keywords...",
-    "filters": "Filters",
-    "craftType": "Craft Type",
-    "category": "Category",
-    "difficulty": "Difficulty",
-    "patternType": "Pattern Type",
-    "basicOnly": "Basic patterns only",
-    "activeFilters": "Active Filters",
-    "selectCategory": "Select a category to explore patterns",
-    "allCategories": "All Categories",
-    "categoriesForCraft": "{{craftType}} Categories",
-    "noCategories": "No categories found",
-    "noCategoriesForCraft": "No categories found for {{craftType}}",
-    "noCategoriesGeneral": "No stitch pattern categories available",
-    "categoriesSummary": "Showing {{count}} categories with patterns",
-    "difficultyLevels": "Difficulty Levels",
-    "samplePatterns": "Sample Patterns",
-    "andMore": "+ {{count}} more patterns",
-    "noPatterns": "No patterns found",
-    "noPatternsSuggestion": "Try adjusting your search or filters"
+    "description": "Explore our comprehensive collection of stitch patterns for knitting and crochet. Browse by category, search by keywords, or filter by difficulty level to find the perfect pattern for your project.",
+    "helpTitle": "Using the Stitch Library",
+    "browsingTitle": "Browsing Patterns",
+    "browsingTip1": "Click on categories to see patterns in that group",
+    "browsingTip2": "Use the search bar to find patterns by name or keywords",
+    "browsingTip3": "Filter by craft type (knitting/crochet) and difficulty level",
+    "browsingTip4": "Switch between grid and list views for different layouts",
+    "patternsTitle": "Pattern Information",
+    "patternsTip1": "Each pattern shows difficulty level and common uses",
+    "patternsTip2": "Click on a pattern to view detailed instructions",
+    "patternsTip3": "Instructions include step-by-step guidance",
+    "patternsTip4": "Copy or print instructions for offline use",
+    "detail": {
+      "noPatternId": "No pattern ID provided",
+      "patternNotFound": "Pattern not found",
+      "errorLoading": "Error loading pattern:",
+      "failedToLoad": "Failed to load pattern"
+    }
   },
-  "stitchCategory": {
-    "basic": "Basic",
-    "cables": "Cables",
-    "lace": "Lace",
-    "textured": "Textured",
-    "ribbing": "Ribbing",
-    "colorwork": "Colorwork",
-    "motifs": "Motifs"
-  },
-  "stitchInstructions": {
-    "title": "Instructions",
-    "noInstructions": "No detailed instructions available for this pattern",
-    "abbreviation": "Abbreviation",
-    "rowByRow": "Row-by-Row Instructions",
-    "roundByRound": "Round-by-Round Instructions",
-    "notes": "Notes",
-    "commonUses": "Common Uses"
-  },
-  "craftType": {
-    "knitting": "Knitting",
-    "crochet": "Crochet"
-  },
-  "common": {
-    "loading": "Loading...",
-    "all": "All",
-    "filters": "Filters",
-    "clearAll": "Clear All",
-    "clearFilters": "Clear Filters",
-    "copy": "Copy",
-    "print": "Print",
+  "patternViewer": {
+    "loading": "Loading your pattern...",
     "retry": "Try Again",
-    "gridView": "Grid View",
-    "listView": "List View",
-    "generating": "Generating...",
-    "downloaded": "Downloaded!",
-    "error": "Error"
-  },
-  "error": {
-    "categoriesLoadFailed": "Failed to load categories",
-    "patternsLoadFailed": "Failed to load patterns"
-  },
-  "stitchIntegration": {
-    "title": "Stitch Pattern Integration Advisor",
-    "subtitle": "Plan how your stitch pattern fits into your garment component",
-    "description": "Plan how your stitch patterns fit into your garment components with precise calculations",
-    "openTool": "Open Integration Tool",
-    "toolFeatures": "Tool Features",
-    "feature1": "Calculate exact pattern repeats for each component",
-    "feature2": "Handle remaining stitches with smart suggestions",
-    "feature3": "Manage edge stitches and centering",
-    "feature4": "Visual preview of stitch distribution",
-    "selectComponent": "Select Garment Component",
-    "chooseComponent": "Choose a component...",
-    "selectPattern": "Select Stitch Pattern",
-    "choosePattern": "Choose a stitch pattern...",
-    "targetStitchCount": "Target Stitch Count",
-    "edgeStitches": "Edge Stitches (each side)",
-    "analyze": "Analyze Integration",
-    "analyzing": "Analyzing...",
-    "analysisResults": "Analysis Results",
-    "integrationOptions": "Integration Options",
-    "selectedOption": "Selected Option",
-    "integrationSummary": "Integration Summary",
-    "component": "Component",
-    "pattern": "Pattern",
-    "finalStitchCount": "Final Stitch Count",
-    "applyIntegration": "Apply Integration",
-    "applying": "Applying...",
-    "integrationComplete": "Integration Complete!",
-    "successMessage": "The stitch pattern has been successfully integrated into your component.",
-    "appliedIntegration": "Applied Integration",
-    "newIntegration": "New Integration",
-    "error": "Integration Error",
-    "stitchDistribution": "Stitch Distribution Visualization",
-    "visualizationHelp": "This shows how your stitches will be distributed across the component width",
-    "visualizationUnavailable": "Visualization unavailable for current parameters",
-    "patternRepeats": "Pattern Repeats",
-    "stockinette": "Stockinette",
-    "calculationDetails": "Calculation Details",
-    "totalStitches": "Total stitches",
-    "edgeStitchesTotal": "Edge stitches",
-    "patternStitches": "Pattern stitches",
-    "stockinetteStitches": "Stockinette stitches"
-  },
-  "pattern": {
-    "downloadPdf": "Download PDF",
-    "downloadPdfTooltip": "Download the pattern as a PDF file"
-  },
-  "showcase": {
-    "title": "Pattern Gallery",
-    "subtitle": "Discover inspiring knitting and crochet patterns",
-    "search": "Search patterns...",
-    "filters": "Filters",
-    "category": "Category",
-    "difficulty": "Difficulty",
-    "allCategories": "All Categories",
-    "allDifficulties": "All Difficulties",
-    "clearFilters": "Clear Filters",
-    "noImage": "Preview Available",
-    "addedOn": "Added",
-    "viewPattern": "View Pattern",
-    "loading": "Loading patterns...",
-    "loadMore": "Load More Patterns",
-    "retry": "Try Again",
-    "backToGallery": "Back to Gallery",
-    "resultsCount": "Showing {{count}} of {{total}} patterns",
-    "noPatterns": "No Patterns Found",
-    "noResultsFiltered": "Try adjusting your filters or search terms",
-    "noResultsEmpty": "No patterns have been added to the showcase yet",
-    "error": "Error Loading Patterns",
+    "goBack": "Go Back",
     "errors": {
       "title": "Pattern Load Error",
-      "noPatternId": "No pattern ID provided",
-      "patternNotFound": "Pattern not found or not available",
-      "invalidPattern": "Invalid pattern ID",
+      "noSessionId": "No session ID provided",
       "loadFailed": "Failed to load pattern",
+      "sessionNotFound": "Session not found or not accessible",
+      "unauthorized": "Please log in to view this pattern",
       "noPattern": "No pattern data available"
+    },
+    "schematicLoadError": "Failed to load schematics",
+    "schematicSessionNotFound": "Pattern session not found or you don't have access to it",
+    "schematicSessionMissing": "Pattern session not found",
+    "schematicUnauthorized": "Please log in to view schematics"
+  },
+  "userRole": {
+    "title": "User Information",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "authenticated": "Authenticated",
+    "adminAccess": "Administrator Access",
+    "notSignedIn": "You are not signed in. Your role is",
+    "roles": {
+      "guest": "guest",
+      "user": "user",
+      "admin": "admin"
     }
   }
 } 
