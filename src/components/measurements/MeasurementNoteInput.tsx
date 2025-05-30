@@ -33,21 +33,21 @@ export default function MeasurementNoteInput({
     'Add a note about this measurement...'
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
   };
 
   return (
     <div className={`mt-1 ${className}`}>
-      <input
-        type="text"
+      <textarea
         value={value}
         onChange={handleChange}
         placeholder={placeholder || defaultPlaceholder}
+        rows={2}
         className="
           block w-full px-3 py-1.5 text-sm
           border border-gray-300 rounded-md
-          placeholder-gray-400
+          placeholder-gray-400 resize-y
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           disabled:bg-gray-50 disabled:text-gray-500
         "

@@ -643,8 +643,8 @@
     "searchPlaceholder": "Rechercher des points...",
     "noSearchResults": "Aucun point trouvé correspondant à votre recherche",
     "noPatterns": "Aucun point disponible",
-    "patternCount": "{{count}} point disponible",
-    "patternCount_plural": "{{count}} points disponibles",
+    "patternCount": "{{count}} motif",
+    "patternCount_plural": "{{count}} motifs",
     "notFound": "Point Non Trouvé",
     "notFoundDescription": "Le point demandé n'a pas pu être trouvé.",
     "craftType": "Type d'Artisanat",
@@ -716,6 +716,13 @@
     },
     "title": "Outils",
     "subtitle": "Outils utiles pour vos projets de tricot et crochet",
+    "related_tools": "Outils Connexes",
+    "gauge_calculator": {
+      "title": "Calculateur d'Échantillon"
+    },
+    "yarn_estimator": {
+      "title": "Estimateur de Quantité de Laine"
+    },
     "morphology_advisor": {
       "title": "Conseiller de Morphologie Corporelle",
       "description": "Obtenez des conseils pour adapter les patrons à votre morphologie"
@@ -734,6 +741,11 @@
       "reset": "Réinitialiser le Formulaire",
       "select_template": "Sélectionnez un modèle de structure de patron",
       "no_template_selected": "Veuillez sélectionner un modèle de structure de patron pour commencer",
+      "supports_shaping": "Supporte le Façonnage",
+      "related": {
+        "gauge_calculator": "Utilisez le Calculateur d'Échantillon Inversé pour des conversions et calculs d'échantillon détaillés.",
+        "yarn_estimator": "Estimez les besoins en laine pour vos dimensions de patron redimensionnées."
+      },
       "gauge_selection": {
         "title": "Sélectionnez Votre Échantillon",
         "use_saved_profile": "Utiliser un Profil d'Échantillon Sauvegardé",
@@ -953,648 +965,133 @@
     },
     "yarn_quantity_estimator": {
       "title": "Estimateur de Quantité de Laine",
-      "description": "Estimez la quantité de laine nécessaire pour votre projet basée sur l'échantillon, les spécifications de laine et le type de projet."
-    }
-  },
-  "common": {
-    "search": "Rechercher",
-    "hideSearch": "Masquer la Recherche",
-    "searching": "Recherche en cours...",
-    "clear": "Effacer",
-    "loading": "Chargement...",
-    "all": "Tous",
-    "filters": "Filtres",
-    "clearAll": "Tout Effacer",
-    "clearFilters": "Effacer les Filtres",
-    "copy": "Copier",
-    "print": "Imprimer",
-    "retry": "Réessayer",
-    "gridView": "Vue Grille",
-    "listView": "Vue Liste",
-    "generating": "Génération...",
-    "downloaded": "Téléchargé !",
-    "error": "Erreur",
-    "back": "Retour",
-    "backToLibrary": "Retour à la Bibliothèque",
-    "favorited": "Ajouté aux favoris",
-    "addToFavorites": "Ajouter aux Favoris",
-    "yes": "Oui",
-    "no": "Non",
-    "selected": "Sélectionné",
-    "templateNotFound": "Modèle non trouvé"
-  },
-  "garmentType": {
-    "selectType": "Sélectionner le Type de Vêtement",
-    "selectTypeDescription": "Choisissez le type de vêtement que vous voulez créer. Cela déterminera les options et outils disponibles pour votre patron.",
-    "noTypesAvailable": "Aucun type de vêtement disponible",
-    "components": "Composants",
-    "difficulty": {
-      "beginner": "Débutant",
-      "intermediate": "Intermédiaire", 
-      "advanced": "Avancé"
-    }
-  },
-  "sweaterStructure": {
-    "title": "Structure du Pull",
-    "description": "Choisissez la méthode de construction et la forme du corps pour votre pull. Ces choix influenceront les calculs du patron et les options disponibles.",
-    "constructionMethod": "Méthode de Construction",
-    "bodyShape": "Forme du Corps",
-    "notApplicable": "Les options de structure de vêtement ne sont disponibles que pour les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
-    "helpText": "Votre choix de méthode de construction affecte les formes de corps disponibles. Certaines combinaisons fonctionnent mieux ensemble pour un ajustement optimal et une facilité de construction.",
-    "difficulty": {
-      "beginner": "Débutant",
-      "intermediate": "Intermédiaire",
-      "advanced": "Avancé"
-    },
-    "fitType": {
-      "loose": "Ample",
-      "fitted": "Ajusté",
-      "oversized": "Surdimensionné"
-    }
-  },
-  "neckline": {
-    "title": "Style d'Encolure",
-    "description": "Choisissez le style d'encolure pour votre vêtement. Chaque style a différents paramètres que vous pouvez personnaliser pour obtenir l'ajustement et l'apparence parfaits.",
-    "selectStyle": "Sélectionner le Style d'Encolure",
-    "parameters": "Paramètres d'Encolure",
-    "notApplicable": "Les options d'encolure ne sont disponibles que pour les vêtements avec des encolures définies comme les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
-    "helpText": "Les paramètres d'encolure seront utilisés pour calculer les instructions de façonnage exactes pour votre patron. Ajustez ces valeurs pour obtenir l'ajustement et le style désirés.",
-    "styles": {
-      "round": {
-        "name": "Col Rond",
-        "description": "Encolure ronde classique, confortable et polyvalente pour le quotidien."
+      "description": "Estimez la quantité de laine nécessaire pour votre projet en fonction de l'échantillon, des spécifications de la laine et du type de projet.",
+      "subtitle": "Obtenez une estimation approximative des besoins en laine pour planifier votre projet",
+      "gauge_section": "Informations d'Échantillon",
+      "yarn_section": "Informations sur la Laine",
+      "project_section": "Spécifications du Projet",
+      "results_section": "Résultats de l'Estimation",
+      "estimate": "Estimer la Quantité de Laine",
+      "estimating": "Calcul en cours...",
+      "reset": "Réinitialiser",
+      "gauge_selection": {
+        "title": "Sélectionner l'Échantillon",
+        "use_saved_profile": "Utiliser un Profil d'Échantillon Sauvegardé",
+        "enter_manually": "Saisir l'Échantillon Manuellement",
+        "select_profile": "Sélectionner un profil d'échantillon",
+        "no_profiles": "Aucun profil d'échantillon trouvé",
+        "create_profile_link": "Créer d'abord un profil d'échantillon",
+        "manual_entry": "Saisie Manuelle d'Échantillon"
       },
-      "v_neck": {
-        "name": "Col en V",
-        "description": "Encolure élégante en forme de V qui allonge le cou et crée une silhouette flatteuse."
+      "yarn_selection": {
+        "title": "Sélectionner la Laine",
+        "use_saved_profile": "Utiliser un Profil de Laine Sauvegardé",
+        "enter_manually": "Saisir les Détails de la Laine Manuellement",
+        "select_profile": "Sélectionner un profil de laine",
+        "no_profiles": "Aucun profil de laine trouvé",
+        "create_profile_link": "Créer d'abord un profil de laine",
+        "manual_entry": "Saisie Manuelle de Laine"
       },
-      "boat_neck": {
-        "name": "Col Bateau",
-        "description": "Encolure large et horizontale qui repose sur les épaules pour un look sophistiqué."
+      "project_types": {
+        "title": "Type de Projet",
+        "scarf": "Écharpe",
+        "baby_blanket": "Couverture Bébé",
+        "simple_hat": "Bonnet Simple",
+        "adult_sweater": "Pull Adulte"
       },
-      "square_neck": {
-        "name": "Col Carré",
-        "description": "Encolure moderne de forme carrée avec des lignes géométriques nettes."
+      "garment_sizes": {
+        "title": "Taille de Vêtement",
+        "S": "Petit",
+        "M": "Moyen",
+        "L": "Grand",
+        "XL": "Très Grand"
       },
-      "turtleneck": {
-        "name": "Col Roulé",
-        "description": "Col haut qui se replie, offrant chaleur et un look classique."
+      "dimensions": {
+        "title": "Dimensions du Projet",
+        "width": "Largeur",
+        "length": "Longueur",
+        "unit": "Unité",
+        "cm": "Centimètres",
+        "inch": "Pouces"
       },
-      "scoop": {
-        "name": "Col Échancré",
-        "description": "Encolure courbée qui descend plus bas qu'un col rond pour une touche féminine."
+      "manual_gauge": {
+        "stitch_count": "Mailles par échantillon",
+        "row_count": "Rangs par échantillon",
+        "swatch_width": "Largeur d'échantillon",
+        "swatch_height": "Hauteur d'échantillon",
+        "measurement_unit": "Unité de mesure"
       },
-      "cowl": {
-        "name": "Col Drapé",
-        "description": "Encolure drapée qui crée des plis doux pour une apparence détendue et douillette."
+      "manual_yarn": {
+        "yarn_weight_category": "Catégorie de poids de laine",
+        "skein_meterage": "Métrage par écheveau (mètres)",
+        "skein_weight_grams": "Poids par écheveau (grammes)",
+        "optional": "Optionnel - aide aux calculs"
+      },
+      "results": {
+        "title": "Estimation de Quantité de Laine",
+        "total_length": "Longueur Totale Nécessaire",
+        "total_weight": "Poids Total Nécessaire",
+        "number_of_skeins": "Nombre d'Écheveaux",
+        "calculation_details": "Détails du Calcul",
+        "surface_area": "Surface du Projet",
+        "yarn_factor": "Facteur de Consommation de Laine",
+        "buffer_included": "Marge Incluse",
+        "calculation_method": "Méthode de Calcul",
+        "yarn_weight_used": "Catégorie de Poids de Laine Utilisée",
+        "meters": "mètres",
+        "yards": "yards",
+        "grams": "grammes",
+        "ounces": "onces",
+        "skeins": "écheveaux",
+        "square_meters": "m²",
+        "meters_per_square_meter": "m/m²",
+        "area_based": "Calcul basé sur la surface",
+        "fixed_yardage": "Estimation de métrage fixe"
+      },
+      "disclaimer": {
+        "title": "Avertissement Important",
+        "content": "Ceci est une estimation approximative et l'usage réel de laine peut varier en fonction de :",
+        "factors": [
+          "Complexité du motif de points",
+          "Tension individuelle de tricot/crochet",
+          "Dimensionnement exact du projet",
+          "Caractéristiques de la laine",
+          "Modifications du patron"
+        ],
+        "recommendation": "Achetez toujours un peu de laine supplémentaire pour tenir compte des variations et des erreurs potentielles."
+      },
+      "validation": {
+        "project_type_required": "Le type de projet est requis",
+        "gauge_required": "Les informations d'échantillon sont requises",
+        "yarn_required": "Les informations sur la laine sont requises",
+        "dimensions_required": "Les dimensions sont requises pour ce type de projet",
+        "size_required": "La taille est requise pour ce type de projet",
+        "width_positive": "La largeur doit être un nombre positif",
+        "length_positive": "La longueur doit être un nombre positif",
+        "stitch_count_positive": "Le nombre de mailles doit être un nombre positif",
+        "row_count_positive": "Le nombre de rangs doit être un nombre positif",
+        "swatch_width_positive": "La largeur d'échantillon doit être un nombre positif",
+        "swatch_height_positive": "La hauteur d'échantillon doit être un nombre positif",
+        "skein_meterage_positive": "Le métrage d'écheveau doit être un nombre positif",
+        "skein_weight_positive": "Le poids d'écheveau doit être un nombre positif"
+      },
+      "messages": {
+        "estimation_success": "Quantité de laine estimée avec succès !",
+        "estimation_error": "Échec de l'estimation de la quantité de laine",
+        "loading_profiles": "Chargement des profils...",
+        "no_estimation": "Aucune estimation disponible"
       }
     },
-    "params": {
-      "depth": "Profondeur",
-      "widthAtShoulder": "Largeur à l'Épaule",
-      "widthAtCenter": "Largeur au Centre",
-      "angle": "Angle"
-    },
-    "difficulty": {
-      "beginner": "Débutant",
-      "intermediate": "Intermédiaire",
-      "advanced": "Avancé"
-    },
-    "validation": {
-      "error": "Veuillez corriger les valeurs des paramètres ci-dessus.",
-      "depthRange": "La profondeur doit être entre 1 et 30 cm",
-      "widthRange": "La largeur doit être entre 1 et 50 cm",
-      "centerWidthRange": "La largeur au centre doit être entre 1 et 40 cm",
-      "angleRange": "L'angle doit être entre 1 et 90 degrés"
-    }
-  },
-  "patternDefinition": {
-    "title": "Définition de Patron",
-    "getStarted": "Commencer",
-    "description": "Créez une nouvelle session de définition de patron ou continuez à travailler sur une session existante.",
-    "createNew": "Créer un Nouveau Patron",
-    "existingSessions": "Vos Définitions de Patron",
-    "untitledSession": "Session Sans Titre",
-    "lastUpdated": "Dernière mise à jour",
-    "noSession": "Aucune Session Active",
-    "noSessionDescription": "Veuillez créer ou sélectionner une session de définition de patron pour continuer.",
-    "progress": "Progression de la Définition de Patron",
-    "completed": "Terminé",
-    "steps": {
-      "garment-type": {
-        "label": "Type de Vêtement"
-      },
-      "gauge": {
-        "label": "Échantillon"
-      },
-      "measurements": {
-        "label": "Mesures"
-      },
-      "ease": {
-        "label": "Aisance"
-      },
-      "yarn": {
-        "label": "Laine"
-      },
-      "stitch-pattern": {
-        "label": "Motif de Point"
-      },
-      "garment-structure": {
-        "label": "Structure du Vêtement"
-      },
-      "neckline": {
-        "label": "Encolure"
-      },
-      "sleeves": {
-        "label": "Manches"
-      },
-      "summary": {
-        "label": "Résumé"
-      }
-    },
-    "status": {
-      "draft": "Brouillon",
-      "ready_for_calculation": "Prêt pour le Calcul",
-      "completed": "Terminé",
-      "archived": "Archivé"
-    },
-    "outline": {
-      "title": "Aperçu du Patron",
-      "subtitle": "Vue d'ensemble structurée de votre définition de patron",
-      "generateButton": "Générer l'Aperçu",
-      "generating": "Génération de l'aperçu...",
-      "viewButton": "Voir l'Aperçu",
-      "closeButton": "Fermer l'Aperçu",
-      "printButton": "Imprimer l'Aperçu",
-      "sections": {
-        "foundations": "Fondations du Patron",
-        "garmentOverview": "Aperçu du Vêtement",
-        "components": "Détail des Composants",
-        "colorScheme": "Schéma de Couleurs",
-        "morphologyNotes": "Notes Morphologiques"
-      },
-      "foundations": {
-        "gauge": "Échantillon",
-        "measurements": "Mesures",
-        "ease": "Préférences d'Aisance",
-        "yarn": "Laine",
-        "stitchPattern": "Motif de Point",
-        "gaugeDetails": "{{stitches}} m, {{rows}} rgs par {{unit}}",
-        "easeDetails": "{{type}} ({{value}}{{unit}})",
-        "yarnDetails": "{{name}} - {{weight}}, {{fiber}}",
-        "measurementSet": "Jeu de mesures : {{name}}",
-        "keyMeasurements": "Mesures clés : {{measurements}}"
-      },
-      "garmentOverview": {
-        "type": "Type de Vêtement",
-        "construction": "Méthode de Construction",
-        "difficulty": "Niveau de Difficulté"
-      },
-      "components": {
-        "component": "Composant",
-        "type": "Type",
-        "style": "Style",
-        "parameters": "Paramètres",
-        "notes": "Notes",
-        "noComponents": "Aucun composant défini pour le moment"
-      },
-      "colorScheme": {
-        "name": "Nom du Schéma",
-        "colors": "Couleurs",
-        "distribution": "Distribution",
-        "colorCount": "{{count}} couleur",
-        "colorCount_plural": "{{count}} couleurs"
-      },
-      "morphologyNotes": {
-        "characteristics": "Caractéristiques Corporelles",
-        "advice": "Points de Conseil Clés"
-      },
-      "completion": {
-        "status": "État d'Avancement",
-        "sectionsCompleted": "{{completed}} sur {{total}} sections complétées",
-        "missingSections": "Sections manquantes : {{sections}}",
-        "allComplete": "Toutes les sections sont complétées !"
-      },
-      "notDefined": "Pas encore défini",
-      "generatedAt": "Généré le {{date}} à {{time}}",
-      "sessionInfo": {
-        "name": "Nom de la Session",
-        "status": "État",
-        "lastUpdated": "Dernière Mise à Jour"
-      },
-      "errors": {
-        "generateFailed": "Échec de la génération de l'aperçu du patron",
-        "sessionNotFound": "Session non trouvée",
-        "tryAgain": "Veuillez réessayer"
-      }
-    }
-  },
-  "sleeve": {
-    "title": "Style et Longueur de Manche",
-    "description": "Choisissez le style, la longueur et les options de poignet pour vos manches. Les options disponibles dépendent de votre méthode de construction sélectionnée.",
-    "style": {
-      "title": "Style de Manche"
-    },
-    "length": {
-      "title": "Longueur de Manche",
-      "typical": "Typique : {{length}}cm",
-      "custom": {
-        "label": "Longueur Personnalisée (cm)",
-        "help": "Entrez la longueur de manche désirée de l'épaule au poignet en centimètres."
-      }
-    },
-    "cuff": {
-      "title": "Style de Poignet",
-      "parameters": {
-        "title": "Paramètres de Poignet",
-        "cuff_depth_cm": "Profondeur du Poignet",
-        "fold_depth_cm": "Profondeur du Pli",
-        "flare_width_cm": "Largeur de l'Évasement",
-        "band_width_cm": "Largeur de la Bande"
-      }
-    },
-    "summary": {
-      "title": "Résumé de Configuration des Manches",
-      "style": "Style :",
-      "length": "Longueur :",
-      "cuff": "Poignet :"
-    },
-    "constructionRequired": {
-      "title": "Méthode de Construction Requise",
-      "description": "Veuillez d'abord sélectionner une méthode de construction pour voir les options de manches disponibles."
-    },
-    "noOptions": {
-      "title": "Aucune Option de Manche Disponible",
-      "description": "Aucune option de manche n'est disponible pour la méthode de construction sélectionnée."
-    },
-    "notApplicable": "Les options de manches ne sont disponibles que pour les vêtements avec des manches comme les pulls et cardigans. Veuillez d'abord sélectionner un type de vêtement compatible.",
-    "error": {
-      "title": "Erreur lors du Chargement des Options de Manches"
-    }
-  },
-  "morphology_advisor": {
-    "tool_title": "Conseiller de Morphologie Corporelle",
-    "tool_description": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques pour un meilleur ajustement.",
-    "page_title": "Conseiller d'Adaptation Morphologique",
-    "page_subtitle": "Conseils personnalisés pour adapter les patrons à votre morphologie",
-    "about": {
-      "title": "À propos de cet outil",
-      "description": "Cet outil vous aide à comprendre comment ajuster les mesures clés ou les éléments de patron pour mieux convenir à votre morphologie spécifique. Sélectionnez vos caractéristiques corporelles pour recevoir des conseils d'ajustement personnalisés."
-    },
-    "morphological_fitting": {
-      "title": "Ajustement Morphologique",
-      "concept": "L'ajustement morphologique",
-      "description": "consiste à adapter un patron standard aux particularités de votre corps pour obtenir un meilleur ajustement.",
-      "full_bust": "Poitrine généreuse",
-      "full_bust_desc": "Nécessite souvent plus de tissu et de mise en forme",
-      "broad_shoulders": "Épaules larges",
-      "broad_shoulders_desc": "Peut nécessiter plus d'aisance dans le haut",
-      "long_short_torso": "Torse long/court",
-      "long_short_torso_desc": "Ajustements de longueur nécessaires",
-      "particular_posture": "Posture particulière",
-      "particular_posture_desc": "Adaptations spécifiques requises"
-    },
-    "fitting_tips": {
-      "title": "Conseils d'Ajustement",
-      "accurate_measurements": "Prenez vos mesures avec précision",
-      "accurate_measurements_desc": "Des mesures précises sont la base de tout bon ajustement.",
-      "make_swatch": "Faites un échantillon",
-      "make_swatch_desc": "Testez toujours votre échantillon avant de commencer le projet.",
-      "adjust_gradually": "Ajustez progressivement",
-      "adjust_gradually_desc": "Commencez par de petits ajustements et testez au fur et à mesure.",
-      "document_changes": "Documentez vos modifications",
-      "document_changes_desc": "Notez les ajustements qui fonctionnent pour vos futurs projets."
-    },
-    "common_adjustments": {
-      "title": "Ajustements Courants",
-      "bust_adjustment": "Ajustement de poitrine (FBA)",
-      "bust_adjustment_desc": "Ajouter du tissu et de la mise en forme pour une poitrine généreuse.",
-      "shoulder_adjustment": "Ajustement d'épaules",
-      "shoulder_adjustment_desc": "Modifier la largeur ou la pente des épaules selon votre morphologie.",
-      "length_adjustment": "Ajustement de longueur",
-      "length_adjustment_desc": "Raccourcir ou allonger le torse, les manches selon vos proportions.",
-      "waist_adjustment": "Ajustement de taille",
-      "waist_adjustment_desc": "Adapter la forme de la taille à votre silhouette naturelle."
-    },
-    "related_tools": {
-      "title": "Outils Complémentaires",
-      "measurements_management": "Gestion des Mesures",
-      "measurements_management_desc": "Enregistrez et gérez vos mesures corporelles",
-      "ease_advisor": "Conseiller d'Aisance",
-      "ease_advisor_desc": "Obtenez des recommandations d'aisance personnalisées"
-    }
-  },
-  "accessory": {
-    "title": "Définition d'Accessoire",
-    "notApplicable": "La définition d'accessoire n'est disponible que pour les types de vêtements accessoires comme les bonnets, chapeaux, écharpes et tours de cou. Veuillez d'abord sélectionner un type de vêtement compatible.",
-    "selectType": "Veuillez sélectionner un type de vêtement accessoire pour continuer."
-  },
-  "beanie": {
-    "defineParameters": "Définir les Paramètres du Bonnet",
-    "defineParametersDescription": "Définissez les dimensions et les options de style pour votre bonnet ou chapeau.",
-    "headCircumference": "Tour de Tête",
-    "useMeasurementSet": "Utiliser un Jeu de Mesures",
-    "selectMeasurementSet": "Sélectionner un jeu de mesures...",
-    "targetCircumference": "Tour de Tête Cible (cm)",
-    "circumferenceHelp": "Plage typique adulte : 54-60 cm",
-    "hatHeight": "Hauteur du Chapeau (cm)",
-    "heightHelp": "De la couronne au bord",
-    "styleOptions": "Options de Style",
-    "crownStyle": "Style de Couronne",
-    "brimStyle": "Style de Bord",
-    "brimDepth": "Profondeur du Bord (cm)",
-    "summary": "Résumé du Bonnet",
-    "circumference": "Circonférence",
-    "height": "Hauteur",
-    "crown": "Couronne",
-    "brim": "Bord"
-  },
-  "scarfCowl": {
-    "defineParameters": "Définir les Paramètres Écharpe/Tour de Cou",
-    "defineParametersDescription": "Définissez le type et les dimensions pour votre écharpe ou tour de cou.",
-    "accessoryType": "Type d'Accessoire",
-    "scarf": "Écharpe",
-    "scarfDescription": "Une pièce rectangulaire portée autour du cou",
-    "cowl": "Tour de Cou",
-    "cowlDescription": "Un cache-cou circulaire, généralement tricoté en rond",
-    "workStyle": "Style de Travail",
-    "flat": "Tricot à Plat",
-    "flatDescription": "Travaillé en allers-retours en rangs",
-    "inTheRound": "Tricot Circulaire",
-    "inTheRoundDescription": "Travaillé en continu en tours",
-    "dimensions": "Dimensions",
-    "width": "Largeur (cm)",
-    "widthHelp": "Plage typique : 15-25 cm",
-    "length": "Longueur (cm)",
-    "lengthHelp": "Plage typique : 120-180 cm",
-    "circumference": "Circonférence (cm)",
-    "circumferenceHelp": "Plage typique : 50-70 cm",
-    "height": "Hauteur (cm)",
-    "heightHelp": "Plage typique : 20-30 cm",
-    "summary": "Résumé",
-    "type": "Type",
-    "construction": "Construction"
-  },
-  "stitchIntegration": {
-    "title": "Conseiller d'Intégration de Motifs",
-    "subtitle": "Planifiez comment votre motif de mailles s'intègre dans votre composant de vêtement",
-    "description": "Planifiez comment vos motifs de mailles s'intègrent dans vos composants de vêtement avec des calculs précis",
-    "openTool": "Ouvrir l'Outil d'Intégration",
-    "toolFeatures": "Fonctionnalités de l'Outil",
-    "feature1": "Calculer les répétitions exactes de motifs pour chaque composant",
-    "feature2": "Gérer les mailles restantes avec des suggestions intelligentes",
-    "feature3": "Gérer les mailles de lisière et le centrage",
-    "feature4": "Aperçu visuel de la distribution des mailles",
-    "selectComponent": "Sélectionner le Composant de Vêtement",
-    "chooseComponent": "Choisir un composant...",
-    "selectPattern": "Sélectionner le Motif de Mailles",
-    "choosePattern": "Choisir un motif de mailles...",
-    "targetStitchCount": "Nombre de Mailles Cible",
-    "edgeStitches": "Mailles de Lisière (chaque côté)",
-    "analyze": "Analyser l'Intégration",
-    "analyzing": "Analyse en cours...",
-    "analysisResults": "Résultats de l'Analyse",
-    "integrationOptions": "Options d'Intégration",
-    "selectedOption": "Option Sélectionnée",
-    "integrationSummary": "Résumé de l'Intégration",
-    "component": "Composant",
-    "pattern": "Motif",
-    "finalStitchCount": "Nombre de Mailles Final",
-    "applyIntegration": "Appliquer l'Intégration",
-    "applying": "Application en cours...",
-    "integrationComplete": "Intégration Terminée !",
-    "successMessage": "Le motif de mailles a été intégré avec succès dans votre composant.",
-    "appliedIntegration": "Intégration Appliquée",
-    "newIntegration": "Nouvelle Intégration",
-    "error": "Erreur d'Intégration",
-    "stitchDistribution": "Visualisation de la Distribution des Mailles",
-    "visualizationHelp": "Ceci montre comment vos mailles seront distribuées sur la largeur du composant",
-    "visualizationUnavailable": "Visualisation non disponible pour les paramètres actuels",
-    "patternRepeats": "Répétitions de Motif",
-    "stockinette": "Jersey",
-    "calculationDetails": "Détails du Calcul",
-    "totalStitches": "Total des mailles",
-    "edgeStitchesTotal": "Mailles de lisière",
-    "patternStitches": "Mailles de motif",
-    "stockinetteStitches": "Mailles de jersey"
-  },
-  "stitchLibrary": {
-    "title": "Bibliothèque de Points",
-    "description": "Explorez notre collection complète de points pour le tricot et le crochet. Parcourez par catégorie, recherchez par mots-clés, ou filtrez par niveau de difficulté pour trouver le point parfait pour votre projet.",
-    "helpTitle": "Utilisation de la Bibliothèque de Points",
-    "browsingTitle": "Navigation des Points",
-    "browsingTip1": "Cliquez sur les catégories pour voir les points de ce groupe",
-    "browsingTip2": "Utilisez la barre de recherche pour trouver des points par nom ou mots-clés",
-    "browsingTip3": "Filtrez par type d'artisanat (tricot/crochet) et niveau de difficulté",
-    "browsingTip4": "Basculez entre les vues grille et liste pour différentes présentations",
-    "patternsTitle": "Informations sur les Points",
-    "patternsTip1": "Chaque point affiche le niveau de difficulté et les utilisations courantes",
-    "patternsTip2": "Cliquez sur un point pour voir les instructions détaillées",
-    "patternsTip3": "Les instructions incluent un guide étape par étape",
-    "patternsTip4": "Copiez ou imprimez les instructions pour une utilisation hors ligne",
-    "detail": {
-      "noPatternId": "Aucun ID de point fourni",
-      "patternNotFound": "Point non trouvé",
-      "errorLoading": "Erreur lors du chargement du point :",
-      "failedToLoad": "Échec du chargement du point"
-    }
-  },
-  "pattern": {
-    "downloadPdf": "Télécharger PDF",
-    "downloadPdfTooltip": "Télécharger le patron en format PDF",
-    "pdf": {
-      "loading": "Chargement du patron...",
-      "generated_on": "Généré le",
-      "footer": "Patron généré par Malaine - Assistant Tricot & Crochet",
-      "not_specified": "Non spécifié",
-      "errors": {
-        "no_data": "Aucune donnée de patron fournie",
-        "invalid_data": "Données de patron invalides",
-        "load_error": "Erreur de chargement"
-      },
-      "sections": {
-        "pattern_info": "Informations du Patron",
-        "materials": "Matériaux Nécessaires",
-        "gauge": "Échantillon"
-      },
-      "fields": {
-        "project_type": "Type de projet",
-        "difficulty": "Difficulté",
-        "techniques": "Techniques utilisées",
-        "estimated_time": "Temps estimé",
-        "description": "Description"
-      },
-      "materials": {
-        "yarn": "Laine",
-        "yarn_type": "Type",
-        "yarn_weight": "Poids",
-        "yarn_quantity": "Quantité",
-        "yarn_color": "Couleur",
-        "tools": "Outils",
-        "accessories": "Accessoires"
-      },
-      "gauge": {
-        "instructions": "Réalisez un échantillon de 10cm x 10cm",
-        "stitches": "Mailles",
-        "stitches_unit": "mailles",
-        "rows": "Rangs",
-        "rows_unit": "rangs",
-        "needle_size": "Taille aiguille",
-        "notes": "Notes"
-      }
-    }
-  },
-  "metadata": {
-    "app": {
-      "title": "Malaine - Assistant Tricot/Crochet",
-      "description": "Votre assistant intelligent pour vos projets de tricot et crochet"
-    },
-    "library": {
-      "title": "Bibliothèque de Motifs | Malaine",
-      "description": "Parcourez et explorez notre collection complète de motifs de tricot et crochet. Trouvez le motif parfait pour votre projet.",
-      "keywords": "motifs de mailles, tricot, crochet, bibliothèque, patrons, techniques"
-    },
-    "libraryPattern": {
-      "title": "Motif de Mailles | Malaine",
-      "description": "Instructions détaillées et informations sur les motifs de mailles."
-    }
-  },
-  "testPdf": {
-    "title": "Test Export PDF - US_9.2",
-    "description": "Cette page démontre la fonctionnalité d'export PDF implémentée pour la US_9.2. Vous pouvez tester l'export en cliquant sur les boutons \"Télécharger PDF\" ci-dessous.",
-    "note": {
-      "title": "Note",
-      "content": "Cette page utilise des données d'exemple. En production, elle serait intégrée dans le vrai PatternViewer de US_9.1."
-    },
-    "technical": {
-      "title": "Informations Techniques - US_9.2",
-      "features": {
-        "title": "Fonctionnalités Implémentées",
-        "export_button": "Bouton d'export PDF dans PatternViewer",
-        "server_generation": "Génération PDF côté serveur avec Puppeteer",
-        "print_optimized": "Page HTML optimisée pour l'impression",
-        "headers_footers": "Headers et footers avec pagination",
-        "user_feedback": "Feedback utilisateur et gestion d'erreurs",
-        "future_support": "Support pour les diagrammes futurs (US_9.3)"
-      },
-      "architecture": {
-        "title": "Architecture Technique",
-        "frontend": "Frontend",
-        "frontend_desc": "Composant React avec hooks",
-        "api": "API",
-        "api_desc": "Route Next.js App Router",
-        "pdf": "PDF",
-        "pdf_desc": "Puppeteer + HTML/CSS",
-        "auth": "Auth",
-        "auth_desc": "Session Supabase",
-        "styles": "Styles",
-        "styles_desc": "Tailwind CSS print media",
-        "i18n": "i18n",
-        "i18n_desc": "Support français/anglais"
-      }
-    },
-    "future": {
-      "title": "Préparation pour US_9.3",
-      "content": "L'architecture inclut déjà le support pour les diagrammes schématiques de US_9.3. Quand cette fonctionnalité sera implémentée, elle s'intégrera automatiquement dans l'export PDF via les interfaces SchematicsData et l'option includeSchematics."
-    }
-  },
-  "testSchematics": {
-    "title": "Test de Génération de Schémas (US_9.3)",
-    "acceptanceCriteria": {
-      "title": "Validation des Critères d'Acceptation"
-    },
-    "testCases": {
-      "title": "Cas de Test :",
-      "ac1": "AC1 : Panneau arrière rectangulaire (50cm × 60cm) avec dimensions étiquetées",
-      "ac2": "AC2 : Manche effilée (20cm → 30cm largeur, 45cm longueur) en trapèze",
-      "ac3": "AC3 : Les schémas sont proportionnels aux dimensions",
-      "ac4": "AC4 : Les étiquettes sont lisibles",
-      "ac5": "AC5 : Schémas pour toutes les pièces principales du vêtement"
-    },
-    "components": {
-      "backPanel": "Panneau Arrière",
-      "frontPanel": "Panneau Avant",
-      "sleeve": "Manche"
-    },
-    "generating": "Génération en cours...",
-    "generateButton": "Générer les Schémas de Test",
-    "results": {
-      "title": "Schémas Générés"
-    },
-    "validation": {
-      "shape": "Forme",
-      "generated": "Généré",
-      "dimensions": "Dimensions"
-    },
-    "dimensions": {
-      "sleeve": "20cm (poignet) → 30cm (haut du bras), 45cm longueur",
-      "panel": "50cm × 60cm"
-    },
-    "rawSvg": {
-      "title": "Sortie SVG Brute (pour débogage)",
-      "componentSvg": "SVG de {{component}} :"
-    },
-    "errors": {
-      "generating": "Erreur lors de la génération des schémas de test :",
-      "failed": "Erreur lors de la génération des schémas : ",
-      "unknown": "Erreur inconnue"
-    }
-  },
-  "stitchPatternDemo": {
-    "title": "Démo d'Intégration de Motif de Points",
-    "description": "Démonstration de US_8.3 : Intégration complexe de motifs de points dans le calcul de patron. Cette démo montre comment le système génère des instructions détaillées rang par rang avec des motifs de câbles et côtes intégrés, incluant les mailles de lisière et le suivi des motifs.",
-    "sampleData": {
-      "patternName": "Câbles et Côtes",
-      "gaugeName": "Échantillon Poids Peigné",
-      "yarnName": "Laine Peignée d'Exemple",
-      "patternFullName": "Motif Câbles et Côtes",
-      "garmentName": "Écharpe à Câbles",
-      "componentName": "Panneau Principal d'Écharpe"
-    },
-    "config": {
-      "title": "Configuration de la Démo :",
-      "component": "Composant",
-      "componentDetails": "écharpe à câbles 20cm × 160cm",
-      "pattern": "Motif",
-      "patternDetails": "Câbles et Côtes (répétition 16 m × 8 rgs)",
-      "integration": "Intégration",
-      "integrationDetails": "4 répétitions complètes avec 4 mailles de lisière de chaque côté",
-      "gauge": "Échantillon",
-      "gaugeDetails": "20 m × 28 rgs par 10cm",
-      "totalStitches": "Total de Mailles",
-      "totalStitchesDetails": "96 (ajusté pour la compatibilité du motif)"
-    },
-    "calculating": "Calcul en cours...",
-    "runDemo": "Lancer la Démo de Motif de Points",
-    "success": {
-      "title": "Calcul Réussi !",
-      "message": "Patron calculé avec intégration de motif de points. Détails ci-dessous."
-    },
-    "results": {
-      "noInstructions": "Aucune instruction détaillée de motif générée.",
-      "patternInstructions": "Instructions de Motif (US_8.3)",
-      "step": "Étape",
-      "patternRow": "Rang du Motif",
-      "row": "Rang",
-      "stitches": "m",
-      "shapingRow": "Rang de Façonnage"
-    },
-    "componentDetails": {
-      "basicCalculations": "Calculs de Base",
-      "stitchCount": "Nombre de Mailles",
-      "rowCount": "Nombre de Rangs",
-      "patternIntegration": "Intégration de Motif",
-      "shapingInfo": "Informations de Façonnage",
-      "hasShaping": "A du Façonnage",
-      "calculationType": "Type de Calcul"
-    },
-    "warnings": {
-      "title": "Avertissements"
-    },
-    "errors": {
-      "title": "Erreurs",
-      "calculationFailed": "Échec du calcul",
-      "requestFailed": "Échec de la requête : "
+    "morphology_advisor": {
+      "tool_title": "Conseiller d'Adaptation Morphologique",
+      "tool_description": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques",
+      "configuration_title": "Configuration",
+      "getting_advice": "Obtention des conseils...",
+      "get_advice_button": "Obtenir des Conseils",
+      "error_title": "Erreur",
+      "error_getting_advice": "Erreur lors de l'obtention des conseils morphologiques",
+      "advice_title": "Conseils d'Adaptation",
+      "no_results_message": "Aucun conseil spécifique trouvé pour les caractéristiques sélectionnées. Essayez de sélectionner d'autres caractéristiques."
     }
   },
   "patternViewer": {
@@ -1627,5 +1124,136 @@
       "user": "utilisateur",
       "admin": "administrateur"
     }
+  },
+  "common": {
+    "search": "Rechercher",
+    "hideSearch": "Masquer la Recherche",
+    "searching": "Recherche en cours...",
+    "clear": "Effacer",
+    "loading": "Chargement...",
+    "all": "Tout",
+    "filters": "Filtres",
+    "clearAll": "Tout Effacer",
+    "clearFilters": "Effacer les Filtres",
+    "copy": "Copier",
+    "print": "Imprimer",
+    "retry": "Réessayer",
+    "gridView": "Vue Grille",
+    "listView": "Vue Liste",
+    "generating": "Génération...",
+    "downloaded": "Téléchargé !",
+    "error": "Erreur",
+    "back": "Retour",
+    "backToLibrary": "Retour à la Bibliothèque",
+    "favorited": "Ajouté aux favoris",
+    "addToFavorites": "Ajouter aux Favoris",
+    "yes": "Oui",
+    "no": "Non",
+    "selected": "Sélectionné",
+    "templateNotFound": "Modèle non trouvé",
+    "hide": "Masquer",
+    "steps": "Étapes",
+    "tips": "Conseils"
+  },
+  "stitchLibrary": {
+    "title": "Bibliothèque de Motifs",
+    "subtitle": "Découvrez et explorez les motifs de points pour vos projets",
+    "description": "Explorez notre collection complète de motifs de points pour le tricot et le crochet. Parcourez par catégorie, recherchez par mots-clés, ou filtrez par niveau de difficulté pour trouver le motif parfait pour votre projet.",
+    "allCategories": "Toutes les Catégories",
+    "categories": "Catégories",
+    "categoriesForCraft": "Catégories {{craftType}}",
+    "categorySubtitle": "Sélectionnez une catégorie pour explorer les motifs",
+    "selectCategory": "Sélectionnez une catégorie pour explorer les motifs",
+    "searchPlaceholder": "Rechercher motifs, techniques ou mots-clés...",
+    "filters": "Filtres",
+    "craftType": "Type d'Artisanat",
+    "category": "Catégorie",
+    "difficulty": "Difficulté",
+    "patternType": "Type de Motif",
+    "basicOnly": "Motifs de base uniquement",
+    "activeFilters": "Filtres Actifs",
+    "noPatterns": "Aucun motif trouvé",
+    "noPatternsSuggestion": "Essayez d'ajuster votre recherche ou vos filtres",
+    "noCategories": "Aucune catégorie trouvée",
+    "noCategoriesForCraft": "Aucune catégorie trouvée pour {{craftType}}",
+    "noCategoriesGeneral": "Aucune catégorie de motifs disponible",
+    "categoriesSummary": "Affichage de {{count}} catégories avec motifs",
+    "difficultyLevels": "Niveaux de Difficulté",
+    "samplePatterns": "Exemples de Motifs", 
+    "andMore": "+ {{count}} autres motifs",
+    "patternCount": "{{count}} motif disponible",
+    "patternCount_plural": "{{count}} motifs disponibles",
+    "backToCategories": "Retour aux Catégories",
+    "helpTitle": "Utilisation de la Bibliothèque de Motifs",
+    "browsingTitle": "Parcourir les Motifs",
+    "browsingTip1": "Cliquez sur les catégories pour voir les motifs de ce groupe",
+    "browsingTip2": "Utilisez la barre de recherche pour trouver des motifs par nom ou mots-clés",
+    "browsingTip3": "Filtrez par type d'artisanat (tricot/crochet) et niveau de difficulté",
+    "browsingTip4": "Basculez entre les vues grille et liste pour différents affichages",
+    "patternsTitle": "Informations sur les Motifs",
+    "patternsTip1": "Chaque motif affiche le niveau de difficulté et les usages courants",
+    "patternsTip2": "Cliquez sur un motif pour voir les instructions détaillées",
+    "patternsTip3": "Les instructions incluent un guide étape par étape",
+    "patternsTip4": "Copiez ou imprimez les instructions pour une utilisation hors ligne",
+    "detail": {
+      "noPatternId": "Aucun ID de motif fourni",
+      "patternNotFound": "Motif non trouvé",
+      "errorLoading": "Erreur lors du chargement du motif :",
+      "failedToLoad": "Échec du chargement du motif",
+      "backToLibrary": "Retour à la Bibliothèque",
+      "basicPattern": "Motif de Base",
+      "repeatSize": "Taille du Rapport",
+      "stitches": "mailles",
+      "rows": "rangs",
+      "commonUses": "Usages Courants",
+      "keywords": "Mots-clés",
+      "instructions": "Instructions",
+      "properties": "Propriétés",
+      "fabricBehavior": "Comportement du Tissu",
+      "textureDescription": "Description de la Texture",
+      "reversibility": "Réversibilité",
+      "stretchHorizontal": "Élasticité Horizontale",
+      "stretchVertical": "Élasticité Verticale",
+      "yarnConsumption": "Consommation de Laine",
+      "notes": "Notes",
+      "patternPreview": "Aperçu du Motif",
+      "quickActions": "Actions Rapides",
+      "addToFavorites": "Ajouter aux Favoris",
+      "useInProject": "Utiliser dans un Projet",
+      "sharePattern": "Partager le Motif",
+      "relatedPatterns": "Motifs Connexes",
+      "relatedPatternsDescription": "Autres motifs dans la catégorie {{category}}"
+    }
+  },
+  "stitchCategory": {
+    "basic": "Basique",
+    "cables": "Torsades",
+    "lace": "Dentelle",
+    "textured": "Texturé",
+    "ribbing": "Côtes",
+    "colorwork": "Jacquard",
+    "motifs": "Motifs"
+  },
+  "stitchPattern": {
+    "patternCount": "{{count}} motif",
+    "patternCount_plural": "{{count}} motifs",
+    "repeat": "Rapport",
+    "uses": "Utilisations",
+    "basic": "Basique",
+    "commonUses": "Utilisations Courantes",
+    "difficulty": {
+      "beginner": "Débutant",
+      "easy": "Facile",
+      "intermediate": "Intermédiaire", 
+      "advanced": "Avancé",
+      "expert": "Expert"
+    },
+    "craftType": {
+      "knitting": "Tricot",
+      "crochet": "Crochet"
+    }
+  },
+  "stitchInstructions": {
+    "commonUses": "Utilisations Courantes"
   }
 }

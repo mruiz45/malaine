@@ -146,14 +146,11 @@ export default function StitchFilterPanel({
             className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 rounded-md"
           >
             <option value="all">{t('common.all', 'All')}</option>
-            {DIFFICULTY_LEVELS.map(level => {
-              const displayInfo = getDifficultyDisplayInfo(level);
-              return (
-                <option key={level} value={level}>
-                  {displayInfo.level}
-                </option>
-              );
-            })}
+            {DIFFICULTY_LEVELS.map(level => (
+              <option key={level} value={level}>
+                {t(`stitchPattern.difficulty.${level}`, level)}
+              </option>
+            ))}
           </select>
         </div>
 
@@ -209,7 +206,7 @@ export default function StitchFilterPanel({
             )}
             {filters.difficultyLevel && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                {getDifficultyDisplayInfo(filters.difficultyLevel).level}
+                {t(`stitchPattern.difficulty.${filters.difficultyLevel}`, filters.difficultyLevel)}
                 <button
                   onClick={() => handleDifficultyChange('all')}
                   className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full text-yellow-400 hover:text-yellow-600 focus:outline-none"

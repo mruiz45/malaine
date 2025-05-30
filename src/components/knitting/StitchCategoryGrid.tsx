@@ -12,7 +12,8 @@ import { ChevronRightIcon } from '@heroicons/react/24/outline';
 import type { 
   StitchPatternCategorySummary, 
   StitchPatternCategory,
-  CraftType 
+  CraftType,
+  DifficultyLevel
 } from '@/types/stitchPattern';
 import { getDifficultyDisplayInfo } from '@/services/stitchPatternService';
 
@@ -80,6 +81,23 @@ function CategoryCard({ category, onSelect }: CategoryCardProps) {
     }
   };
 
+  const getDifficultyColor = (level: DifficultyLevel): string => {
+    switch (level) {
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'easy':
+        return 'bg-blue-100 text-blue-800';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'advanced':
+        return 'bg-orange-100 text-orange-800';
+      case 'expert':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
   return (
     <div
       onClick={() => onSelect(category.category)}
@@ -97,7 +115,7 @@ function CategoryCard({ category, onSelect }: CategoryCardProps) {
                 {t(`stitchCategory.${category.category.toLowerCase()}`, category.category)}
               </h3>
               <p className="text-sm opacity-90">
-                {category.count} {category.count === 1 ? 'pattern' : 'patterns'}
+                {t('stitchPattern.patternCount', '{{count}} pattern', { count: category.count })}
               </p>
             </div>
           </div>
@@ -114,24 +132,14 @@ function CategoryCard({ category, onSelect }: CategoryCardProps) {
               {t('stitchLibrary.difficultyLevels', 'Difficulty Levels')}
             </h4>
             <div className="flex flex-wrap gap-1">
-              {category.difficulty_levels.map(level => {
-                const difficultyInfo = getDifficultyDisplayInfo(level);
-                return (
-                  <span
-                    key={level}
-                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      difficultyInfo.color === 'green' ? 'bg-green-100 text-green-800' :
-                      difficultyInfo.color === 'blue' ? 'bg-blue-100 text-blue-800' :
-                      difficultyInfo.color === 'yellow' ? 'bg-yellow-100 text-yellow-800' :
-                      difficultyInfo.color === 'orange' ? 'bg-orange-100 text-orange-800' :
-                      difficultyInfo.color === 'red' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {difficultyInfo.level}
-                  </span>
-                );
-              })}
+              {category.difficulty_levels.map(level => (
+                <span
+                  key={level}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(level)}`}
+                >
+                  {t(`stitchPattern.difficulty.${level}`, level)}
+                </span>
+              ))}
             </div>
           </div>
         )}
@@ -246,4 +254,4 @@ export default function StitchCategoryGrid({
       </div>
     </div>
   );
-} 
+}

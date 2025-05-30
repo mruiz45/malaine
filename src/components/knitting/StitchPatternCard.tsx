@@ -135,7 +135,7 @@ export default function StitchPatternCard({
                       {pattern.category}
                     </span>
                   )}
-                  {showDifficulty && difficultyInfo && (
+                  {showDifficulty && difficultyInfo && pattern.difficulty_level && (
                     <span className={`text-xs px-2 py-1 rounded ${
                       difficultyInfo.color === 'green' ? 'bg-green-100 text-green-700' :
                       difficultyInfo.color === 'blue' ? 'bg-blue-100 text-blue-700' :
@@ -144,7 +144,7 @@ export default function StitchPatternCard({
                       difficultyInfo.color === 'red' ? 'bg-red-100 text-red-700' :
                       'bg-gray-100 text-gray-700'
                     }`}>
-                      {difficultyInfo.level}
+                      {t(`stitchPattern.difficulty.${pattern.difficulty_level}`, pattern.difficulty_level)}
                     </span>
                   )}
                 </div>
@@ -212,7 +212,7 @@ export default function StitchPatternCard({
               {pattern.category}
             </span>
           )}
-          {showDifficulty && difficultyInfo && (
+          {showDifficulty && difficultyInfo && pattern.difficulty_level && (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
               difficultyInfo.color === 'green' ? 'bg-green-100 text-green-800' :
               difficultyInfo.color === 'blue' ? 'bg-blue-100 text-blue-800' :
@@ -221,7 +221,7 @@ export default function StitchPatternCard({
               difficultyInfo.color === 'red' ? 'bg-red-100 text-red-800' :
               'bg-gray-100 text-gray-800'
             }`}>
-              {difficultyInfo.level}
+              {t(`stitchPattern.difficulty.${pattern.difficulty_level}`, pattern.difficulty_level)}
             </span>
           )}
         </div>

@@ -92,7 +92,7 @@ export default function ResizerTemplateSelector({
               {template.supports_shaping && (
                 <div className="mt-3">
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                    Supports Shaping
+                    {t('tools.pattern_resizer.supports_shaping')}
                   </span>
                 </div>
               )}

@@ -587,435 +587,24 @@
         }
       }
     },
-    "reverse_gauge_calculator": {
-      "title": "Reverse Gauge Calculator",
-      "description": "Calculate required stitches/rows for target dimensions, resulting dimensions from stitch counts, or compare pattern gauge vs user gauge",
-      "scenario_selection": "Choose Your Calculation Scenario",
-      "calculate": "Calculate",
-      "calculating": "Calculating...",
-      "reset": "Reset",
-      "scenarios": {
-        "target_to_stitches": {
-          "title": "Target Dimension → Stitches/Rows",
-          "description": "Calculate how many stitches or rows you need for a specific dimension with your gauge"
-        },
-        "stitches_to_dimension": {
-          "title": "Stitches/Rows → Dimension",
-          "description": "Calculate the resulting dimension when using a specific number of stitches or rows with your gauge"
-        },
-        "gauge_comparison": {
-          "title": "Pattern vs User Gauge Comparison",
-          "description": "Compare pattern gauge with your gauge and get adjustments needed"
-        }
-      },
-      "form": {
-        "your_gauge": "Your Gauge",
-        "pattern_gauge": "Pattern Gauge",
-        "stitches": "Stitches",
-        "rows": "Rows",
-        "unit_dimension": "Unit Dimension",
-        "unit": "Unit",
-        "target_dimension": "Target Dimension",
-        "dimension_unit": "Dimension Unit",
-        "calculate_for": "Calculate for",
-        "stitch_or_row_count": "Stitch or Row Count",
-        "calculate_dimension_for": "Calculate dimension for",
-        "pattern_stitch_row_count": "Pattern Stitch/Row Count",
-        "calculate_component_for": "Calculate component for",
-        "width": "Width",
-        "height": "Height"
-      },
-      "results": {
-        "title": "Calculation Results",
-        "scenario_a": {
-          "title": "Target Dimension → Required Stitches/Rows"
-        },
-        "scenario_b": {
-          "title": "Stitches/Rows → Resulting Dimension"
-        },
-        "scenario_c": {
-          "title": "Gauge Comparison"
-        },
-        "target_dimension": "Target Dimension",
-        "calculating_for": "Calculating for",
-        "required_count": "Required Count",
-        "stitches_needed": "stitches needed",
-        "rows_needed": "rows needed",
-        "stitches_used": "Stitches Used",
-        "rows_used": "Rows Used",
-        "resulting_dimension": "Resulting Dimension",
-        "final_width": "final width",
-        "final_height": "final height",
-        "pattern_count": "Pattern Count",
-        "original_pattern_dimension": "Original Pattern Dimension",
-        "with_pattern_gauge": "With pattern gauge",
-        "with_your_gauge": "With Your Gauge",
-        "with_your_gauge_detail": "With your gauge",
-        "difference": "difference",
-        "adjustment_needed": "Adjustment Needed",
-        "to_achieve_original_dimension": "to achieve original dimension",
-        "gauges_match": "Gauges match!",
-        "no_adjustment_needed": "No adjustment needed",
-        "gauge_used": "Gauge used"
-      }
+    "title": "Tools",
+    "subtitle": "Useful tools for your knitting and crochet projects",
+    "related_tools": "Related Tools",
+    "gauge_calculator": {
+      "title": "Gauge Calculator"
     },
-    "yarn_quantity_estimator": {
-      "title": "Yarn Quantity Estimator",
-      "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type",
-      "subtitle": "Get a rough estimate of yarn requirements for planning your project",
-      "gauge_section": "Gauge Information",
-      "yarn_section": "Yarn Information",
-      "project_section": "Project Specifications",
-      "results_section": "Estimation Results",
-      "estimate": "Estimate Yarn Quantity",
-      "estimating": "Calculating...",
-      "reset": "Reset",
-      "gauge_selection": {
-        "title": "Select Gauge",
-        "use_saved_profile": "Use Saved Gauge Profile",
-        "enter_manually": "Enter Gauge Manually",
-        "select_profile": "Select a gauge profile",
-        "no_profiles": "No gauge profiles found",
-        "create_profile_link": "Create a gauge profile first",
-        "manual_entry": "Manual Gauge Entry"
-      },
-      "yarn_selection": {
-        "title": "Select Yarn",
-        "use_saved_profile": "Use Saved Yarn Profile",
-        "enter_manually": "Enter Yarn Details Manually",
-        "select_profile": "Select a yarn profile",
-        "no_profiles": "No yarn profiles found",
-        "create_profile_link": "Create a yarn profile first",
-        "manual_entry": "Manual Yarn Entry"
-      },
-      "project_types": {
-        "title": "Project Type",
-        "scarf": "Scarf",
-        "baby_blanket": "Baby Blanket",
-        "simple_hat": "Simple Hat",
-        "adult_sweater": "Adult Sweater"
-      },
-      "garment_sizes": {
-        "title": "Garment Size",
-        "S": "Small",
-        "M": "Medium",
-        "L": "Large",
-        "XL": "Extra Large"
-      },
-      "dimensions": {
-        "title": "Project Dimensions",
-        "width": "Width",
-        "length": "Length",
-        "unit": "Unit",
-        "cm": "Centimeters",
-        "inch": "Inches"
-      },
-      "manual_gauge": {
-        "stitch_count": "Stitches per swatch",
-        "row_count": "Rows per swatch",
-        "swatch_width": "Swatch width",
-        "swatch_height": "Swatch height",
-        "measurement_unit": "Measurement unit"
-      },
-      "manual_yarn": {
-        "yarn_weight_category": "Yarn weight category",
-        "skein_meterage": "Meterage per skein (meters)",
-        "skein_weight_grams": "Weight per skein (grams)",
-        "optional": "Optional - helps with calculations"
-      },
-      "results": {
-        "title": "Yarn Quantity Estimation",
-        "total_length": "Total Length Needed",
-        "total_weight": "Total Weight Needed",
-        "number_of_skeins": "Number of Skeins",
-        "calculation_details": "Calculation Details",
-        "surface_area": "Project Surface Area",
-        "yarn_factor": "Yarn Consumption Factor",
-        "buffer_included": "Buffer Included",
-        "calculation_method": "Calculation Method",
-        "yarn_weight_used": "Yarn Weight Category Used",
-        "meters": "meters",
-        "yards": "yards",
-        "grams": "grams",
-        "ounces": "ounces",
-        "skeins": "skeins",
-        "square_meters": "m²",
-        "meters_per_square_meter": "m/m²",
-        "area_based": "Area-based calculation",
-        "fixed_yardage": "Fixed yardage estimation"
-      },
-      "disclaimer": {
-        "title": "Important Disclaimer",
-        "content": "This is a rough estimate and actual yarn usage may vary based on:",
-        "factors": [
-          "Stitch pattern complexity",
-          "Individual knitting/crochet tension",
-          "Exact project sizing",
-          "Yarn characteristics",
-          "Pattern modifications"
-        ],
-        "recommendation": "Always purchase a little extra yarn to account for variations and potential mistakes."
-      },
-      "validation": {
-        "project_type_required": "Project type is required",
-        "gauge_required": "Gauge information is required",
-        "yarn_required": "Yarn information is required",
-        "dimensions_required": "Dimensions are required for this project type",
-        "size_required": "Size is required for this project type",
-        "width_positive": "Width must be a positive number",
-        "length_positive": "Length must be a positive number",
-        "stitch_count_positive": "Stitch count must be a positive number",
-        "row_count_positive": "Row count must be a positive number",
-        "swatch_width_positive": "Swatch width must be a positive number",
-        "swatch_height_positive": "Swatch height must be a positive number",
-        "skein_meterage_positive": "Skein meterage must be a positive number",
-        "skein_weight_positive": "Skein weight must be a positive number"
-      },
-      "messages": {
-        "estimation_success": "Yarn quantity estimated successfully!",
-        "estimation_error": "Failed to estimate yarn quantity",
-        "loading_profiles": "Loading profiles...",
-        "no_estimation": "No estimation available"
-      }
-    },
-    "morphology_advisor": {
-      "title": "Body Morphology Advisor",
-      "description": "Get advice on adapting patterns to your body shape"
+    "yarn_estimator": {
+      "title": "Yarn Quantity Estimator"
     },
     "pattern_resizer": {
       "title": "Existing Pattern Resizer",
       "description": "Adapt existing pattern numbers to your gauge and desired dimensions",
-      "subtitle": "Rescale an existing pattern's stitch counts and measurements to your specifications",
-      "template_selection": "Select Pattern Structure",
-      "original_pattern_section": "Original Pattern Information",
-      "new_gauge_section": "Your New Gauge",
-      "new_dimensions_section": "Your Desired New Dimensions",
-      "results_section": "Calculated New Values",
-      "calculate": "Calculate New Pattern",
-      "calculating": "Calculating...",
-      "reset": "Reset Form",
-      "select_template": "Select a pattern structure template",
-      "no_template_selected": "Please select a pattern structure template to begin",
-      "gauge_selection": {
-        "title": "Select Your Gauge",
-        "use_saved_profile": "Use Saved Gauge Profile",
-        "enter_manually": "Enter Gauge Manually",
-        "select_profile": "Select a gauge profile",
-        "no_profiles": "No gauge profiles found",
-        "create_profile_link": "Create a gauge profile first",
-        "manual_entry": "Manual Gauge Entry"
-      },
-      "templates": {
-        "simple_body_panel_rectangular": {
-          "name": "Simple Rectangular Body Panel",
-          "description": "For basic rectangular body pieces like sweater fronts/backs without complex shaping"
-        },
-        "simple_sleeve_tapered": {
-          "name": "Simple Tapered Sleeve",
-          "description": "For sleeves with basic linear tapering from cuff to upper arm"
-        },
-        "simple_scarf_rectangular": {
-          "name": "Simple Rectangular Scarf",
-          "description": "For basic rectangular scarves with consistent width"
-        },
-        "simple_hat_cylindrical": {
-          "name": "Simple Cylindrical Hat Body",
-          "description": "For the main cylindrical body of a hat (before crown shaping)"
-        }
-      },
-      "form": {
-        "original_gauge_section": "Original Pattern Gauge",
-        "original_gauge_stitches": "Original Gauge: Stitches per 10cm/4in",
-        "original_gauge_rows": "Original Gauge: Rows per 10cm/4in",
-        "original_gauge_unit": "Original Gauge Unit",
-        "original_cast_on": "Original Cast-On Stitches",
-        "original_rows_total": "Original Total Rows",
-        "original_finished_width": "Original Finished Width",
-        "original_finished_length": "Original Finished Length",
-        "original_cuff_stitches": "Original Cuff Stitches",
-        "original_upper_arm_stitches": "Original Upper Arm Stitches",
-        "original_sleeve_length_rows": "Original Sleeve Length (in Rows)",
-        "original_shaping_stitches_per_event": "Original Sts Inc/Dec per Shaping Row",
-        "original_head_circumference": "Original Head Circumference",
-        "original_hat_height": "Original Hat Height",
-        "new_finished_width": "Desired NEW Finished Width",
-        "new_finished_length": "Desired NEW Finished Length",
-        "new_cuff_width": "Desired NEW Cuff Width",
-        "new_upper_arm_width": "Desired NEW Upper Arm Width",
-        "new_sleeve_length": "Desired NEW Sleeve Length",
-        "new_head_circumference": "Desired NEW Head Circumference",
-        "new_hat_height": "Desired NEW Hat Height",
-        "unit_cm": "Centimeters (cm)",
-        "unit_inch": "Inches (in)"
-      },
-      "results": {
-        "title": "Your New Pattern Numbers",
-        "new_cast_on_stitches": "New Cast-On Stitches",
-        "new_total_rows": "New Total Rows",
-        "new_actual_width": "New Actual Width",
-        "new_actual_length": "New Actual Length",
-        "new_cuff_stitches": "New Cuff Stitches",
-        "new_upper_arm_stitches": "New Upper Arm Stitches",
-        "new_sleeve_length_rows": "New Sleeve Length (in Rows)",
-        "new_shaping_schedule_summary": "New Shaping Schedule",
-        "new_actual_circumference": "New Actual Circumference",
-        "new_actual_height": "New Actual Height",
-        "original_values_title": "Original Pattern Values",
-        "new_values_title": "Your New Values",
-        "calculation_summary": "Calculation Summary",
-        "stitches": "stitches",
-        "rows": "rows",
-        "gauge_used": "Gauge used",
-        "template_used": "Template used"
-      },
-      "validation": {
-        "template_required": "Please select a pattern structure template",
-        "original_gauge_stitches_required": "Original gauge stitches per unit is required",
-        "original_gauge_rows_required": "Original gauge rows per unit is required",
-        "original_gauge_positive": "Original gauge values must be positive numbers",
-        "new_gauge_required": "Your new gauge information is required",
-        "new_gauge_positive": "New gauge values must be positive numbers",
-        "original_pattern_values_required": "Original pattern values are required",
-        "original_values_positive": "Original pattern values must be positive numbers",
-        "new_dimensions_required": "New desired dimensions are required",
-        "new_dimensions_positive": "New dimensions must be positive numbers",
-        "calculation_error": "Error performing calculation"
-      },
-      "messages": {
-        "calculation_success": "Pattern resized successfully!",
-        "calculation_error": "Failed to calculate new pattern values",
-        "loading_templates": "Loading pattern templates...",
-        "loading_profiles": "Loading gauge profiles...",
-        "no_calculation": "No calculation available"
-      },
-      "disclaimers": {
-        "title": "Important Disclaimers",
-        "content": "This tool provides numerical rescaling only and cannot account for:",
-        "limitations": [
-          "Complex pattern features beyond basic measurements",
-          "Stitch pattern adjustments or interactions",
-          "Yarn characteristics and drape differences",
-          "Construction method variations",
-          "Advanced shaping techniques"
-        ],
-        "recommendation": "Use your knitting/crochet judgment to verify results and make necessary adjustments.",
-        "note": "This is a starting point for pattern adaptation, not a complete solution."
-      },
-      "help": {
-        "title": "How to Use This Tool",
-        "steps": [
-          "Select the pattern structure that matches your existing pattern",
-          "Enter the original pattern's gauge and key measurements",
-          "Enter your own gauge (from swatching or saved profiles)",
-          "Enter your desired new dimensions",
-          "Review the calculated adjustments"
-        ],
-        "tips": [
-          "Always swatch with your yarn to get accurate gauge",
-          "Double-check original pattern measurements carefully",
-          "Consider how yarn weight differences might affect drape",
-          "Test calculations on a small sample first if unsure"
-        ]
-      },
-      "input_method": {
-        "manual": "Manual Input",
-        "text": "Import from Text"
-      },
-      "text_parser": {
-        "title": "Import from Text",
-        "description": "Paste your pattern text using the structured format below. The parser will automatically extract gauge and measurement values.",
-        "unit": "Unit",
-        "text_label": "Pattern Text",
-        "placeholder": "Paste your structured pattern text here...\n\nExample:\nPATTERN_NAME: My Pattern\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
-        "show_example": "Show Example Format",
-        "parse_button": "Parse Text",
-        "parsing": "Parsing...",
-        "clear_button": "Clear",
-        "parse_errors": "Parsing Errors",
-        "parse_success": "Parsing Successful",
-        "pattern_name": "Pattern:",
-        "gauge": "Gauge:",
-        "values_found": "Values found:",
-        "components_found": "Components:",
-        "warnings": "Warnings:",
-        "parsing_failed": "Parsing failed",
-        "unknown_error": "Unknown error occurred",
-        "format_help": {
-          "title": "Text Format Guide",
-          "description": "Use this simple keyword-based format:",
-          "keywords": {
-            "pattern_name": "PATTERN_NAME: Your pattern name",
-            "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: number (or _PER_4IN for inches)",
-            "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: number (or _PER_4IN for inches)",
-            "component": "COMPONENT: ComponentName (optional, for grouping values)",
-            "cast_on": "CAST_ON: number of stitches",
-            "rows": "ROWS_TOTAL: number of rows",
-            "width": "FINISHED_WIDTH_CM: measurement (or _IN for inches)",
-            "length": "FINISHED_LENGTH_CM: measurement (or _IN for inches)"
-          },
-          "example_title": "Example for Body Panel:",
-          "tips": [
-            "Use keywords exactly as shown (case insensitive)",
-            "One value per line in KEYWORD: value format",
-            "Comments start with // or #",
-            "Unit suffixes (_CM or _IN) help automatic detection"
-          ]
-        }
+      "subtitle": "Resize stitch counts and measurements of an existing pattern to your specifications",
+      "supports_shaping": "Supports Shaping",
+      "related": {
+        "gauge_calculator": "Use the Reverse Gauge Calculator for detailed gauge conversions and calculations.",
+        "yarn_estimator": "Estimate yarn requirements for your resized pattern dimensions."
       }
-    },
-    "development": {
-      "title": "Development Tools",
-      "description": "Temporary page to test all tools developed for Malaine",
-      "note": {
-        "title": "Note:",
-        "content": "This page is temporary and will be used only during development to facilitate testing of the different tools."
-      },
-      "status": {
-        "implemented": "Implemented",
-        "coming_soon": "Coming Soon"
-      },
-      "future_tools": {
-        "tool1": "Future Tool #1",
-        "description1": "Next tool to be developed according to functional specifications.",
-        "tool2": "Future Tool #2",
-        "description2": "Another tool to be developed according to functional specifications.",
-        "tool3": "Future Tool #3",
-        "description3": "Another tool to be developed according to functional specifications."
-      },
-      "info": {
-        "title": "Development Information",
-        "implemented_tools": "Implemented Tools",
-        "architecture": "Architecture",
-        "tools": {
-          "reverse_gauge": "Reverse Gauge Calculator (US_2.1)",
-          "yarn_estimator": "Yarn Quantity Estimator (US_2.2)",
-          "ease_advisor": "Ease Selection Advisor (US_3.2)",
-          "pattern_resizer": "Existing Pattern Resizer (US_10.1)",
-          "morphology_advisor": "Body Morphology Advisor (US_3.1)",
-          "next_tool": "Next tool according to specifications"
-        },
-        "arch": {
-          "reusable_components": "Reusable components",
-          "business_logic": "Services with business logic",
-          "api_routes": "Next.js API routes",
-          "unit_tests": "Unit tests with Jest",
-          "i18n": "Internationalization (FR/EN)"
-        }
-      },
-      "quick_links": {
-        "title": "Quick Links",
-        "dashboard": "Dashboard",
-        "gauge_profiles": "Gauge Profiles",
-        "measurements": "Measurements"
-      }
-    },
-    "pattern_resizer": {
-      "title": "Existing Pattern Resizer",
-      "description": "Adapt existing pattern numbers to your gauge and desired dimensions. Rescale stitch counts and measurements for your specifications."
-    },
-    "yarn_quantity_estimator": {
-      "title": "Yarn Quantity Estimator",
-      "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type."
     },
     "reverse_gauge_calculator": {
       "title": "Reverse Gauge Calculator",
@@ -1024,6 +613,7 @@
       "calculate": "Calculate",
       "calculating": "Calculating...",
       "reset": "Reset",
+      "calculation_error": "An error occurred during calculation",
       "scenarios": {
         "target_to_stitches": {
           "title": "Target Dimension → Stitches/Rows",
@@ -1039,19 +629,8 @@
         }
       },
       "form": {
-        "your_gauge": "Your Gauge",
-        "pattern_gauge": "Pattern Gauge",
         "stitches": "Stitches",
         "rows": "Rows",
-        "unit_dimension": "Unit Dimension",
-        "unit": "Unit",
-        "target_dimension": "Target Dimension",
-        "dimension_unit": "Dimension Unit",
-        "calculate_for": "Calculate for",
-        "stitch_or_row_count": "Stitch or Row Count",
-        "calculate_dimension_for": "Calculate dimension for",
-        "pattern_stitch_row_count": "Pattern Stitch/Row Count",
-        "calculate_component_for": "Calculate component for",
         "width": "Width",
         "height": "Height"
       },
@@ -1087,6 +666,398 @@
         "gauges_match": "Gauges match!",
         "no_adjustment_needed": "No adjustment needed",
         "gauge_used": "Gauge used"
+      }
+    },
+    "morphology_advisor": {
+      "tool_title": "Morphology Adaptation Advisor",
+      "tool_description": "Get personalized advice for adapting patterns to your specific body characteristics",
+      "configuration_title": "Configuration",
+      "getting_advice": "Getting advice...",
+      "get_advice_button": "Get Advice",
+      "error_title": "Error",
+      "error_getting_advice": "Error getting morphology advice",
+      "advice_title": "Adaptation Advice",
+      "no_results_message": "No specific advice found for the selected characteristics. Try selecting other characteristics."
+    }
+  },
+  "yarn_quantity_estimator": {
+    "title": "Yarn Quantity Estimator",
+    "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type",
+    "subtitle": "Get a rough estimate of yarn requirements for planning your project",
+    "gauge_section": "Gauge Information",
+    "yarn_section": "Yarn Information",
+    "project_section": "Project Specifications",
+    "results_section": "Estimation Results",
+    "estimate": "Estimate Yarn Quantity",
+    "estimating": "Calculating...",
+    "reset": "Reset",
+    "gauge_selection": {
+      "title": "Select Gauge",
+      "use_saved_profile": "Use Saved Gauge Profile",
+      "enter_manually": "Enter Gauge Manually",
+      "select_profile": "Select a gauge profile",
+      "no_profiles": "No gauge profiles found",
+      "create_profile_link": "Create a gauge profile first",
+      "manual_entry": "Manual Gauge Entry"
+    },
+    "yarn_selection": {
+      "title": "Select Yarn",
+      "use_saved_profile": "Use Saved Yarn Profile",
+      "enter_manually": "Enter Yarn Details Manually",
+      "select_profile": "Select a yarn profile",
+      "no_profiles": "No yarn profiles found",
+      "create_profile_link": "Create a yarn profile first",
+      "manual_entry": "Manual Yarn Entry"
+    },
+    "project_types": {
+      "title": "Project Type",
+      "scarf": "Scarf",
+      "baby_blanket": "Baby Blanket",
+      "simple_hat": "Simple Hat",
+      "adult_sweater": "Adult Sweater"
+    },
+    "garment_sizes": {
+      "title": "Garment Size",
+      "S": "Small",
+      "M": "Medium",
+      "L": "Large",
+      "XL": "Extra Large"
+    },
+    "dimensions": {
+      "title": "Project Dimensions",
+      "width": "Width",
+      "length": "Length",
+      "unit": "Unit",
+      "cm": "Centimeters",
+      "inch": "Inches"
+    },
+    "manual_gauge": {
+      "stitch_count": "Stitches per swatch",
+      "row_count": "Rows per swatch",
+      "swatch_width": "Swatch width",
+      "swatch_height": "Swatch height",
+      "measurement_unit": "Measurement unit"
+    },
+    "manual_yarn": {
+      "yarn_weight_category": "Yarn weight category",
+      "skein_meterage": "Meterage per skein (meters)",
+      "skein_weight_grams": "Weight per skein (grams)",
+      "optional": "Optional - helps with calculations"
+    },
+    "results": {
+      "title": "Yarn Quantity Estimation",
+      "total_length": "Total Length Needed",
+      "total_weight": "Total Weight Needed",
+      "number_of_skeins": "Number of Skeins",
+      "calculation_details": "Calculation Details",
+      "surface_area": "Project Surface Area",
+      "yarn_factor": "Yarn Consumption Factor",
+      "buffer_included": "Buffer Included",
+      "calculation_method": "Calculation Method",
+      "yarn_weight_used": "Yarn Weight Category Used",
+      "meters": "meters",
+      "yards": "yards",
+      "grams": "grams",
+      "ounces": "ounces",
+      "skeins": "skeins",
+      "square_meters": "m²",
+      "meters_per_square_meter": "m/m²",
+      "area_based": "Area-based calculation",
+      "fixed_yardage": "Fixed yardage estimation"
+    },
+    "disclaimer": {
+      "title": "Important Disclaimer",
+      "content": "This is a rough estimate and actual yarn usage may vary based on:",
+      "factors": [
+        "Stitch pattern complexity",
+        "Individual knitting/crochet tension",
+        "Exact project sizing",
+        "Yarn characteristics",
+        "Pattern modifications"
+      ],
+      "recommendation": "Always purchase a little extra yarn to account for variations and potential mistakes."
+    },
+    "validation": {
+      "project_type_required": "Project type is required",
+      "gauge_required": "Gauge information is required",
+      "yarn_required": "Yarn information is required",
+      "dimensions_required": "Dimensions are required for this project type",
+      "size_required": "Size is required for this project type",
+      "width_positive": "Width must be a positive number",
+      "length_positive": "Length must be a positive number",
+      "stitch_count_positive": "Stitch count must be a positive number",
+      "row_count_positive": "Row count must be a positive number",
+      "swatch_width_positive": "Swatch width must be a positive number",
+      "swatch_height_positive": "Swatch height must be a positive number",
+      "skein_meterage_positive": "Skein meterage must be a positive number",
+      "skein_weight_positive": "Skein weight must be a positive number"
+    },
+    "messages": {
+      "estimation_success": "Yarn quantity estimated successfully!",
+      "estimation_error": "Failed to estimate yarn quantity",
+      "loading_profiles": "Loading profiles...",
+      "no_estimation": "No estimation available"
+    }
+  },
+  "morphology_advisor": {
+    "title": "Body Morphology Advisor",
+    "description": "Get advice on adapting patterns to your body shape"
+  },
+  "pattern_resizer": {
+    "title": "Existing Pattern Resizer",
+    "description": "Adapt existing pattern numbers to your gauge and desired dimensions",
+    "subtitle": "Rescale an existing pattern's stitch counts and measurements to your specifications",
+    "template_selection": "Select Pattern Structure",
+    "original_pattern_section": "Original Pattern Information",
+    "new_gauge_section": "Your New Gauge",
+    "new_dimensions_section": "Your Desired New Dimensions",
+    "results_section": "Calculated New Values",
+    "calculate": "Calculate New Pattern",
+    "calculating": "Calculating...",
+    "reset": "Reset Form",
+    "select_template": "Select a pattern structure template",
+    "no_template_selected": "Please select a pattern structure template to begin",
+    "gauge_selection": {
+      "title": "Select Your Gauge",
+      "use_saved_profile": "Use Saved Gauge Profile",
+      "enter_manually": "Enter Gauge Manually",
+      "select_profile": "Select a gauge profile",
+      "no_profiles": "No gauge profiles found",
+      "create_profile_link": "Create a gauge profile first",
+      "manual_entry": "Manual Gauge Entry"
+    },
+    "templates": {
+      "simple_body_panel_rectangular": {
+        "name": "Simple Rectangular Body Panel",
+        "description": "For basic rectangular body pieces like sweater fronts/backs without complex shaping"
+      },
+      "simple_sleeve_tapered": {
+        "name": "Simple Tapered Sleeve",
+        "description": "For sleeves with basic linear tapering from cuff to upper arm"
+      },
+      "simple_scarf_rectangular": {
+        "name": "Simple Rectangular Scarf",
+        "description": "For basic rectangular scarves with consistent width"
+      },
+      "simple_hat_cylindrical": {
+        "name": "Simple Cylindrical Hat Body",
+        "description": "For the main cylindrical body of a hat (before crown shaping)"
+      }
+    },
+    "form": {
+      "original_gauge_section": "Original Pattern Gauge",
+      "original_gauge_stitches": "Original Gauge: Stitches per 10cm/4in",
+      "original_gauge_rows": "Original Gauge: Rows per 10cm/4in",
+      "original_gauge_unit": "Original Gauge Unit",
+      "original_cast_on": "Original Cast-On Stitches",
+      "original_rows_total": "Original Total Rows",
+      "original_finished_width": "Original Finished Width",
+      "original_finished_length": "Original Finished Length",
+      "original_cuff_stitches": "Original Cuff Stitches",
+      "original_upper_arm_stitches": "Original Upper Arm Stitches",
+      "original_sleeve_length_rows": "Original Sleeve Length (in Rows)",
+      "original_shaping_stitches_per_event": "Original Sts Inc/Dec per Shaping Row",
+      "original_head_circumference": "Original Head Circumference",
+      "original_hat_height": "Original Hat Height",
+      "new_finished_width": "Desired NEW Finished Width",
+      "new_finished_length": "Desired NEW Finished Length",
+      "new_cuff_width": "Desired NEW Cuff Width",
+      "new_upper_arm_width": "Desired NEW Upper Arm Width",
+      "new_sleeve_length": "Desired NEW Sleeve Length",
+      "new_head_circumference": "Desired NEW Head Circumference",
+      "new_hat_height": "Desired NEW Hat Height",
+      "unit_cm": "Centimeters (cm)",
+      "unit_inch": "Inches (in)"
+    },
+    "results": {
+      "title": "Your New Pattern Numbers",
+      "new_cast_on_stitches": "New Cast-On Stitches",
+      "new_total_rows": "New Total Rows",
+      "new_actual_width": "New Actual Width",
+      "new_actual_length": "New Actual Length",
+      "new_cuff_stitches": "New Cuff Stitches",
+      "new_upper_arm_stitches": "New Upper Arm Stitches",
+      "new_sleeve_length_rows": "New Sleeve Length (in Rows)",
+      "new_shaping_schedule_summary": "New Shaping Schedule",
+      "new_actual_circumference": "New Actual Circumference",
+      "new_actual_height": "New Actual Height",
+      "original_values_title": "Original Pattern Values",
+      "new_values_title": "Your New Values",
+      "calculation_summary": "Calculation Summary",
+      "stitches": "stitches",
+      "rows": "rows",
+      "gauge_used": "Gauge used",
+      "template_used": "Template used"
+    },
+    "validation": {
+      "template_required": "Please select a pattern structure template",
+      "original_gauge_stitches_required": "Original gauge stitches per unit is required",
+      "original_gauge_rows_required": "Original gauge rows per unit is required",
+      "original_gauge_positive": "Original gauge values must be positive numbers",
+      "new_gauge_required": "Your new gauge information is required",
+      "new_gauge_positive": "New gauge values must be positive numbers",
+      "original_pattern_values_required": "Original pattern values are required",
+      "original_values_positive": "Original pattern values must be positive numbers",
+      "new_dimensions_required": "New desired dimensions are required",
+      "new_dimensions_positive": "New dimensions must be positive numbers",
+      "calculation_error": "Error performing calculation"
+    },
+    "messages": {
+      "calculation_success": "Pattern resized successfully!",
+      "calculation_error": "Failed to calculate new pattern values",
+      "loading_templates": "Loading pattern templates...",
+      "loading_profiles": "Loading gauge profiles...",
+      "no_calculation": "No calculation available"
+    },
+    "disclaimers": {
+      "title": "Important Disclaimers",
+      "content": "This tool provides numerical rescaling only and cannot account for:",
+      "limitations": [
+        "Complex pattern features beyond basic measurements",
+        "Stitch pattern adjustments or interactions",
+        "Yarn characteristics and drape differences",
+        "Construction method variations",
+        "Advanced shaping techniques"
+      ],
+      "recommendation": "Use your knitting/crochet judgment to verify results and make necessary adjustments.",
+      "note": "This is a starting point for pattern adaptation, not a complete solution."
+    },
+    "help": {
+      "title": "How to Use This Tool",
+      "steps": [
+        "Select the pattern structure that matches your existing pattern",
+        "Enter the original pattern's gauge and key measurements",
+        "Enter your own gauge (from swatching or saved profiles)",
+        "Enter your desired new dimensions",
+        "Review the calculated adjustments"
+      ],
+      "tips": [
+        "Always swatch with your yarn to get accurate gauge",
+        "Double-check original pattern measurements carefully",
+        "Consider how yarn weight differences might affect drape",
+        "Test calculations on a small sample first if unsure"
+      ]
+    },
+    "input_method": {
+      "manual": "Manual Input",
+      "text": "Import from Text"
+    },
+    "text_parser": {
+      "title": "Import from Text",
+      "description": "Paste your pattern text using the structured format below. The parser will automatically extract gauge and measurement values.",
+      "unit": "Unit",
+      "text_label": "Pattern Text",
+      "placeholder": "Paste your structured pattern text here...\n\nExample:\nPATTERN_NAME: My Pattern\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
+      "show_example": "Show Example Format",
+      "parse_button": "Parse Text",
+      "parsing": "Parsing...",
+      "clear_button": "Clear",
+      "parse_errors": "Parsing Errors",
+      "parse_success": "Parsing Successful",
+      "pattern_name": "Pattern:",
+      "gauge": "Gauge:",
+      "values_found": "Values found:",
+      "components_found": "Components:",
+      "warnings": "Warnings:",
+      "parsing_failed": "Parsing failed",
+      "unknown_error": "Unknown error occurred",
+      "format_help": {
+        "title": "Text Format Guide",
+        "description": "Use this simple keyword-based format:",
+        "keywords": {
+          "pattern_name": "PATTERN_NAME: Your pattern name",
+          "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: number (or _PER_4IN for inches)",
+          "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: number (or _PER_4IN for inches)",
+          "component": "COMPONENT: ComponentName (optional, for grouping values)",
+          "cast_on": "CAST_ON: number of stitches",
+          "rows": "ROWS_TOTAL: number of rows",
+          "width": "FINISHED_WIDTH_CM: measurement (or _IN for inches)",
+          "length": "FINISHED_LENGTH_CM: measurement (or _IN for inches)"
+        },
+        "example_title": "Example for Body Panel:",
+        "tips": [
+          "Use keywords exactly as shown (case insensitive)",
+          "One value per line in KEYWORD: value format",
+          "Comments start with // or #",
+          "Unit suffixes (_CM or _IN) help automatic detection"
+        ]
+      }
+    }
+  },
+  "development": {
+    "title": "Development Tools",
+    "description": "Temporary page to test all tools developed for Malaine",
+    "note": {
+      "title": "Note:",
+      "content": "This page is temporary and will be used only during development to facilitate testing of the different tools."
+    },
+    "status": {
+      "implemented": "Implemented",
+      "coming_soon": "Coming Soon"
+    },
+    "future_tools": {
+      "tool1": "Future Tool #1",
+      "description1": "Next tool to be developed according to functional specifications.",
+      "tool2": "Future Tool #2",
+      "description2": "Another tool to be developed according to functional specifications.",
+      "tool3": "Future Tool #3",
+      "description3": "Another tool to be developed according to functional specifications."
+    },
+    "info": {
+      "title": "Development Information",
+      "implemented_tools": "Implemented Tools",
+      "architecture": "Architecture",
+      "tools": {
+        "reverse_gauge": "Reverse Gauge Calculator (US_2.1)",
+        "yarn_estimator": "Yarn Quantity Estimator (US_2.2)",
+        "ease_advisor": "Ease Selection Advisor (US_3.2)",
+        "pattern_resizer": "Existing Pattern Resizer (US_10.1)",
+        "morphology_advisor": "Body Morphology Advisor (US_3.1)",
+        "next_tool": "Next tool according to specifications"
+      },
+      "arch": {
+        "reusable_components": "Reusable components",
+        "business_logic": "Services with business logic",
+        "api_routes": "Next.js API routes",
+        "unit_tests": "Unit tests with Jest",
+        "i18n": "Internationalization (FR/EN)"
+      }
+    },
+    "quick_links": {
+      "title": "Quick Links",
+      "dashboard": "Dashboard",
+      "gauge_profiles": "Gauge Profiles",
+      "measurements": "Measurements"
+    }
+  },
+  "pattern_resizer": {
+    "title": "Existing Pattern Resizer",
+    "description": "Adapt existing pattern numbers to your gauge and desired dimensions. Rescale stitch counts and measurements for your specifications."
+  },
+  "yarn_quantity_estimator": {
+    "title": "Yarn Quantity Estimator",
+    "description": "Estimate the amount of yarn needed for your project based on gauge, yarn specifications, and project type."
+  },
+  "reverse_gauge_calculator": {
+    "title": "Reverse Gauge Calculator",
+    "description": "Calculate required stitches/rows for target dimensions, resulting dimensions from stitch counts, or compare pattern gauge vs user gauge",
+    "scenario_selection": "Choose Your Calculation Scenario",
+    "calculate": "Calculate",
+    "calculating": "Calculating...",
+    "reset": "Reset",
+    "calculation_error": "An error occurred during calculation",
+    "scenarios": {
+      "target_to_stitches": {
+        "title": "Target Dimension → Stitches/Rows",
+        "description": "Calculate how many stitches or rows you need for a specific dimension with your gauge"
+      },
+      "stitches_to_dimension": {
+        "title": "Stitches/Rows → Dimension",
+        "description": "Calculate the resulting dimension when using a specific number of stitches or rows with your gauge"
+      },
+      "gauge_comparison": {
+        "title": "Pattern vs User Gauge Comparison",
+        "description": "Compare pattern gauge with your gauge and get adjustments needed"
       }
     }
   },
@@ -1173,7 +1144,10 @@
     "yes": "Yes",
     "no": "No",
     "selected": "Selected",
-    "templateNotFound": "Template not found"
+    "templateNotFound": "Template not found",
+    "hide": "Hide",
+    "steps": "Steps",
+    "tips": "Tips"
   },
   "error": {
     "categoriesLoadFailed": "Failed to load categories",

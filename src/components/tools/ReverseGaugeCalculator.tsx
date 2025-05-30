@@ -132,7 +132,7 @@ export default function ReverseGaugeCalculator({
     } catch (error) {
       console.error('Calculation error:', error);
       setErrors({
-        calculate_for: error instanceof Error ? error.message : 'An error occurred during calculation'
+        calculate_for: error instanceof Error ? error.message : t('tools.reverse_gauge_calculator.calculation_error')
       });
     } finally {
       setIsCalculating(false);

@@ -43,14 +43,14 @@ export default function PatternResizerTool({ className = '' }: PatternResizerToo
           className="inline-flex items-center px-4 py-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900 dark:hover:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-md transition-colors"
         >
           <InformationCircleIcon className="w-5 h-5 mr-2" />
-          {showHelp ? 'Hide Help' : t('tools.pattern_resizer.help.title')}
+          {showHelp ? t('common.hide') : t('tools.pattern_resizer.help.title')}
         </button>
         <button
           onClick={() => setShowDisclaimers(!showDisclaimers)}
           className="inline-flex items-center px-4 py-2 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900 dark:hover:bg-yellow-800 text-yellow-700 dark:text-yellow-200 rounded-md transition-colors"
         >
           <ExclamationTriangleIcon className="w-5 h-5 mr-2" />
-          {showDisclaimers ? 'Hide Disclaimers' : t('tools.pattern_resizer.disclaimers.title')}
+          {showDisclaimers ? t('common.hide') : t('tools.pattern_resizer.disclaimers.title')}
         </button>
       </div>
 
@@ -64,7 +64,7 @@ export default function PatternResizerTool({ className = '' }: PatternResizerToo
           <div className="space-y-4">
             <div>
               <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
-                Steps:
+                {t('common.steps')}:
               </h4>
               <ol className="list-decimal list-inside space-y-1 text-blue-700 dark:text-blue-300">
                 {(t('tools.pattern_resizer.help.steps', { returnObjects: true }) as string[]).map((step, index) => (
@@ -75,7 +75,7 @@ export default function PatternResizerTool({ className = '' }: PatternResizerToo
             
             <div>
               <h4 className="font-medium text-blue-800 dark:text-blue-200 mb-2">
-                Tips:
+                {t('common.tips')}:
               </h4>
               <ul className="list-disc list-inside space-y-1 text-blue-700 dark:text-blue-300">
                 {(t('tools.pattern_resizer.help.tips', { returnObjects: true }) as string[]).map((tip, index) => (
@@ -127,23 +127,23 @@ export default function PatternResizerTool({ className = '' }: PatternResizerToo
       {/* Additional Information */}
       <div className="mt-8 p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Related Tools
+          {t('tools.related_tools')}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">
-              Gauge Calculator
+              {t('tools.gauge_calculator.title')}
             </h4>
             <p className="text-gray-600 dark:text-gray-400">
-              Use the Reverse Gauge Calculator for detailed gauge conversions and calculations.
+              {t('tools.pattern_resizer.related.gauge_calculator')}
             </p>
           </div>
           <div>
             <h4 className="font-medium text-gray-800 dark:text-gray-200 mb-2">
-              Yarn Quantity Estimator
+              {t('tools.yarn_estimator.title')}
             </h4>
             <p className="text-gray-600 dark:text-gray-400">
-              Estimate yarn requirements for your resized pattern dimensions.
+              {t('tools.pattern_resizer.related.yarn_estimator')}
             </p>
           </div>
         </div>
