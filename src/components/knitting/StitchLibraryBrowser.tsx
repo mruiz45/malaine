@@ -213,7 +213,7 @@ export default function StitchLibraryBrowser({
             <span className="text-gray-400">/</span>
             <li>
               <span className="text-sm font-medium text-gray-500">
-                {filters.category}
+                {t(`stitchCategory.${filters.category.toLowerCase()}`, filters.category)}
               </span>
             </li>
           </>

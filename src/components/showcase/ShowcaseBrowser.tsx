@@ -186,6 +186,22 @@ export default function ShowcaseBrowser({
     }
   };
 
+  /**
+   * Translates the difficulty level using the existing translations
+   */
+  const translateDifficultyLevel = (level: string) => {
+    const levelKey = level.toLowerCase();
+    return t(`stitchPattern.difficulty.${levelKey}`, level);
+  };
+
+  /**
+   * Translates the category using the showcase translations
+   */
+  const translateCategory = (category: string) => {
+    const categoryKey = category.toLowerCase();
+    return t(`showcase.categories.${categoryKey}`, category);
+  };
+
   const hasActiveFilters = state.filters.category || state.filters.difficulty_level || state.filters.search;
 
   return (
@@ -258,7 +274,7 @@ export default function ShowcaseBrowser({
                     <option value="">{t('showcase.allCategories', 'All Categories')}</option>
                     {availableCategories.map(category => (
                       <option key={category} value={category}>
-                        {category}
+                        {translateCategory(category)}
                       </option>
                     ))}
                   </select>
@@ -279,7 +295,7 @@ export default function ShowcaseBrowser({
                     <option value="">{t('showcase.allDifficulties', 'All Difficulties')}</option>
                     {availableDifficulties.map(difficulty => (
                       <option key={difficulty} value={difficulty}>
-                        {difficulty}
+                        {translateDifficultyLevel(difficulty)}
                       </option>
                     ))}
                   </select>

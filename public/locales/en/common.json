@@ -677,7 +677,94 @@
       "error_title": "Error",
       "error_getting_advice": "Error getting morphology advice",
       "advice_title": "Adaptation Advice",
-      "no_results_message": "No specific advice found for the selected characteristics. Try selecting other characteristics."
+      "no_results_message": "No specific advice found for the selected characteristics. Try selecting other characteristics.",
+      "select_characteristics": "Select Your Body Characteristics",
+      "select_characteristics_description": "Choose the characteristics that best describe your body shape to get personalized fitting advice",
+      "selected_count": "{{count}} characteristic selected",
+      "selected_count_plural": "{{count}} characteristics selected",
+      "title": "Body Morphology Advisor",
+      "description": "Get advice on adapting patterns to your body shape",
+      "page_title": "Body Morphology Adaptation Advisor", 
+      "page_subtitle": "Get personalized advice for adapting patterns to your specific body characteristics",
+      "about": {
+        "title": "About This Tool",
+        "description": "This tool helps you understand how to modify knitting and crochet patterns to better fit your unique body characteristics. Get specific advice on pattern adjustments, ease considerations, and fitting techniques."
+      },
+      "morphological_fitting": {
+        "title": "About Morphological Fitting",
+        "concept": "Morphological Fitting:",
+        "description": "The practice of adjusting patterns to accommodate individual body characteristics that differ from standard sizing.",
+        "full_bust": "Full Bust",
+        "full_bust_desc": "Requires bust shaping adjustments like dart placement or short rows",
+        "broad_shoulders": "Broad Shoulders", 
+        "broad_shoulders_desc": "May need shoulder width adjustments and sleeve cap modifications",
+        "long_short_torso": "Long/Short Torso",
+        "long_short_torso_desc": "Requires length adjustments to bodice and waist placement",
+        "particular_posture": "Particular Posture",
+        "particular_posture_desc": "Such as sway back, requiring back length and fit adjustments"
+      },
+      "fitting_tips": {
+        "title": "General Fitting Tips",
+        "accurate_measurements": "Take Accurate Measurements",
+        "accurate_measurements_desc": "Use a flexible tape measure and have someone help for hard-to-reach areas",
+        "make_swatch": "Make a Gauge Swatch",
+        "make_swatch_desc": "Always knit/crochet a swatch with your chosen yarn and needles/hook",
+        "adjust_gradually": "Adjust Gradually", 
+        "adjust_gradually_desc": "Make small adjustments and test fit frequently during construction",
+        "document_changes": "Document Your Changes",
+        "document_changes_desc": "Keep notes of successful modifications for future projects"
+      },
+      "common_adjustments": {
+        "title": "Common Adjustments",
+        "bust_adjustment": "Bust Adjustment",
+        "bust_adjustment_desc": "Add short rows or darts for better bust fit",
+        "shoulder_adjustment": "Shoulder Adjustment", 
+        "shoulder_adjustment_desc": "Modify shoulder width and slope for proper fit",
+        "length_adjustment": "Length Adjustment",
+        "length_adjustment_desc": "Adjust torso and sleeve lengths to your proportions",
+        "waist_adjustment": "Waist Adjustment",
+        "waist_adjustment_desc": "Shape waist placement and curves to your body"
+      },
+      "related_tools": {
+        "title": "Related Tools",
+        "measurements_management": "Measurement Management",
+        "measurements_management_desc": "Store and manage your body measurements",
+        "ease_advisor": "Ease Selection Advisor",
+        "ease_advisor_desc": "Get recommendations for appropriate ease amounts"
+      },
+      "categories": {
+        "torso": "Torso",
+        "shoulders": "Shoulders", 
+        "arms": "Arms",
+        "posture": "Posture"
+      },
+      "characteristics": {
+        "full_bust": "Full Bust",
+        "full_bust_description": "Larger bust measurement requiring additional shaping",
+        "sway_back": "Sway Back",
+        "sway_back_description": "Lower back curves inward more than average",
+        "broad_shoulders": "Broad Shoulders",
+        "broad_shoulders_description": "Shoulder width wider than average proportionally",
+        "sloping_shoulders": "Sloping Shoulders",
+        "sloping_shoulders_description": "Shoulders that slope downward more than average",
+        "long_torso": "Long Torso",
+        "long_torso_description": "Torso longer than average in proportion to height",
+        "short_torso": "Short Torso", 
+        "short_torso_description": "Torso shorter than average in proportion to height",
+        "long_arms": "Long Arms",
+        "long_arms_description": "Arms longer than average requiring longer sleeves",
+        "short_arms": "Short Arms",
+        "short_arms_description": "Arms shorter than average requiring shorter sleeves"
+      },
+      "fitting_implications": "Fitting Implications",
+      "measurement_focus": "Key Measurements",
+      "ease_considerations": "Ease Considerations",
+      "adjustment_suggestions": "Pattern Adjustments",
+      "visual_guide": "Visual Guide",
+      "related_information": "Related Information",
+      "related_measurements_link": "Take precise body measurements for best results",
+      "related_ease_link": "Use the Ease Advisor tool for garment-specific recommendations",
+      "pattern_selection_tips": "Consider these characteristics when selecting patterns"
     }
   },
   "yarn_quantity_estimator": {
@@ -1263,6 +1350,14 @@
     "noResultsFiltered": "Try adjusting your filters or search terms",
     "noResultsEmpty": "No patterns have been added to the showcase yet",
     "error": "Error Loading Patterns",
+    "categories": {
+      "sweaters": "Sweaters",
+      "accessories": "Accessories",
+      "garments": "Garments",
+      "home & decor": "Home & Decor",
+      "baby & kids": "Baby & Kids",
+      "beginner friendly": "Beginner Friendly"
+    },
     "errors": {
       "title": "Pattern Load Error",
       "noPatternId": "No pattern ID provided",

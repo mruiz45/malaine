@@ -50,6 +50,26 @@ export default function ShowcasePatternCard({
   };
 
   /**
+   * Translates the difficulty level using the existing translations
+   */
+  const translateDifficultyLevel = (level?: string) => {
+    if (!level) return '';
+    
+    const levelKey = level.toLowerCase();
+    return t(`stitchPattern.difficulty.${levelKey}`, level);
+  };
+
+  /**
+   * Translates the category using the showcase translations
+   */
+  const translateCategory = (category?: string) => {
+    if (!category) return '';
+    
+    const categoryKey = category.toLowerCase();
+    return t(`showcase.categories.${categoryKey}`, category);
+  };
+
+  /**
    * Formats the creation date
    */
   const formatDate = (dateString: string) => {
@@ -105,7 +125,7 @@ export default function ShowcasePatternCard({
           {/* Category */}
           {pattern.category && (
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              {pattern.category}
+              {translateCategory(pattern.category)}
             </span>
           )}
 
@@ -113,7 +133,7 @@ export default function ShowcasePatternCard({
           {pattern.difficulty_level && (
             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getDifficultyColor(pattern.difficulty_level)}`}>
               <StarIcon className="h-3 w-3 mr-1" />
-              {pattern.difficulty_level}
+              {translateDifficultyLevel(pattern.difficulty_level)}
             </span>
           )}
         </div>

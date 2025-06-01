@@ -168,6 +168,14 @@
     "noResultsFiltered": "Essayez d'ajuster vos filtres ou termes de recherche",
     "noResultsEmpty": "Aucun modèle n'a encore été ajouté à la galerie",
     "error": "Erreur de Chargement des Modèles",
+    "categories": {
+      "sweaters": "Pulls",
+      "accessories": "Accessoires",
+      "garments": "Vêtements",
+      "home & decor": "Maison & Décoration",
+      "baby & kids": "Bébé & Enfants",
+      "beginner friendly": "Débutant Amical"
+    },
     "errors": {
       "title": "Erreur de Chargement du Modèle",
       "noPatternId": "Aucun ID de modèle fourni",
@@ -1083,15 +1091,56 @@
       }
     },
     "morphology_advisor": {
-      "tool_title": "Conseiller d'Adaptation Morphologique",
-      "tool_description": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques",
-      "configuration_title": "Configuration",
-      "getting_advice": "Obtention des conseils...",
-      "get_advice_button": "Obtenir des Conseils",
-      "error_title": "Erreur",
-      "error_getting_advice": "Erreur lors de l'obtention des conseils morphologiques",
-      "advice_title": "Conseils d'Adaptation",
-      "no_results_message": "Aucun conseil spécifique trouvé pour les caractéristiques sélectionnées. Essayez de sélectionner d'autres caractéristiques."
+      "title": "Conseiller de Morphologie Corporelle",
+      "description": "Obtenez des conseils pour adapter les patrons à votre morphologie",
+      "page_title": "Conseiller d'Adaptation Morphologique",
+      "page_subtitle": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques",
+      "about": {
+        "title": "À Propos de Cet Outil",
+        "description": "Cet outil vous aide à comprendre comment modifier les patrons de tricot et crochet pour mieux s'adapter à vos caractéristiques corporelles uniques. Obtenez des conseils spécifiques sur les ajustements de patron, les considérations d'aisance et les techniques d'ajustement."
+      },
+      "morphological_fitting": {
+        "title": "À Propos de l'Ajustement Morphologique",
+        "concept": "Ajustement Morphologique :",
+        "description": "La pratique d'ajuster les patrons pour accommoder les caractéristiques corporelles individuelles qui diffèrent du dimensionnement standard.",
+        "full_bust": "Poitrine Forte",
+        "full_bust_desc": "Nécessite des ajustements de mise en forme de poitrine comme le placement de pinces ou les rangs raccourcis",
+        "broad_shoulders": "Épaules Larges",
+        "broad_shoulders_desc": "Peut nécessiter des ajustements de largeur d'épaules et des modifications d'emmanchure",
+        "long_short_torso": "Torse Long/Court",
+        "long_short_torso_desc": "Nécessite des ajustements de longueur au corsage et placement de taille",
+        "particular_posture": "Posture Particulière",
+        "particular_posture_desc": "Comme le dos creusé, nécessitant des ajustements de longueur et d'ajustement du dos"
+      },
+      "fitting_tips": {
+        "title": "Conseils Généraux d'Ajustement",
+        "accurate_measurements": "Prenez des Mesures Précises",
+        "accurate_measurements_desc": "Utilisez un mètre ruban flexible et demandez de l'aide pour les zones difficiles à atteindre",
+        "make_swatch": "Faites un Échantillon",
+        "make_swatch_desc": "Tricotez/crochetez toujours un échantillon avec votre laine et aiguilles/crochet choisis",
+        "adjust_gradually": "Ajustez Graduellement",
+        "adjust_gradually_desc": "Faites de petits ajustements et essayez fréquemment pendant la construction",
+        "document_changes": "Documentez Vos Changements",
+        "document_changes_desc": "Gardez des notes des modifications réussies pour les projets futurs"
+      },
+      "common_adjustments": {
+        "title": "Ajustements Courants",
+        "bust_adjustment": "Ajustement de Poitrine",
+        "bust_adjustment_desc": "Ajoutez des rangs raccourcis ou des pinces pour un meilleur ajustement de poitrine",
+        "shoulder_adjustment": "Ajustement d'Épaules",
+        "shoulder_adjustment_desc": "Modifiez la largeur et la pente des épaules pour un ajustement approprié",
+        "length_adjustment": "Ajustement de Longueur",
+        "length_adjustment_desc": "Ajustez les longueurs de torse et de manches à vos proportions",
+        "waist_adjustment": "Ajustement de Taille",
+        "waist_adjustment_desc": "Façonnez le placement et les courbes de taille selon votre corps"
+      },
+      "related_tools": {
+        "title": "Outils Connexes",
+        "measurements_management": "Gestion des Mesures",
+        "measurements_management_desc": "Stockez et gérez vos mensurations corporelles",
+        "ease_advisor": "Conseiller de Sélection d'Aisance",
+        "ease_advisor_desc": "Obtenez des recommandations pour les quantités d'aisance appropriées"
+      }
     }
   },
   "patternViewer": {
@@ -1255,5 +1304,53 @@
   },
   "stitchInstructions": {
     "commonUses": "Utilisations Courantes"
+  },
+  "morphology_advisor": {
+    "tool_title": "Conseiller d'Adaptation Morphologique",
+    "tool_description": "Obtenez des conseils personnalisés pour adapter les patrons à vos caractéristiques corporelles spécifiques",
+    "configuration_title": "Configuration",
+    "getting_advice": "Obtention des conseils...",
+    "get_advice_button": "Obtenir des Conseils",
+    "error_title": "Erreur",
+    "error_getting_advice": "Erreur lors de l'obtention des conseils morphologiques",
+    "advice_title": "Conseils d'Adaptation",
+    "no_results_message": "Aucun conseil spécifique trouvé pour les caractéristiques sélectionnées. Essayez de sélectionner d'autres caractéristiques.",
+    "select_characteristics": "Sélectionnez Vos Caractéristiques Corporelles",
+    "select_characteristics_description": "Choisissez les caractéristiques qui décrivent le mieux votre morphologie pour obtenir des conseils d'ajustement personnalisés",
+    "selected_count": "{{count}} caractéristique sélectionnée",
+    "selected_count_plural": "{{count}} caractéristiques sélectionnées",
+    "categories": {
+      "torso": "Torse",
+      "shoulders": "Épaules", 
+      "arms": "Bras",
+      "posture": "Posture"
+    },
+    "characteristics": {
+      "full_bust": "Poitrine Forte",
+      "full_bust_description": "Mesure de poitrine plus importante nécessitant une mise en forme supplémentaire",
+      "sway_back": "Dos Creusé",
+      "sway_back_description": "Le bas du dos se courbe vers l'intérieur plus que la moyenne",
+      "broad_shoulders": "Épaules Larges",
+      "broad_shoulders_description": "Largeur d'épaules plus importante proportionnellement à la moyenne",
+      "sloping_shoulders": "Épaules Tombantes",
+      "sloping_shoulders_description": "Épaules qui tombent vers le bas plus que la moyenne",
+      "long_torso": "Torse Long",
+      "long_torso_description": "Torse plus long que la moyenne proportionnellement à la taille",
+      "short_torso": "Torse Court", 
+      "short_torso_description": "Torse plus court que la moyenne proportionnellement à la taille",
+      "long_arms": "Bras Longs",
+      "long_arms_description": "Bras plus longs que la moyenne nécessitant des manches plus longues",
+      "short_arms": "Bras Courts",
+      "short_arms_description": "Bras plus courts que la moyenne nécessitant des manches plus courtes"
+    },
+    "fitting_implications": "Implications d'Ajustement",
+    "measurement_focus": "Mesures Clés",
+    "ease_considerations": "Considérations d'Aisance",
+    "adjustment_suggestions": "Ajustements de Patron",
+    "visual_guide": "Guide Visuel",
+    "related_information": "Informations Connexes",
+    "related_measurements_link": "Prenez des mesures corporelles précises pour de meilleurs résultats",
+    "related_ease_link": "Utilisez l'outil Conseiller d'Aisance pour des recommandations spécifiques au vêtement",
+    "pattern_selection_tips": "Considérez ces caractéristiques lors de la sélection de patrons"
   }
 }

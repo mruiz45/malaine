@@ -110,7 +110,7 @@ export default function StitchFilterPanel({
             <option value="all">{t('common.all', 'All')}</option>
             {CRAFT_TYPES.map(craftType => (
               <option key={craftType} value={craftType}>
-                {t(`craftType.${craftType}`, craftType.charAt(0).toUpperCase() + craftType.slice(1))}
+                {t(`stitchPattern.craftType.${craftType}`, craftType.charAt(0).toUpperCase() + craftType.slice(1))}
               </option>
             ))}
           </select>
@@ -184,7 +184,7 @@ export default function StitchFilterPanel({
           <div className="flex flex-wrap gap-2">
             {filters.craftType && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                {t(`craftType.${filters.craftType}`, filters.craftType)}
+                {t(`stitchPattern.craftType.${filters.craftType}`, filters.craftType)}
                 <button
                   onClick={() => handleCraftTypeChange('all')}
                   className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full text-blue-400 hover:text-blue-600 focus:outline-none"
@@ -195,7 +195,7 @@ export default function StitchFilterPanel({
             )}
             {filters.category && (
               <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                {filters.category}
+                {t(`stitchCategory.${filters.category.toLowerCase()}`, filters.category)}
                 <button
                   onClick={() => handleCategoryChange('all')}
                   className="ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full text-green-400 hover:text-green-600 focus:outline-none"

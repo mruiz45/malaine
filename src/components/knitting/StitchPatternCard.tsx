@@ -127,12 +127,12 @@ export default function StitchPatternCard({
                 <div className="flex items-center space-x-3 mt-1">
                   {showCraftType && (
                     <span className="text-xs text-gray-500 capitalize">
-                      {displayInfo.craftType}
+                      {t(`stitchPattern.craftType.${displayInfo.craftType}`, displayInfo.craftType)}
                     </span>
                   )}
                   {showCategory && pattern.category && (
                     <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                      {pattern.category}
+                      {t(`stitchCategory.${pattern.category.toLowerCase()}`, pattern.category)}
                     </span>
                   )}
                   {showDifficulty && difficultyInfo && pattern.difficulty_level && (
@@ -198,7 +198,7 @@ export default function StitchPatternCard({
           )}
           {showCraftType && (
             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 capitalize">
-              {displayInfo.craftType}
+              {t(`stitchPattern.craftType.${displayInfo.craftType}`, displayInfo.craftType)}
             </span>
           )}
         </div>
@@ -209,7 +209,7 @@ export default function StitchPatternCard({
         <div className="flex flex-wrap gap-2 mb-3">
           {showCategory && pattern.category && (
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-              {pattern.category}
+              {t(`stitchCategory.${pattern.category.toLowerCase()}`, pattern.category)}
             </span>
           )}
           {showDifficulty && difficultyInfo && pattern.difficulty_level && (
