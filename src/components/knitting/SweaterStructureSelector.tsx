@@ -29,6 +29,7 @@ import {
 
 /**
  * Available construction methods with metadata
+ * Extended for US_12.1 to include raglan top-down construction
  */
 const CONSTRUCTION_METHODS: ConstructionMethodOption[] = [
   {
@@ -53,6 +54,13 @@ const CONSTRUCTION_METHODS: ConstructionMethodOption[] = [
     compatible_garment_types: ['sweater', 'cardigan']
   },
   {
+    key: 'raglan_top_down',
+    display_name: 'Raglan Top-Down',
+    description: 'Seamless raglan construction knitted from the neckline down, ideal for circular knitting.',
+    difficulty: 'advanced',
+    compatible_garment_types: ['sweater']
+  },
+  {
     key: 'dolman',
     display_name: 'Dolman',
     description: 'Wide, loose sleeves that are part of the body piece, creating a flowing silhouette.',
@@ -63,6 +71,7 @@ const CONSTRUCTION_METHODS: ConstructionMethodOption[] = [
 
 /**
  * Available body shapes with metadata
+ * Updated to include raglan_top_down compatibility
  */
 const BODY_SHAPES: BodyShapeOption[] = [
   {
@@ -70,14 +79,14 @@ const BODY_SHAPES: BodyShapeOption[] = [
     display_name: 'Straight',
     description: 'Classic straight silhouette with minimal shaping, comfortable and versatile.',
     fit_type: 'loose',
-    compatible_construction_methods: ['drop_shoulder', 'set_in_sleeve', 'raglan', 'dolman']
+    compatible_construction_methods: ['drop_shoulder', 'set_in_sleeve', 'raglan', 'raglan_top_down', 'dolman']
   },
   {
     key: 'a_line',
     display_name: 'A-line',
     description: 'Fitted at the bust with gradual widening toward the hem for a flattering shape.',
     fit_type: 'fitted',
-    compatible_construction_methods: ['set_in_sleeve', 'raglan']
+    compatible_construction_methods: ['set_in_sleeve', 'raglan', 'raglan_top_down']
   },
   {
     key: 'fitted_shaped_waist',
@@ -91,12 +100,13 @@ const BODY_SHAPES: BodyShapeOption[] = [
     display_name: 'Oversized Boxy',
     description: 'Relaxed, boxy fit with extra ease for a modern, casual look.',
     fit_type: 'oversized',
-    compatible_construction_methods: ['drop_shoulder', 'dolman']
+    compatible_construction_methods: ['drop_shoulder', 'raglan_top_down', 'dolman']
   }
 ];
 
 /**
  * Get icon for construction method
+ * Updated for US_12.1 to include raglan_top_down icon
  */
 const getConstructionMethodIcon = (method: ConstructionMethod, isSelected: boolean) => {
   const iconProps = { className: "w-6 h-6" };
@@ -108,6 +118,8 @@ const getConstructionMethodIcon = (method: ConstructionMethod, isSelected: boole
       return isSelected ? <Square3Stack3DIconSolid {...iconProps} /> : <Square3Stack3DIcon {...iconProps} />;
     case 'raglan':
       return isSelected ? <ArrowsRightLeftIconSolid {...iconProps} /> : <ArrowsRightLeftIcon {...iconProps} />;
+    case 'raglan_top_down':
+      return isSelected ? <ArrowsRightLeftIconSolid {...iconProps} /> : <ArrowsRightLeftIcon {...iconProps} />; // Use similar icon as raglan but could be differentiated
     case 'dolman':
       return isSelected ? <RectangleStackIconSolid {...iconProps} /> : <RectangleStackIcon {...iconProps} />;
     default:

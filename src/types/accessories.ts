@@ -4,6 +4,13 @@
  */
 
 /**
+ * Accessory-related types for the Malaine project
+ * Extended for US_12.5: Triangular shawl support
+ */
+
+import { TriangularShawlAttributes, validateTriangularShawlAttributes } from './triangular-shawl';
+
+/**
  * Crown style options for beanies/hats
  */
 export type CrownStyle = 'classic_tapered' | 'slouchy' | 'flat_top';
@@ -21,7 +28,7 @@ export type WorkStyle = 'flat' | 'in_the_round';
 /**
  * Accessory type discriminator
  */
-export type AccessoryType = 'scarf' | 'cowl';
+export type AccessoryType = 'scarf' | 'cowl' | 'triangular_shawl';
 
 /**
  * Beanie/Hat attributes interface
@@ -78,9 +85,9 @@ export interface CowlAttributes {
 export type ScarfCowlAttributes = ScarfAttributes | CowlAttributes;
 
 /**
- * Complete accessory attributes union
+ * Complete accessory attributes union including triangular shawls
  */
-export type AccessoryAttributes = BeanieAttributes | ScarfCowlAttributes;
+export type AccessoryAttributes = BeanieAttributes | ScarfCowlAttributes | TriangularShawlAttributes;
 
 /**
  * Props for BeanieDefinitionForm component
@@ -272,4 +279,25 @@ export function validateScarfCowlAttributes(attributes: Partial<ScarfCowlAttribu
   } else {
     return validateCowlAttributes(attributes as Partial<CowlAttributes>);
   }
+}
+
+/**
+ * Validates triangular shawl attributes  
+ */
+export function validateAccessoryAttributes(attributes: Partial<AccessoryAttributes>): string[] {
+  // Type guard for beanie attributes (legacy check for beanie without explicit type)
+  if ('target_circumference_cm' in attributes && attributes.target_circumference_cm !== undefined) {
+    return validateBeanieAttributes(attributes as Partial<BeanieAttributes>);
+  }
+
+  // Type guard for typed accessories
+  if ('type' in attributes && attributes.type) {
+    if (attributes.type === 'triangular_shawl') {
+      return validateTriangularShawlAttributes(attributes as Partial<TriangularShawlAttributes>);
+    } else if (attributes.type === 'scarf' || attributes.type === 'cowl') {
+      return validateScarfCowlAttributes(attributes as Partial<ScarfCowlAttributes>);
+    }
+  }
+
+  return ['Accessory type must be selected'];
 } 

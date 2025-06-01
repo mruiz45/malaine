@@ -1183,7 +1183,8 @@
       "cardigan": "Cardigan",
       "hat": "Hat",
       "socks": "Socks",
-      "shawl": "Shawl"
+      "shawl": "Shawl",
+      "triangular_shawl": "Triangular Shawl"
     },
     "fit_preferences": {
       "very_close_fitting": "Very Close-fitting/Negative Ease",
@@ -1685,8 +1686,12 @@
       "abbreviations": "Abbreviations",
       "measurements": "Finished Measurements",
       "components": "Instructions",
-      "assembly": "Assembly & Finishing"
+      "assembly": "Assembly & Finishing",
+      "assemblyVisualization": "2D Assembly View",
+      "3dPreview": "3D Wireframe Preview"
     },
+    "assemblyVisualizationDescription": "Interactive 2D layout showing how pattern components fit together. Click on pieces to select them and hover over connection lines for assembly instructions.",
+    "3dPreviewDescription": "Basic 3D wireframe visualization showing the approximate shape and proportions of the finished garment. This is a simplified representation for reference only.",
     "tableOfContents": "Contents",
     "printPreview": "Print Preview",
     "print": "Print",
@@ -1751,10 +1756,42 @@
     "legend": "Symbol Legend",
     "dimensions": "Size",
     "craftType": "Type",
+    "repeat": "Repeat",
     "rightSideReading": "Right side rows",
     "wrongSideReading": "Wrong side rows",
     "leftToRight": " left to right",
-    "rightToLeft": " right to left"
+    "rightToLeft": " right to left",
+    "styleControls": {
+      "title": "Chart Style Options",
+      "resetToDefaults": "Reset to defaults",
+      "colors": "Colors",
+      "grid": "Grid",
+      "repeats": "Repeats",
+      "colorSchemes": "Color Schemes",
+      "selectScheme": "Select a scheme...",
+      "symbolColor": "Symbol Color",
+      "backgroundColor": "Background Color",
+      "gridColor": "Grid Color",
+      "noStitchColor": "No Stitch Color",
+      "textColor": "Text Color",
+      "showGrid": "Show Grid Lines",
+      "gridLineWidth": "Grid Line Width",
+      "gridLineStyle": "Grid Line Style",
+      "lineStyleSolid": "Solid",
+      "lineStyleDashed": "Dashed",
+      "lineStyleDotted": "Dotted",
+      "highlightRepeats": "Highlight Pattern Repeats",
+      "repeatHighlightColor": "Highlight Color",
+      "repeatOpacity": "Highlight Opacity",
+      "repeatBorderStyle": "Border Style"
+    },
+    "colorSchemes": {
+      "default": "Default",
+      "high_contrast": "High Contrast",
+      "print_friendly": "Print Friendly",
+      "dark_mode": "Dark Mode",
+      "colorblind_friendly": "Colorblind Friendly"
+    }
   },
   "craftType": {
     "knitting": "Knitting",
@@ -1772,6 +1809,98 @@
       "guest": "guest",
       "user": "user",
       "admin": "admin"
+    }
+  },
+  "triangular_shawl": {
+    "title": "Triangular Shawl",
+    "description": "Calculator for triangular shawls with different construction methods",
+    "construction_methods": {
+      "top_down_center_out": {
+        "name": "Top-Down Center-Out",
+        "description": "Starts with a few stitches at the center top, with increases on both sides and around a central spine to form a downward-pointing triangle"
+      },
+      "side_to_side": {
+        "name": "Side-to-Side",
+        "description": "Starts with a few stitches at one point, increases on one side until maximum depth, then decreases on the same side to form the other half"
+      },
+      "bottom_up": {
+        "name": "Bottom-Up",
+        "description": "Starts with a large number of stitches for the longest side of the triangle and decreases regularly on both sides to form the top point"
+      }
+    },
+    "dimensions": {
+      "target_wingspan": "Target Wingspan",
+      "target_depth": "Target Depth",
+      "wingspan_description": "Total width of the shawl from end to end",
+      "depth_description": "Depth from center to triangle point"
+    },
+    "construction": {
+      "construction_method": "Construction Method",
+      "work_style": "Work Style",
+      "border_stitches": "Border Stitches Each Side",
+      "flat": "Flat",
+      "in_the_round": "In the Round"
+    },
+    "results": {
+      "cast_on_stitches": "Cast-On Stitches",
+      "final_stitch_count": "Final Stitch Count",
+      "total_rows": "Total Rows",
+      "calculated_dimensions": "Calculated Dimensions",
+      "actual_wingspan": "Actual Wingspan",
+      "actual_depth": "Actual Depth",
+      "shaping_schedule": "Shaping Schedule",
+      "phase_increases": "Increase Phase",
+      "phase_decreases": "Decrease Phase",
+      "stitches_per_event": "Stitches per Event",
+      "shaping_frequency": "Shaping Frequency",
+      "every_x_rows": "every {{count}} rows"
+    },
+    "instructions": {
+      "setup": "Setup",
+      "cast_on": "Cast on {{count}} stitches",
+      "work_construction": "Work {{method}} construction",
+      "bind_off": "Bind off all stitches",
+      "place_markers": "Place markers for center spine if desired",
+      "phase_1_title": "Phase 1: Increases",
+      "phase_2_title": "Phase 2: Decreases"
+    },
+    "warnings": {
+      "dimension_difference": "Calculated dimensions differ from target dimensions",
+      "wingspan_variance": "Actual wingspan ({{actual}}cm) differs from target ({{target}}cm) by more than {{percentage}}%",
+      "depth_variance": "Actual depth ({{actual}}cm) differs from target ({{target}}cm) by more than {{percentage}}%"
+    },
+    "complexity": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "estimated_complexity": "Estimated Complexity",
+      "estimated_stitches": "Estimated Stitches",
+      "complexity_factors": "Complexity Factors"
+    }
+  },
+  "3dPreview": {
+    "title": "Basic 3D Wireframe Preview",
+    "loading": "Loading 3D preview...",
+    "generating": "Generating 3D preview...",
+    "components": "components",
+    "controls": "Drag to rotate",
+    "autoRotate": "Auto-rotate",
+    "showWarnings": "Show Warnings",
+    "hideWarnings": "Hide Warnings",
+    "toggleWarnings": "Toggle warnings",
+    "generated": "Generated",
+    "algorithm": "Algorithm",
+    "error": {
+      "title": "3D Preview Error",
+      "suggestion": "Please check that all required measurements (chest, length, arm length, upper arm) are provided."
+    },
+    "noData": {
+      "title": "No 3D Preview Available",
+      "description": "Insufficient measurement data to generate 3D preview."
+    },
+    "approximation": {
+      "title": "Approximation Notice",
+      "description": "This is a very basic wireframe representation and not a realistic rendering of the final garment."
     }
   }
 } 

@@ -93,15 +93,12 @@ export default function ScarfCowlDefinitionForm({
   };
 
   /**
-   * Handle accessory type change (scarf vs cowl)
+   * Handle accessory type change and reset dimensions to defaults
    */
-  const handleAccessoryTypeChange = (type: AccessoryType) => {
-    setAccessoryType(type);
-    
-    // Reset form data with appropriate defaults for the new type
+  const handleAccessoryTypeChange = (type: 'scarf' | 'cowl') => {
     const baseData = {
       type,
-      work_style: type === 'cowl' ? 'in_the_round' as WorkStyle : 'flat' as WorkStyle
+      work_style: formData.work_style
     };
 
     const newFormData = type === 'scarf' ? {

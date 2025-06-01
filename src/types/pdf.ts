@@ -1,7 +1,10 @@
 /**
- * Types pour l'export PDF des patrons - US_9.2 + US_11.6
+ * Types pour l'export PDF des patrons - US_9.2 + US_11.6 + US_12.8
  * Préparé pour l'intégration future des diagrammes schématiques (US_9.3) et des diagrammes de tricot (US_11.6)
+ * Inclut le support des styles personnalisés (US_12.8)
  */
+
+import type { DiagramStyleOptions } from './stitchChartStyles';
 
 export interface PdfExportOptions {
   /** Inclure l'en-tête avec le titre du patron */
@@ -12,6 +15,8 @@ export interface PdfExportOptions {
   includeSchematics?: boolean;
   /** Inclure les diagrammes de tricot/crochet (US_11.6) */
   includeStitchCharts?: boolean;
+  /** Options de style pour les diagrammes (US_12.8) */
+  stitchChartStyles?: DiagramStyleOptions;
   /** Format de page (défaut: A4) */
   pageFormat?: 'A4' | 'Letter';
   /** Orientation (défaut: portrait) */
@@ -57,20 +62,16 @@ export interface PdfGenerationResult {
   };
 }
 
-/** Interface pour les diagrammes schématiques (US_9.3 future) */
+/**
+ * Structure des données schématiques (US_9.3 future)
+ */
 export interface SchematicsData {
-  /** ID unique du diagramme */
+  /** Identifiant unique du schéma */
   id: string;
-  /** Type de diagramme */
-  type: 'stitch_diagram' | 'construction_diagram' | 'size_chart';
-  /** Titre du diagramme */
-  title: string;
-  /** Données SVG ou image du diagramme */
-  content: string;
-  /** Position dans le document */
-  position: 'inline' | 'appendix';
-  /** Section où insérer le diagramme */
-  section?: string;
+  /** Type de schéma */
+  type: 'garment' | 'construction' | 'detail';
+  /** Données du schéma */
+  data: any; // Sera défini dans US_9.3
 }
 
 export interface PdfTemplateData {

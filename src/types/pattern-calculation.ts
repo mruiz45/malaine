@@ -1,9 +1,12 @@
 /**
  * Types for Pattern Calculation Engine (US_6.1)
  * Defines interfaces for the input data structure and API contract for the Core Pattern Calculation Engine
+ * Extended for US_12.5: Triangular shawl calculations
  */
 
 import { ShapingSchedule } from './shaping';
+import { RaglanTopDownCalculations } from './raglan-construction';
+import { TriangularShawlCalculations } from './triangular-shawl';
 
 /**
  * Version information for the calculation input schema
@@ -157,6 +160,12 @@ export interface PatternCalculationInput {
 
 /**
  * Component calculation result
+ * Extended for US_8.3 stitch pattern integration
+ * Extended for US_11.1 neckline shaping
+ * Extended for US_11.3 armhole shaping  
+ * Extended for US_12.1 raglan top-down construction
+ * Extended for US_12.3 hammer sleeve construction
+ * Extended for US_12.5 triangular shawl calculations
  */
 export interface ComponentCalculationResult {
   /** Component key */
@@ -175,6 +184,12 @@ export interface ComponentCalculationResult {
   necklineShapingSchedule?: import('./neckline-shaping').NecklineShapingSchedule;
   /** Armhole shaping schedule for this component (US_11.3) */
   armholeShapingSchedule?: import('./armhole-shaping').ArmholeShapingSchedule;
+  /** Raglan top-down calculations for this component (US_12.1) */
+  raglanTopDownCalculations?: RaglanTopDownCalculations;
+  /** Hammer sleeve calculations for this component (US_12.3) */
+  hammerSleeveCalculations?: import('./hammer-sleeve-construction').HammerSleeveCalculations;
+  /** Triangular shawl calculations for this component (US_12.5) */
+  triangularShawlCalculations?: TriangularShawlCalculations;
   /** Stitch pattern context for instruction generation (US_8.3) */
   stitchPatternContext?: StitchPatternInstructionContext;
   /** Additional calculation metadata */

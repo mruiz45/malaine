@@ -2,17 +2,23 @@
  * Types for Instruction Generation with Shaping (US 7.3)
  * Extended for US_11.2: Neckline instruction generation
  * Extended for US_11.4: Armhole instruction generation
+ * Extended for US_12.2: Raglan instruction generation
+ * Extended for US_12.4: Hammer sleeve instruction generation
  * Defines interfaces for generating detailed textual instructions including shaping
  */
 
 import { ShapingSchedule } from './shaping';
 import { NecklineShapingSchedule } from './neckline-shaping';
 import { ArmholeShapingSchedule, SleeveCapShapingSchedule } from './armhole-shaping';
+import { RaglanTopDownCalculations } from './raglan-construction';
+import { HammerSleeveCalculations } from './hammer-sleeve-construction';
 
 /**
  * Type of instruction step
  * Extended for US_11.2 with neckline-specific instruction types
  * Extended for US_11.4 with armhole-specific instruction types
+ * Extended for US_12.2 with raglan-specific instruction types
+ * Extended for US_12.4 with hammer sleeve-specific instruction types
  */
 export type InstructionType = 
   | 'shaping_row' 
@@ -28,7 +34,19 @@ export type InstructionType =
   | 'armhole_base_bind_off'
   | 'armhole_shaping'
   | 'armhole_raglan_shaping'
-  | 'sleeve_cap_shaping';
+  | 'sleeve_cap_shaping'
+  | 'raglan_cast_on'
+  | 'raglan_marker_placement'
+  | 'raglan_increase_round'
+  | 'raglan_plain_round'
+  | 'raglan_separation'
+  | 'raglan_underarm_cast_on'
+  | 'hammer_sleeve_main'
+  | 'hammer_sleeve_vertical'
+  | 'hammer_sleeve_extension'
+  | 'body_armhole_cutout'
+  | 'shoulder_strap_work'
+  | 'hammer_assembly';
 
 /**
  * Side indicator for neckline instructions (US_11.2)
@@ -51,9 +69,41 @@ export type NecklineStepType = 'center_bind_off' | 'side_shaping' | 'side_comple
 export type ArmholeStepType = 'base_bind_off' | 'decrease_shaping' | 'raglan_line_shaping' | 'sleeve_cap_increases' | 'sleeve_cap_decreases';
 
 /**
+ * Type of raglan shaping step (US_12.2)
+ */
+export type RaglanStepType = 'cast_on_setup' | 'marker_placement' | 'increase_round' | 'plain_round' | 'sleeve_separation';
+
+/**
+ * Type of hammer sleeve shaping step (US_12.4)
+ */
+export type HammerSleeveStepType = 
+  | 'main_sleeve_cast_on'
+  | 'main_sleeve_tapered'
+  | 'vertical_part_start'
+  | 'vertical_part_plain'
+  | 'extension_continuation'
+  | 'body_cutout_bind_off'
+  | 'shoulder_strap_division'
+  | 'shoulder_strap_plain'
+  | 'assembly_joining';
+
+/**
+ * Component part for hammer sleeve instructions (US_12.4)
+ */
+export type HammerSleeveComponent = 
+  | 'sleeve_main'
+  | 'sleeve_vertical_part'
+  | 'sleeve_extension'
+  | 'body_front'
+  | 'body_back'
+  | 'assembly';
+
+/**
  * Detailed instruction with shaping information
  * Extended for US_11.2 with neckline-specific metadata
  * Extended for US_11.4 with armhole-specific metadata
+ * Extended for US_12.2 with raglan-specific metadata
+ * Extended for US_12.4 with hammer sleeve-specific metadata
  */
 export interface DetailedInstruction {
   /** Step number in the overall sequence */
@@ -102,6 +152,46 @@ export interface DetailedInstruction {
       /** For sleeve cap: current cap height */
       sleeve_cap_height_cm?: number;
     };
+    /** Raglan-specific metadata (US_12.2) */
+    raglan?: {
+      /** Type of raglan shaping step */
+      step_type: RaglanStepType;
+      /** Step number within raglan shaping sequence */
+      raglan_step: number;
+      /** Round number within raglan construction */
+      round_number?: number;
+      /** Current stitch distribution across sections */
+      section_stitches?: {
+        back: number;
+        front: number;
+        left_sleeve: number;
+        right_sleeve: number;
+        raglan_lines: number;
+      };
+      /** For increase rounds: number of stitches increased */
+      stitches_increased?: number;
+      /** For separation: underarm cast-on count */
+      underarm_cast_on?: number;
+    };
+    /** Hammer sleeve-specific metadata (US_12.4) */
+    hammer_sleeve?: {
+      /** Type of hammer sleeve shaping step */
+      step_type: HammerSleeveStepType;
+      /** Step number within hammer sleeve construction sequence */
+      hammer_sleeve_step: number;
+      /** Component being worked */
+      component: HammerSleeveComponent;
+      /** Row number within current component section */
+      component_row?: number;
+      /** Current width in stitches for this component */
+      component_width_stitches?: number;
+      /** For tapered sleeve: shaping row indicator */
+      is_taper_shaping_row?: boolean;
+      /** For body cutout: which stitches are being bound off */
+      bind_off_stitches?: number;
+      /** For shoulder straps: which strap (left/right) */
+      shoulder_strap_side?: 'left' | 'right' | 'both';
+    };
   };
 }
 
@@ -109,6 +199,8 @@ export interface DetailedInstruction {
  * Context for instruction generation
  * Extended for US_11.2 with neckline shaping support
  * Extended for US_11.4 with armhole shaping support
+ * Extended for US_12.2 with raglan shaping support
+ * Extended for US_12.4 with hammer sleeve shaping support
  */
 export interface InstructionGenerationContext {
   /** Craft type (knitting or crochet) */
@@ -131,6 +223,10 @@ export interface InstructionGenerationContext {
   armholeShapingSchedule?: ArmholeShapingSchedule;
   /** Sleeve cap shaping schedule to process (US_11.4) */
   sleeveCapShapingSchedule?: SleeveCapShapingSchedule;
+  /** Raglan top-down calculations to process (US_12.2) */
+  raglanTopDownCalculations?: RaglanTopDownCalculations;
+  /** Hammer sleeve calculations to process (US_12.4) */
+  hammerSleeveCalculations?: HammerSleeveCalculations;
   /** Additional context metadata */
   metadata?: {
     /** Pattern repeat information */
@@ -139,6 +235,8 @@ export interface InstructionGenerationContext {
     stitchPatternName?: string;
     /** Total component length */
     totalLength?: number;
+    /** Raglan increase method preference (US_12.2) */
+    raglanIncreaseMethod?: string;
   };
 }
 

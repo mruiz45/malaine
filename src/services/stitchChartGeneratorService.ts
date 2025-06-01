@@ -1,6 +1,7 @@
 /**
- * Stitch Chart Generator Service (US_11.5)
+ * Stitch Chart Generator Service (US_11.5 & US_12.7)
  * Handles generation of stitch chart data structures from stitch patterns
+ * Extended to support colorwork patterns with color assignments
  * Follows the established service pattern for the Malaine project
  */
 
@@ -15,9 +16,20 @@ import type {
   StandardStitchSymbol,
   ChartGridCell,
   ChartLegendSymbol,
-  ChartSymbolsDefinition
+  ChartSymbolsDefinition,
+  ChartColorLegend,
+  ColorDefinition
 } from '@/types/stitchChart';
+import type { YarnProfile } from '@/types/yarn';
+import type { 
+  ColorAssignment,
+  ResolvedColorInfo
+} from '@/types/colorworkAssignments';
 import { getStitchPattern } from './stitchPatternService';
+import { 
+  resolveColorInformation,
+  validateColorworkAssignments
+} from './colorworkAssignmentService';
 
 /**
  * Default chart generation options
@@ -33,15 +45,19 @@ const DEFAULT_CHART_OPTIONS: ChartGenerationOptions = {
 };
 
 /**
- * Generates a stitch chart data structure from a stitch pattern
+ * Generates a stitch chart data structure from a stitch pattern (US_11.5 & US_12.7)
  * @param stitchPatternId - ID of the stitch pattern to generate chart from
  * @param options - Chart generation options
+ * @param colorAssignments - Optional color assignments for colorwork patterns (US_12.7)
+ * @param availableYarnProfiles - Available yarn profiles for color resolution (US_12.7)
  * @returns Promise<StitchChartData> The generated chart data
  * @throws Error if pattern not found, invalid chart definition, or generation fails
  */
 export async function generateStitchChart(
   stitchPatternId: string,
-  options: ChartGenerationOptions = {}
+  options: ChartGenerationOptions = {},
+  colorAssignments?: ColorAssignment[],
+  availableYarnProfiles?: YarnProfile[]
 ): Promise<StitchChartData> {
   try {
     // Merge with default options
@@ -59,6 +75,16 @@ export async function generateStitchChart(
       throw new Error(`Stitch pattern '${stitchPattern.stitch_name}' does not have chart symbols definition`);
     }
 
+    // Check dimensions against limits before detailed validation
+    if (chartOptions.max_dimensions) {
+      const { width, height } = stitchPattern.chart_symbols;
+      const { width: maxWidth, height: maxHeight } = chartOptions.max_dimensions;
+      
+      if (width > maxWidth || height > maxHeight) {
+        throw new Error(`Chart dimensions (${width}x${height}) exceed maximum allowed (${maxWidth}x${maxHeight})`);
+      }
+    }
+
     // Validate the chart definition
     if (chartOptions.validate_symbols) {
       const validation = await validateChartDefinition(stitchPattern.chart_symbols, stitchPattern.craft_type);
@@ -68,14 +94,20 @@ export async function generateStitchChart(
       }
     }
 
-    // Check dimensions against limits
-    if (chartOptions.max_dimensions) {
-      const { width, height } = stitchPattern.chart_symbols;
-      const { width: maxWidth, height: maxHeight } = chartOptions.max_dimensions;
-      
-      if (width > maxWidth || height > maxHeight) {
-        throw new Error(`Chart dimensions (${width}x${height}) exceed maximum allowed (${maxWidth}x${maxHeight})`);
-      }
+    // Determine if this is a colorwork pattern
+    const hasColorwork = !!(stitchPattern.chart_symbols.palette && stitchPattern.chart_symbols.palette.length > 0);
+    const hasColorInGrid = stitchPattern.chart_symbols.grid.some(row => 
+      row.some(cell => cell.color_key !== undefined)
+    );
+
+    // Generate color legend if colorwork pattern (US_12.7)
+    let colorLegend: ChartColorLegend[] | undefined;
+    if (hasColorwork && (hasColorInGrid || colorAssignments)) {
+      colorLegend = await generateColorLegend(
+        stitchPattern.chart_symbols.palette!,
+        colorAssignments || [],
+        availableYarnProfiles || []
+      );
     }
 
     // Generate the chart data structure
@@ -88,6 +120,7 @@ export async function generateStitchChart(
       },
       grid: stitchPattern.chart_symbols.grid,
       legend: stitchPattern.chart_symbols.legend,
+      color_legend: colorLegend,
       reading_directions: {
         rs: stitchPattern.chart_symbols.reading_direction_rs,
         ws: stitchPattern.chart_symbols.reading_direction_ws
@@ -95,6 +128,7 @@ export async function generateStitchChart(
       metadata: {
         craft_type: stitchPattern.craft_type,
         has_no_stitch_cells: hasNoStitchCells(stitchPattern.chart_symbols.grid),
+        has_colorwork: hasColorwork && hasColorInGrid,
         generated_at: new Date().toISOString(),
         stitch_pattern_name: stitchPattern.stitch_name
       }
@@ -389,4 +423,93 @@ export function extractSymbolKeys(grid: ChartGridCell[][]): string[] {
   });
   
   return Array.from(symbolKeys);
+}
+
+/**
+ * Generates color legend for colorwork patterns (US_12.7)
+ * @param colorPalette - Pattern color palette definitions
+ * @param colorAssignments - User color assignments
+ * @param availableYarnProfiles - Available yarn profiles for resolution
+ * @returns Promise<ChartColorLegend[]> Generated color legend
+ */
+export async function generateColorLegend(
+  colorPalette: ColorDefinition[],
+  colorAssignments: ColorAssignment[],
+  availableYarnProfiles: YarnProfile[]
+): Promise<ChartColorLegend[]> {
+  try {
+    // Validate assignments if provided
+    if (colorAssignments.length > 0) {
+      const validation = validateColorworkAssignments(
+        colorAssignments,
+        colorPalette,
+        availableYarnProfiles
+      );
+
+      if (!validation.isValid) {
+        console.warn('Color assignment validation warnings:', validation.errors);
+        // Continue with generation but log warnings
+      }
+    }
+
+    // Resolve color information
+    const resolvedColors = await resolveColorInformation(
+      colorPalette,
+      colorAssignments,
+      availableYarnProfiles
+    );
+
+    // Convert to chart color legend format
+    const colorLegend: ChartColorLegend[] = resolvedColors.map(resolved => ({
+      color_key: resolved.color_key,
+      name: resolved.color_name,
+      hex_code: resolved.hex_code,
+      yarn_info: resolved.yarn_profile ? {
+        yarn_profile_id: resolved.yarn_profile.id,
+        yarn_name: resolved.yarn_profile.yarn_name,
+        color_name: resolved.yarn_profile.color_name
+      } : undefined
+    }));
+
+    return colorLegend;
+  } catch (error) {
+    console.error('Error generating color legend:', error);
+    throw error;
+  }
+}
+
+/**
+ * Checks if a pattern has colorwork (US_12.7)
+ * @param chartSymbols - Chart symbols definition
+ * @returns boolean Whether the pattern contains colorwork
+ */
+export function hasColorwork(chartSymbols: ChartSymbolsDefinition): boolean {
+  // Check if palette is defined
+  if (!chartSymbols.palette || chartSymbols.palette.length === 0) {
+    return false;
+  }
+
+  // Check if any grid cells have color keys
+  return chartSymbols.grid.some(row => 
+    row.some(cell => cell.color_key !== undefined)
+  );
+}
+
+/**
+ * Extracts all color keys used in a chart grid (US_12.7)
+ * @param grid - Chart grid
+ * @returns string[] Array of unique color keys found in the grid
+ */
+export function extractColorKeys(grid: ChartGridCell[][]): string[] {
+  const colorKeys = new Set<string>();
+
+  grid.forEach(row => {
+    row.forEach(cell => {
+      if (cell.color_key) {
+        colorKeys.add(cell.color_key);
+      }
+    });
+  });
+
+  return Array.from(colorKeys);
 } 

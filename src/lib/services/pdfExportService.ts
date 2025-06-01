@@ -1,6 +1,7 @@
 /**
- * Service de génération PDF pour les patrons - US_9.2
+ * Service de génération PDF pour les patrons - US_9.2 + US_12.8
  * Utilise Puppeteer pour convertir HTML en PDF
+ * Supporte les styles personnalisés pour les diagrammes de points
  */
 
 import puppeteer, { Browser, Page } from 'puppeteer';
@@ -10,6 +11,7 @@ import {
   PdfExportOptions,
   PdfTemplateData 
 } from '@/types/pdf';
+import type { DiagramStyleOptions } from '@/types/stitchChartStyles';
 
 export class PdfExportService {
   private static browser: Browser | null = null;
@@ -50,10 +52,11 @@ export class PdfExportService {
 
     try {
       // Configuration des options par défaut
-      const options: Required<PdfExportOptions> = {
+      const options: Required<Omit<PdfExportOptions, 'stitchChartStyles'>> & { stitchChartStyles?: DiagramStyleOptions } = {
         includeHeader: true,
         includePageNumbers: true,
         includeSchematics: false,
+        includeStitchCharts: false,
         pageFormat: 'A4',
         orientation: 'portrait',
         margins: {
@@ -99,6 +102,11 @@ export class PdfExportService {
       // Attendre que le contenu soit complètement chargé
       await page.waitForSelector('[data-pdf-ready="true"]', { timeout: 10000 });
 
+      // Application des styles personnalisés pour les diagrammes si spécifiés (US_12.8)
+      if (options.stitchChartStyles && options.includeStitchCharts) {
+        await this.applyStitchChartStyles(page, options.stitchChartStyles);
+      }
+
       // Génération du PDF
       const pdfBuffer = await page.pdf({
         format: options.pageFormat,
@@ -135,6 +143,119 @@ export class PdfExportService {
       throw new Error(`Échec de la génération PDF: ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
     } finally {
       await page.close();
+    }
+  }
+
+  /**
+   * Applique les styles personnalisés aux diagrammes de points dans le PDF (US_12.8)
+   */
+  private static async applyStitchChartStyles(page: Page, styles: DiagramStyleOptions): Promise<void> {
+    try {
+      await page.evaluate((styleOptions) => {
+        // Rechercher tous les SVG de diagrammes de points
+        const chartSvgs = document.querySelectorAll('.stitch-chart-display svg');
+        
+        chartSvgs.forEach((svg) => {
+          // Appliquer les couleurs personnalisées
+          if (styleOptions.colors) {
+            const { backgroundColor, gridColor, noStitchColor, textColor, symbolColor } = styleOptions.colors;
+            
+            // Couleur de fond
+            if (backgroundColor) {
+              (svg as any).style.backgroundColor = backgroundColor;
+            }
+            
+            // Couleur de la grille
+            if (gridColor) {
+              const gridCells = svg.querySelectorAll('.chart-cell rect');
+              gridCells.forEach((cell: any) => {
+                if (cell.getAttribute('stroke') !== 'none') {
+                  cell.setAttribute('stroke', gridColor);
+                }
+              });
+            }
+            
+            // Couleur des cases "pas de maille"
+            if (noStitchColor) {
+              const noStitchCells = svg.querySelectorAll('.chart-cell rect[fill*="#e5e5e5"], .chart-cell rect[fill*="#E5E5E5"]');
+              noStitchCells.forEach((cell: any) => {
+                cell.setAttribute('fill', noStitchColor);
+              });
+            }
+            
+            // Couleur du texte
+            if (textColor) {
+              const textElements = svg.querySelectorAll('text');
+              textElements.forEach((text: any) => {
+                text.setAttribute('fill', textColor);
+              });
+            }
+            
+            // Couleur des symboles (pour diagrammes monochromes)
+            if (symbolColor) {
+              const symbolImages = svg.querySelectorAll('.chart-cell image');
+              symbolImages.forEach((img: any) => {
+                img.style.filter = `hue-rotate(0deg) contrast(1) brightness(0) saturate(0) drop-shadow(0 0 0 ${symbolColor})`;
+              });
+            }
+          }
+          
+          // Appliquer les options de grille
+          if (styleOptions.grid) {
+            const { showGrid, gridLineWidth, gridLineStyle } = styleOptions.grid;
+            
+            if (!showGrid) {
+              const gridCells = svg.querySelectorAll('.chart-cell rect');
+              gridCells.forEach((cell: any) => {
+                cell.setAttribute('stroke', 'none');
+                cell.setAttribute('stroke-width', '0');
+              });
+            } else {
+              if (gridLineWidth) {
+                const gridCells = svg.querySelectorAll('.chart-cell rect');
+                gridCells.forEach((cell: any) => {
+                  if (cell.getAttribute('stroke') !== 'none') {
+                    cell.setAttribute('stroke-width', gridLineWidth.toString());
+                  }
+                });
+              }
+              
+              if (gridLineStyle && gridLineStyle !== 'solid') {
+                const gridCells = svg.querySelectorAll('.chart-cell rect');
+                const dashArray = gridLineStyle === 'dashed' 
+                  ? `${(gridLineWidth || 1) * 3},${gridLineWidth || 1}`
+                  : `${gridLineWidth || 1},${gridLineWidth || 1}`;
+                
+                gridCells.forEach((cell: any) => {
+                  if (cell.getAttribute('stroke') !== 'none') {
+                    cell.setAttribute('stroke-dasharray', dashArray);
+                  }
+                });
+              }
+            }
+          }
+          
+          // Appliquer les options de surbrillance des répétitions
+          if (styleOptions.repeats && styleOptions.repeats.highlightRepeats) {
+            const { repeatHighlightColor, repeatHighlightOpacity } = styleOptions.repeats;
+            
+            // Rechercher l'overlay de surbrillance des répétitions
+            const repeatOverlay = svg.querySelector('.repeat-highlight-overlay');
+            if (repeatOverlay) {
+              const highlightRect = repeatOverlay.querySelector('rect[fill-opacity]');
+              if (highlightRect && repeatHighlightColor) {
+                highlightRect.setAttribute('fill', repeatHighlightColor);
+                if (repeatHighlightOpacity !== undefined) {
+                  highlightRect.setAttribute('fill-opacity', repeatHighlightOpacity.toString());
+                }
+              }
+            }
+          }
+        });
+      }, styles);
+    } catch (error) {
+      console.warn('Erreur lors de l\'application des styles de diagramme:', error);
+      // Continue sans les styles personnalisés
     }
   }
 

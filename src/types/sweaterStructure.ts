@@ -1,15 +1,18 @@
 /**
  * Types for Sweater Structure Selection (US_4.3)
  * Defines interfaces for construction methods and body shapes
+ * Extended for US_12.1: Raglan Top-Down Construction
  */
 
 /**
  * Available construction methods for sweaters
+ * Extended for US_12.1 to include raglan_top_down
  */
 export type ConstructionMethod = 
   | 'drop_shoulder'
   | 'set_in_sleeve' 
   | 'raglan'
+  | 'raglan_top_down'
   | 'dolman';
 
 /**

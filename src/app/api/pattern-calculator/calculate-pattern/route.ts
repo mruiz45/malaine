@@ -1,9 +1,12 @@
 /**
- * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2 + US_8.3 + US_11.1 + US_11.3)
+ * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2 + US_8.3 + US_11.1 + US_11.3 + US_12.1 + US_12.3 + US_12.5)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
  * Extended for US_8.3: Stitch pattern integration
  * Extended for US_11.1: Neckline shaping calculations
  * Extended for US_11.3: Armhole shaping calculations
+ * Extended for US_12.1: Raglan top-down construction calculations
+ * Extended for US_12.3: Hammer sleeve calculation
+ * Extended for US_12.5: Triangular shawl calculations
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -47,6 +50,23 @@ import {
   componentRequiresArmholeShaping 
 } from '@/utils/armhole-shaping-helpers';
 import { ArmholeShapingSchedule } from '@/types/armhole-shaping';
+import { 
+  calculateRaglanTopDown,
+  extractRaglanInputFromComponent,
+  componentRequiresRaglanCalculation
+} from '@/utils/raglan-top-down-calculator';
+import { 
+  calculateHammerSleeve, 
+  componentRequiresHammerSleeveCalculation, 
+  extractHammerSleeveInputFromComponent 
+} from '@/utils/hammer-sleeve-calculator';
+import { 
+  calculateTriangularShawl 
+} from '@/utils/triangular-shawl-calculator';
+import { 
+  componentRequiresTriangularShawlCalculation, 
+  extractTriangularShawlInputFromComponent 
+} from '@/utils/triangular-shawl-helpers';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -214,6 +234,7 @@ async function performPatternCalculation(
  * Enhanced for US_6.2 with specialized rectangular piece calculation
  * Enhanced for US_7.1.1 with specialized beanie calculation
  * Enhanced for US_8.3 with stitch pattern integration
+ * Enhanced for US_12.1 with raglan top-down calculation
  */
 async function calculateComponent(
   component: any, 
@@ -223,6 +244,11 @@ async function calculateComponent(
 ): Promise<ComponentCalculationResult> {
   const { gauge, stitchPattern } = input;
   
+  // Check if this is a raglan top-down component (US_12.1)
+  if (componentRequiresRaglanCalculation(component)) {
+    return calculateRaglanComponent(component, input, craftType);
+  }
+  
   // Check if this is a beanie component (US_7.1.1)
   if (component.beanieAttributes) {
     return calculateBeanieComponent(component, input, craftType);
@@ -231,6 +257,16 @@ async function calculateComponent(
   // Check if this is a rectangular component that can use the specialized calculator
   if (component.targetWidth && component.targetLength) {
     return await calculateRectangularComponent(component, input, craftType, supabaseClient);
+  }
+
+  // Check if this is a hammer sleeve component (US_12.3)
+  if (componentRequiresHammerSleeveCalculation(component)) {
+    return calculateHammerSleeveComponent(component, input, craftType);
+  }
+
+  // Check if this is a triangular shawl component (US_12.5)
+  if (componentRequiresTriangularShawlCalculation(component)) {
+    return calculateTriangularShawlComponent(component, input, craftType);
   }
 
   // Fallback to original calculation for non-rectangular components
@@ -973,4 +1009,229 @@ function extractStitchPatternIntegration(
     stockinetteStitchesEachSide: integration.stockinetteStitchesEachSide,
     fullRepeatsCount: integration.fullRepeatsCount
   };
+}
+
+/**
+ * Calculates stitch and row counts for raglan top-down components
+ * Implements US_12.1 raglan top-down calculation logic
+ */
+function calculateRaglanComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+  const { gauge } = input;
+  
+  try {
+    // Extract raglan input from component data
+    const raglanInput = extractRaglanInputFromComponent(component, gauge);
+    if (!raglanInput) {
+      throw new Error('Unable to extract raglan input from component data');
+    }
+
+    // Perform raglan calculation
+    const raglanResult = calculateRaglanTopDown(raglanInput);
+    
+    if (!raglanResult.success) {
+      throw new Error(raglanResult.error || 'Raglan calculation failed');
+    }
+
+    const calculations = raglanResult.calculations!;
+
+    // Generate basic shaping instructions summary
+    const shapingInstructions: string[] = [];
+    shapingInstructions.push(`Cast on ${calculations.neckline_cast_on_total} stitches for neckline`);
+    shapingInstructions.push(`Distribute stitches: ${calculations.initial_distribution.back_stitches} back, ${calculations.initial_distribution.front_stitches} front, ${calculations.initial_distribution.sleeve_left_stitches} each sleeve, ${calculations.initial_distribution.raglan_line_stitches_each} each raglan line`);
+    shapingInstructions.push(calculations.raglan_shaping.augmentation_frequency_description);
+    shapingInstructions.push(`Work raglan increases for ${calculations.raglan_shaping.total_augmentation_rounds_or_rows} rounds/rows`);
+    shapingInstructions.push(`At separation: ${calculations.stitches_at_separation.body_total_stitches} body stitches, ${calculations.stitches_at_separation.sleeve_each_stitches} sleeve stitches each`);
+    shapingInstructions.push(`Cast on ${calculations.stitches_at_separation.underarm_cast_on_stitches} stitches under each arm`);
+
+    // Calculate total stitch count (sum of all pieces)
+    const totalStitchCount = calculations.stitches_at_separation.body_total_stitches + 
+                           (calculations.stitches_at_separation.sleeve_each_stitches * 2);
+
+    // Estimate total rounds (raglan shaping plus some additional rounds)
+    const totalRounds = calculations.raglan_shaping.raglan_line_length_rows_or_rounds + 20; // Add some rounds for neckline finishing
+
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Raglan Sweater',
+      stitchCount: totalStitchCount,
+      rowCount: totalRounds,
+      shapingInstructions,
+      raglanTopDownCalculations: calculations,
+      detailedCalculations: {
+        castOnStitches: calculations.neckline_cast_on_total,
+        totalRows: totalRounds,
+        rawStitchCount: totalStitchCount,
+        actualCalculatedWidth_cm: calculations.calculation_metadata?.actual_body_width_at_separation_cm,
+        actualCalculatedLength_cm: calculations.calculation_metadata?.actual_sleeve_width_at_separation_cm,
+      },
+      errors: raglanResult.validationErrors,
+      warnings: raglanResult.warnings || calculations.calculation_metadata?.warnings,
+      metadata: {
+        calculationType: 'raglan_top_down',
+        constructionMethod: 'raglan_top_down',
+        raglanCalculations: calculations
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in raglan component calculation:', error);
+    
+    // Return a fallback result with error information
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Raglan Component',
+      stitchCount: 0,
+      rowCount: 0,
+      errors: [error instanceof Error ? error.message : 'Unknown raglan calculation error'],
+      metadata: {
+        calculationType: 'raglan_top_down',
+        constructionMethod: 'raglan_top_down'
+      }
+    };
+  }
+}
+
+/**
+ * Calculates stitch and row counts for hammer sleeve components
+ * Implements US_12.3 hammer sleeve calculation logic
+ */
+function calculateHammerSleeveComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+  const { gauge } = input;
+  
+  try {
+    // Extract hammer sleeve input from component data
+    const hammerSleeveInput = extractHammerSleeveInputFromComponent(component, gauge);
+    if (!hammerSleeveInput) {
+      throw new Error('Unable to extract hammer sleeve input from component data');
+    }
+
+    // Perform hammer sleeve calculation
+    const hammerSleeveResult = calculateHammerSleeve(hammerSleeveInput);
+    
+    if (!hammerSleeveResult.success) {
+      throw new Error(hammerSleeveResult.error || 'Hammer sleeve calculation failed');
+    }
+
+    const calculations = hammerSleeveResult.calculations!;
+
+    // Generate basic shaping instructions summary
+    const shapingInstructions: string[] = [];
+    shapingInstructions.push(`Sleeve cap extension: ${calculations.hammer_sleeve_shaping.sleeve_cap_extension.width_stitches} stitches wide, ${calculations.hammer_sleeve_shaping.sleeve_cap_extension.length_rows} rows long`);
+    shapingInstructions.push(`Sleeve cap vertical part: ${calculations.hammer_sleeve_shaping.sleeve_cap_vertical_part.width_stitches} stitches wide, ${calculations.hammer_sleeve_shaping.sleeve_cap_vertical_part.height_rows} rows high`);
+    shapingInstructions.push(`Body shoulder strap: ${calculations.body_panel_hammer_armhole_shaping.shoulder_strap_width_stitches} stitches each side`);
+    shapingInstructions.push(`Body armhole cutout: ${calculations.body_panel_hammer_armhole_shaping.armhole_cutout_width_stitches} stitches wide, ${calculations.body_panel_hammer_armhole_shaping.armhole_depth_rows} rows deep`);
+    shapingInstructions.push(`Bind off ${calculations.body_panel_hammer_armhole_shaping.bind_off_for_cutout_stitches} stitches for armhole cutout`);
+    shapingInstructions.push(`Total body width at chest: ${calculations.body_panel_hammer_armhole_shaping.body_width_at_chest_stitches} stitches`);
+
+    // Calculate total stitch count (sleeve + body)
+    const sleeveStitches = calculations.hammer_sleeve_shaping.sleeve_cap_extension.width_stitches + 
+                          calculations.hammer_sleeve_shaping.sleeve_cap_vertical_part.width_stitches;
+    const bodyStitches = calculations.body_panel_hammer_armhole_shaping.body_width_at_chest_stitches;
+    const totalStitchCount = (sleeveStitches * 2) + bodyStitches; // 2 sleeves + body
+
+    // Estimate total rows (max of sleeve parts + some additional rows)
+    const sleeveRows = Math.max(
+      calculations.hammer_sleeve_shaping.sleeve_cap_extension.length_rows,
+      calculations.hammer_sleeve_shaping.sleeve_cap_vertical_part.height_rows
+    );
+    const bodyRows = calculations.body_panel_hammer_armhole_shaping.armhole_depth_rows;
+    const totalRows = Math.max(sleeveRows, bodyRows) + 20; // Add some rows for finishing
+
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Hammer Sleeve Garment',
+      stitchCount: totalStitchCount,
+      rowCount: totalRows,
+      shapingInstructions,
+      hammerSleeveCalculations: calculations,
+      detailedCalculations: {
+        castOnStitches: bodyStitches,
+        totalRows: totalRows,
+        rawStitchCount: totalStitchCount,
+        actualCalculatedWidth_cm: calculations.calculation_metadata?.actual_shoulder_width_cm,
+        actualCalculatedLength_cm: calculations.calculation_metadata?.actual_armhole_depth_cm,
+      },
+      errors: hammerSleeveResult.validationErrors,
+      warnings: hammerSleeveResult.warnings || calculations.calculation_metadata?.warnings,
+      metadata: {
+        calculationType: 'hammer_sleeve',
+        constructionMethod: 'hammer_sleeve',
+        hammerSleeveCalculations: calculations
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in hammer sleeve component calculation:', error);
+    
+    // Return a fallback result with error information
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Hammer Sleeve Component',
+      stitchCount: 0,
+      rowCount: 0,
+      errors: [error instanceof Error ? error.message : 'Unknown hammer sleeve calculation error'],
+      metadata: {
+        calculationType: 'hammer_sleeve',
+        constructionMethod: 'hammer_sleeve'
+      }
+    };
+  }
+}
+
+/**
+ * Calculates stitch and row counts for triangular shawl components
+ * Implements US_12.5 triangular shawl calculation logic
+ */
+function calculateTriangularShawlComponent(component: any, input: any, craftType: 'knitting' | 'crochet'): ComponentCalculationResult {
+  try {
+    // Extract triangular shawl input from component data
+    const triangularShawlInput = extractTriangularShawlInputFromComponent(component, input);
+    
+    // Perform triangular shawl calculation
+    const calculations = calculateTriangularShawl(triangularShawlInput);
+
+    // Generate basic shaping instructions summary
+    const shapingInstructions: string[] = [];
+    shapingInstructions.push(`Cast on ${calculations.setup.cast_on_stitches} stitches for triangular shawl`);
+    shapingInstructions.push(`Work ${calculations.construction_method} triangular shawl for ${calculations.total_rows_knit} rows`);
+    shapingInstructions.push('Bind off all stitches');
+
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Triangular Shawl',
+      stitchCount: calculations.final_stitch_count,
+      rowCount: calculations.total_rows_knit,
+      shapingInstructions,
+      triangularShawlCalculations: calculations,
+      detailedCalculations: {
+        castOnStitches: calculations.setup.cast_on_stitches,
+        totalRows: calculations.total_rows_knit,
+        rawStitchCount: calculations.setup.cast_on_stitches,
+        actualCalculatedWidth_cm: calculations.calculated_dimensions.actual_wingspan_cm,
+        actualCalculatedLength_cm: calculations.calculated_dimensions.actual_depth_cm,
+      },
+      warnings: calculations.warnings,
+      metadata: {
+        calculationType: 'triangular_shawl',
+        constructionMethod: calculations.construction_method,
+        triangularShawlCalculations: calculations
+      }
+    };
+
+  } catch (error) {
+    console.error('Error in triangular shawl component calculation:', error);
+    
+    // Return a fallback result with error information
+    return {
+      componentKey: component.componentKey,
+      displayName: component.displayName || 'Triangular Shawl Component',
+      stitchCount: 0,
+      rowCount: 0,
+      errors: [error instanceof Error ? error.message : 'Unknown triangular shawl calculation error'],
+      metadata: {
+        calculationType: 'triangular_shawl',
+        constructionMethod: 'unknown'
+      }
+    };
+  }
 } 

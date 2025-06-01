@@ -4,6 +4,7 @@
  */
 
 import type { StitchChartData } from './stitchChart';
+import { GarmentAssemblyData } from './assembly-visualization';
 
 /**
  * Standard abbreviation used in patterns
@@ -177,6 +178,8 @@ export interface AssembledPattern {
   generated_at: string;
   /** Source session ID */
   session_id: string;
+  /** 2D Assembly visualization data (US_12.9) - Optional */
+  assembly_2d?: GarmentAssemblyData;
 }
 
 /**

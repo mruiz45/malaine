@@ -4,6 +4,7 @@
  * Extended for US_8.3: Stitch pattern integration
  * Extended for US_11.2: Neckline instruction generation
  * Extended for US_11.4: Armhole instruction generation
+ * Extended for US_12.2: Raglan instruction generation
  */
 
 import { 
@@ -17,6 +18,13 @@ import {
 import { ShapingSchedule, ShapingEvent } from '@/types/shaping';
 import { NecklineShapingSchedule, NecklineShapingAction } from '@/types/neckline-shaping';
 import { ArmholeShapingSchedule, ArmholeShapingAction, SleeveCapShapingSchedule } from '@/types/armhole-shaping';
+import { RaglanTopDownCalculations } from '@/types/raglan-construction';
+import { HammerSleeveCalculations } from '@/types/hammer-sleeve-construction';
+import { 
+  RaglanInstructionContext,
+  RaglanInstructionGenerationResult,
+  DEFAULT_RAGLAN_INCREASE_METHODS
+} from '@/types/raglan-instruction';
 import { 
   StitchPatternInstructionContext,
   ComponentStitchPatternIntegrationData
@@ -48,6 +56,19 @@ import {
   determineArmholeRowSide,
   generateArmholePlainRowInstruction
 } from '@/utils/armhole-instruction-generator';
+import { generateRaglanTopDownInstructions } from '@/utils/raglan-instruction-generator';
+import { 
+  generateHammerSleeveInstructions,
+  HammerSleeveInstructionContext,
+  HammerSleeveInstructionResult
+} from '@/utils/hammer-sleeve-instruction-generator';
+import { 
+  generateTriangularShawlInstructions
+} from '@/utils/triangular-shawl-instruction-generator';
+import type {
+  TriangularShawlInstructionContext,
+  TriangularShawlInstructionResult
+} from '@/utils/triangular-shawl-instruction-generator';
 
 /**
  * Service class for generating detailed instructions with shaping and stitch patterns
@@ -64,6 +85,7 @@ export class InstructionGeneratorService {
   /**
    * Generates detailed instructions with shaping for a component
    * Extended for US_11.2: Integrated neckline instruction generation
+   * Extended for US_12.2: Integrated raglan instruction generation
    * @param context - Component and shaping context
    * @param config - Optional configuration overrides
    * @returns Generated instructions result
@@ -79,7 +101,68 @@ export class InstructionGeneratorService {
       let currentStep = 1;
       let currentRowInSection = 1;
 
-      // Add cast-on instruction
+      // Process raglan shaping if available (US_12.2)
+      if (context.raglanTopDownCalculations) {
+        const raglanResult = this.generateRaglanInstructions(
+          context.raglanTopDownCalculations,
+          context,
+          finalConfig
+        );
+
+        if (raglanResult.success && raglanResult.allInstructions) {
+          // Convert raglan instructions to DetailedInstruction format
+          const convertedRaglanInstructions = raglanResult.allInstructions.map((raglanInstruction) => ({
+            step: raglanInstruction.step,
+            row_number_in_section: raglanInstruction.roundNumber,
+            type: raglanInstruction.type,
+            text: raglanInstruction.text,
+            stitchCount: raglanInstruction.stitchCount,
+            metadata: {
+              raglan: {
+                step_type: this.mapRaglanStepType(raglanInstruction.type),
+                raglan_step: raglanInstruction.step,
+                round_number: raglanInstruction.roundNumber,
+                section_stitches: raglanInstruction.raglanMetadata.sectionStitches ? {
+                  back: raglanInstruction.raglanMetadata.sectionStitches.back,
+                  front: raglanInstruction.raglanMetadata.sectionStitches.front,
+                  left_sleeve: raglanInstruction.raglanMetadata.sectionStitches.leftSleeve,
+                  right_sleeve: raglanInstruction.raglanMetadata.sectionStitches.rightSleeve,
+                  raglan_lines: raglanInstruction.raglanMetadata.sectionStitches.raglanLines
+                } : undefined,
+                stitches_increased: raglanInstruction.raglanMetadata.stitchesIncreased,
+                underarm_cast_on: raglanInstruction.raglanMetadata.underarmCastOn
+              }
+            }
+          }));
+
+          instructions.push(...convertedRaglanInstructions);
+          currentStep += raglanResult.allInstructions.length;
+          
+          // Update final stitch count based on raglan shaping
+          if (raglanResult.summary?.finalStitchCount) {
+            currentStitchCount = raglanResult.summary.finalStitchCount;
+          }
+
+          return {
+            success: true,
+            instructions,
+            totalRows: raglanResult.summary?.totalRounds,
+            summary: {
+              totalInstructions: instructions.length,
+              totalRows: raglanResult.summary?.totalRounds || 0,
+              finalStitchCount: currentStitchCount
+            }
+          };
+        } else if (raglanResult.error) {
+          return {
+            success: false,
+            error: `Raglan instruction generation failed: ${raglanResult.error}`,
+            warnings: [`Failed to generate raglan instructions: ${raglanResult.error}`]
+          };
+        }
+      }
+
+      // Add cast-on instruction (for non-raglan components)
       instructions.push({
         step: currentStep++,
         type: 'cast_on',
@@ -218,20 +301,10 @@ export class InstructionGeneratorService {
         }
       }
 
-      // Add cast-off instruction if no neckline shaping or for remaining stitches
-      if (!context.necklineShapingSchedule && 
-          (currentStitchCount !== context.startingStitchCount || !context.shapingSchedule?.hasShaping)) {
-        instructions.push({
-          step: currentStep++,
-          type: 'cast_off',
-          text: this.generateCastOffInstruction(context.craftType, currentStitchCount, finalConfig),
-          stitchCount: 0
-        });
-      }
-
       return {
         success: true,
         instructions,
+        totalRows: this.calculateTotalRows(instructions),
         summary: {
           totalInstructions: instructions.length,
           totalRows: this.calculateTotalRows(instructions),
@@ -240,12 +313,101 @@ export class InstructionGeneratorService {
       };
 
     } catch (error) {
+      console.error('Error generating detailed instructions:', error);
+      
       return {
         success: false,
-        error: `Failed to generate instructions: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        warnings: []
+        error: error instanceof Error ? error.message : 'Unknown error during instruction generation'
       };
     }
+  }
+
+  /**
+   * Generates raglan top-down instructions (US_12.2)
+   * @param raglanCalculations - Raglan calculations from US_12.1
+   * @param context - Generation context
+   * @param config - Configuration
+   * @returns Raglan instruction generation result
+   */
+  public generateRaglanInstructions(
+    raglanCalculations: RaglanTopDownCalculations,
+    context: InstructionGenerationContext,
+    config?: Partial<InstructionGenerationConfig>
+  ): RaglanInstructionGenerationResult {
+    try {
+      const finalConfig = { ...this.defaultConfig, ...config };
+      
+      // Extract raglan increase method preference from context metadata
+      const increaseMethod = context.metadata?.raglanIncreaseMethod as any || 
+                            DEFAULT_RAGLAN_INCREASE_METHODS[context.craftType];
+
+      const raglanContext: RaglanInstructionContext = {
+        craftType: context.craftType,
+        raglanCalculations,
+        increaseMethod,
+        componentKey: context.componentKey,
+        componentDisplayName: context.componentDisplayName,
+        config: finalConfig
+      };
+
+      return generateRaglanTopDownInstructions(raglanContext);
+
+    } catch (error) {
+      console.error('Error generating raglan instructions:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error during raglan instruction generation'
+      };
+    }
+  }
+
+  /**
+   * Generates hammer sleeve instructions (US_12.4)
+   * @param hammerSleeveCalculations - Hammer sleeve calculations from US_12.3
+   * @param context - Generation context
+   * @param config - Configuration
+   * @returns Hammer sleeve instruction generation result
+   */
+  public generateHammerSleeveInstructions(
+    hammerSleeveCalculations: HammerSleeveCalculations,
+    context: InstructionGenerationContext,
+    config?: Partial<InstructionGenerationConfig>
+  ): HammerSleeveInstructionResult {
+    try {
+      const finalConfig = { ...this.defaultConfig, ...config };
+
+      const hammerSleeveContext: HammerSleeveInstructionContext = {
+        craftType: context.craftType,
+        hammerSleeveCalculations,
+        componentKey: context.componentKey,
+        componentDisplayName: context.componentDisplayName,
+        config: finalConfig,
+        sleeveShapingSchedule: context.shapingSchedule // Pass tapered sleeve shaping if available
+      };
+
+      return generateHammerSleeveInstructions(hammerSleeveContext);
+
+    } catch (error) {
+      console.error('Error generating hammer sleeve instructions:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error during hammer sleeve instruction generation'
+      };
+    }
+  }
+
+  /**
+   * Helper method to map raglan step types to the format expected by DetailedInstruction
+   */
+  private mapRaglanStepType(raglanType: any): any {
+    const mapping: Record<string, string> = {
+      'raglan_cast_on': 'cast_on_setup',
+      'raglan_marker_placement': 'marker_placement',
+      'raglan_increase_round': 'increase_round',
+      'raglan_plain_round': 'plain_round',
+      'raglan_separation': 'sleeve_separation'
+    };
+    return mapping[raglanType] || raglanType;
   }
 
   /**
@@ -1481,5 +1643,39 @@ export class InstructionGeneratorService {
         }
       }
     };
+  }
+
+  /**
+   * Generates triangular shawl instructions (US_12.6)
+   * @param triangularShawlCalculations - Triangular shawl calculations from US_12.5
+   * @param context - Generation context
+   * @param config - Configuration
+   * @returns Triangular shawl instruction generation result
+   */
+  public generateTriangularShawlInstructions(
+    triangularShawlCalculations: import('@/types/triangular-shawl').TriangularShawlCalculations,
+    context: InstructionGenerationContext,
+    config?: Partial<InstructionGenerationConfig>
+  ): TriangularShawlInstructionResult {
+    try {
+      const finalConfig = { ...this.defaultConfig, ...config };
+
+      const triangularShawlContext: TriangularShawlInstructionContext = {
+        craftType: context.craftType,
+        triangularShawlCalculations,
+        componentKey: context.componentKey,
+        componentDisplayName: context.componentDisplayName,
+        config: finalConfig
+      };
+
+      return generateTriangularShawlInstructions(triangularShawlContext);
+
+    } catch (error) {
+      console.error('Error generating triangular shawl instructions:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error during triangular shawl instruction generation'
+      };
+    }
   }
 } 

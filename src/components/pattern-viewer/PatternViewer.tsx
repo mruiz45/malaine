@@ -23,6 +23,8 @@ import ComponentInstructionsSection from './ComponentInstructionsSection';
 import AssemblySection from './AssemblySection';
 import PatternWarnings from './PatternWarnings';
 import PatternProgressControls from './PatternProgressControls';
+import GarmentAssemblyViewer from './GarmentAssemblyViewer';
+import Basic3DPreview from './Basic3DPreview';
 import { usePatternProgressContext } from '@/contexts/PatternProgressContext';
 
 interface PatternViewerProps {
@@ -74,7 +76,9 @@ export default function PatternViewer({
         title: component.componentName
       }))
     },
-    { id: 'assembly', title: t('patternViewer.sections.assembly', 'Assembly & Finishing') }
+    { id: 'assembly', title: t('patternViewer.sections.assembly', 'Assembly & Finishing') },
+    { id: 'assembly-visualization', title: t('patternViewer.sections.assemblyVisualization', '2D Assembly View') },
+    { id: '3d-preview', title: t('patternViewer.sections.3dPreview', '3D Wireframe Preview') }
   ];
 
   const handlePrint = () => {
@@ -242,6 +246,88 @@ export default function PatternViewer({
             printMode={printMode}
           />
         )}
+
+        {/* 2D Assembly Visualization (US_12.9) */}
+        {pattern.assembly_2d && (
+          <section id="assembly-visualization" className="section">
+            <div className="border-b border-gray-200 pb-4 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {t('patternViewer.sections.assemblyVisualization', '2D Assembly View')}
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                {t('patternViewer.assemblyVisualizationDescription', 
+                  'Interactive 2D layout showing how pattern components fit together. Click on pieces to select them and hover over connection lines for assembly instructions.')}
+              </p>
+            </div>
+            
+            <GarmentAssemblyViewer
+              session_id={pattern.session_id}
+              print_mode={printMode}
+              className="mb-6"
+              on_component_select={(componentKey) => {
+                console.log('Component selected:', componentKey);
+                // Optional: Could scroll to that component's instructions
+              }}
+              on_connection_click={(connectionId) => {
+                console.log('Connection clicked:', connectionId);
+                // Optional: Could show more detailed assembly instructions
+              }}
+            />
+          </section>
+        )}
+
+        {/* Alternative: Show assembly visualization even if not pre-generated */}
+        {!pattern.assembly_2d && !printMode && (
+          <section id="assembly-visualization" className="section">
+            <div className="border-b border-gray-200 pb-4 mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">
+                {t('patternViewer.sections.assemblyVisualization', '2D Assembly View')}
+              </h2>
+              <p className="mt-2 text-sm text-gray-600">
+                {t('patternViewer.assemblyVisualizationDescription', 
+                  'Interactive 2D layout showing how pattern components fit together.')}
+              </p>
+            </div>
+            
+            <GarmentAssemblyViewer
+              session_id={pattern.session_id}
+              print_mode={printMode}
+              className="mb-6"
+              on_component_select={(componentKey) => {
+                console.log('Component selected:', componentKey);
+              }}
+              on_connection_click={(connectionId) => {
+                console.log('Connection clicked:', connectionId);
+              }}
+            />
+          </section>
+        )}
+
+        {/* 3D Wireframe Preview (US_12.10) */}
+        <section id="3d-preview" className="section">
+          <div className="border-b border-gray-200 pb-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {t('patternViewer.sections.3dPreview', '3D Wireframe Preview')}
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              {t('patternViewer.3dPreviewDescription', 
+                'Basic 3D wireframe visualization showing the approximate shape and proportions of the finished garment. This is a simplified representation for reference only.')}
+            </p>
+          </div>
+          
+          <Basic3DPreview
+            measurements={pattern.finished_measurements}
+            garmentType={pattern.craftType === 'knitting' ? 'sweater' : 'pullover'}
+            printMode={printMode}
+            className="mb-6"
+            onModelLoad={(model) => {
+              console.log('3D model loaded:', model);
+            }}
+            onError={(error) => {
+              console.error('3D preview error:', error);
+            }}
+          />
+        </section>
 
         {/* Pattern Footer - Only in print mode */}
         {printMode && (

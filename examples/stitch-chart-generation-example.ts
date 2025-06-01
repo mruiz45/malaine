@@ -1,7 +1,8 @@
 /**
- * Example: Stitch Chart Generation (US_11.5)
+ * Example: Stitch Chart Generation (US_11.5 & US_12.7)
  * Demonstrates how to use the StitchChartGeneratorService
  * to generate chart data structures from stitch patterns
+ * including colorwork patterns with yarn assignments
  */
 
 import {
@@ -9,16 +10,28 @@ import {
   validateChartDefinition,
   generateChartLegend,
   buildChartFromInstructions,
-  extractSymbolKeys
+  extractSymbolKeys,
+  generateColorLegend,
+  hasColorwork,
+  extractColorKeys
 } from '../src/services/stitchChartGeneratorService';
+import {
+  getColorworkAssignments,
+  updateColorworkAssignments,
+  resolveColorInformation
+} from '../src/services/colorworkAssignmentService';
 import type { StitchPattern } from '../src/types/stitchPattern';
 import type { 
   ChartSymbolsDefinition,
   StitchChartData 
 } from '../src/types/stitchChart';
+import type { 
+  ColorAssignment 
+} from '../src/types/colorworkAssignments';
+import type { YarnProfile } from '../src/types/yarn';
 
 /**
- * Example 1: Generate chart from a stitch pattern with predefined chart symbols
+ * Example 1: Generate chart from a stitch pattern with predefined chart symbols (US_11.5)
  */
 async function generateBasicRibbingChart() {
   console.log('=== Example 1: Basic Ribbing Chart Generation ===');
@@ -41,6 +54,7 @@ async function generateBasicRibbingChart() {
     console.log('- Legend symbols:', chartData.legend.map(l => l.symbol_key).join(', '));
     console.log('- Reading directions:', chartData.reading_directions);
     console.log('- Has no-stitch cells:', chartData.metadata.has_no_stitch_cells);
+    console.log('- Has colorwork:', chartData.metadata.has_colorwork);
     
     return chartData;
   } catch (error) {
@@ -49,172 +63,268 @@ async function generateBasicRibbingChart() {
 }
 
 /**
- * Example 2: Validate a chart definition before generation
+ * Example 2: Generate colorwork chart with yarn assignments (US_12.7)
  */
-async function validateLaceChart() {
-  console.log('\n=== Example 2: Lace Chart Validation ===');
-  
-  // Example lace chart definition with no-stitch cells
-  const laceChartDefinition: ChartSymbolsDefinition = {
-    width: 6,
-    height: 4,
-    grid: [
-      [
-        { symbol_key: 'k' },
-        { symbol_key: 'yo' },
-        { symbol_key: 'k2tog' },
-        { symbol_key: 'k' },
-        { symbol_key: 'k' },
-        { symbol_key: 'k' }
-      ],
-      [
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' }
-      ],
-      [
-        { symbol_key: 'k' },
-        { symbol_key: 'k' },
-        { symbol_key: 'yo' },
-        { symbol_key: 'ssk' },
-        { symbol_key: 'k' },
-        { symbol_key: 'k' }
-      ],
-      [
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' },
-        { symbol_key: 'no_stitch', is_no_stitch: true },
-        { symbol_key: 'p' },
-        { symbol_key: 'p' }
-      ]
-    ],
-    legend: [
-      { symbol_key: 'k', definition: 'Knit on RS, purl on WS', graphic_ref: '/assets/symbols/knit.svg' },
-      { symbol_key: 'p', definition: 'Purl on RS, knit on WS', graphic_ref: '/assets/symbols/purl.svg' },
-      { symbol_key: 'yo', definition: 'Yarn over', graphic_ref: '/assets/symbols/yarn_over.svg' },
-      { symbol_key: 'k2tog', definition: 'Knit 2 together', graphic_ref: '/assets/symbols/k2tog.svg' },
-      { symbol_key: 'ssk', definition: 'Slip, slip, knit', graphic_ref: '/assets/symbols/ssk.svg' },
-      { symbol_key: 'no_stitch', definition: 'No stitch', graphic_ref: '/assets/symbols/no_stitch.svg' }
-    ],
-    reading_direction_rs: 'right_to_left',
-    reading_direction_ws: 'left_to_right',
-    default_craft_type: 'knitting'
-  };
+async function generateColorworkChartWithAssignments() {
+  console.log('=== Example 2: Colorwork Chart with Yarn Assignments ===');
   
   try {
-    const validation = await validateChartDefinition(laceChartDefinition, 'knitting');
+    // Assuming we have a Fair Isle pattern with colorwork
+    const stitchPatternId = 'fair-isle-diamond-pattern';
+    const sessionId = 'pattern-session-123';
     
-    console.log('Validation Result:');
-    console.log('- Is valid:', validation.is_valid);
-    console.log('- Errors:', validation.errors.length > 0 ? validation.errors : 'None');
-    console.log('- Warnings:', validation.warnings.length > 0 ? validation.warnings : 'None');
-    console.log('- Missing symbols:', validation.missing_symbols.length > 0 ? validation.missing_symbols : 'None');
-    
-    if (validation.is_valid) {
-      // Extract symbol keys used in the chart
-      const usedSymbols = extractSymbolKeys(laceChartDefinition.grid);
-      console.log('- Symbols used:', usedSymbols.join(', '));
-    }
-    
-    return validation;
-  } catch (error) {
-    console.error('Error validating lace chart:', error);
-  }
-}
+    // Mock yarn profiles with colors
+    const yarnProfiles: YarnProfile[] = [
+      {
+        id: 'yarn-navy-123',
+        user_id: 'user-456',
+        yarn_name: 'Cascade 220 Wool',
+        color_name: 'Navy Blue',
+        color_hex_code: '#1e3a8a',
+        brand_name: 'Cascade Yarns',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      },
+      {
+        id: 'yarn-cream-456',
+        user_id: 'user-456',
+        yarn_name: 'Cascade 220 Wool',
+        color_name: 'Natural Cream',
+        color_hex_code: '#f9fafb',
+        brand_name: 'Cascade Yarns',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+    ];
 
-/**
- * Example 3: Generate chart legend for specific symbols
- */
-async function generateCableLegend() {
-  console.log('\n=== Example 3: Cable Chart Legend Generation ===');
-  
-  try {
-    const cableSymbols = ['k', 'p', 'c4f', 'c4b', 'c6f'];
-    
-    const legend = await generateChartLegend(cableSymbols, 'knitting');
-    
-    console.log('Generated Legend:');
-    legend.forEach(item => {
-      console.log(`- ${item.symbol_key}: ${item.definition} (${item.graphic_ref})`);
-    });
-    
-    return legend;
-  } catch (error) {
-    console.error('Error generating cable legend:', error);
-  }
-}
+    // Color assignments mapping pattern colors to yarns
+    const colorAssignments: ColorAssignment[] = [
+      { color_key: 'MC', yarn_profile_id: 'yarn-navy-123' },
+      { color_key: 'CC1', yarn_profile_id: 'yarn-cream-456' }
+    ];
 
-/**
- * Example 4: Build chart from written instructions (basic conversion)
- */
-function buildChartFromInstructionsExample() {
-  console.log('\n=== Example 4: Build Chart from Instructions ===');
-  
-  // Example stitch pattern with written instructions
-  const pattern: StitchPattern = {
-    id: 'example-seed-stitch',
-    stitch_name: 'Seed Stitch',
-    craft_type: 'knitting',
-    is_basic: true,
-    stitch_repeat_width: 2,
-    stitch_repeat_height: 2,
-    instructions_written: {
-      craft_type: 'knitting',
-      rows: [
-        { row_num: 1, instruction: 'K1, P1' },
-        { row_num: 2, instruction: 'P1, K1' }
-      ]
-    },
-    created_at: '2025-01-01T00:00:00Z',
-    updated_at: '2025-01-01T00:00:00Z'
-  };
-  
-  try {
-    const chartDefinition = buildChartFromInstructions(pattern);
-    
-    if (chartDefinition) {
-      console.log('Built Chart Definition:');
-      console.log('- Dimensions:', `${chartDefinition.width}w x ${chartDefinition.height}h`);
-      console.log('- Grid:', chartDefinition.grid);
-      console.log('- Legend:', chartDefinition.legend.map(l => `${l.symbol_key}: ${l.definition}`));
-      console.log('- Reading directions:', `RS: ${chartDefinition.reading_direction_rs}, WS: ${chartDefinition.reading_direction_ws}`);
-    } else {
-      console.log('Could not build chart from instructions (insufficient data)');
-    }
-    
-    return chartDefinition;
-  } catch (error) {
-    console.error('Error building chart from instructions:', error);
-  }
-}
+    // Save color assignments to the session
+    await updateColorworkAssignments(sessionId, stitchPatternId, colorAssignments);
+    console.log('Color assignments saved to session');
 
-/**
- * Example 5: Handle chart with maximum dimensions
- */
-async function generateChartWithLimits() {
-  console.log('\n=== Example 5: Chart Generation with Dimension Limits ===');
-  
-  try {
-    const stitchPatternId = 'large-cable-pattern';
+    // Generate the chart with color assignments
+    const chartData: StitchChartData = await generateStitchChart(
+      stitchPatternId,
+      {
+        validate_symbols: true,
+        include_row_numbers: true,
+        include_stitch_numbers: true
+      },
+      colorAssignments,
+      yarnProfiles
+    );
     
-    // Try to generate with restrictive limits
-    const chartData = await generateStitchChart(stitchPatternId, {
-      max_dimensions: { width: 20, height: 20 },
-      validate_symbols: true
-    });
-    
-    console.log('Generated chart within limits:');
+    console.log('Generated Colorwork Chart Data:');
+    console.log('- Pattern ID:', chartData.stitch_pattern_id);
     console.log('- Dimensions:', `${chartData.dimensions.width}w x ${chartData.dimensions.height}h`);
-    console.log('- Chart ID:', chartData.id);
+    console.log('- Has colorwork:', chartData.metadata.has_colorwork);
+    
+    if (chartData.color_legend) {
+      console.log('- Color Legend:');
+      chartData.color_legend.forEach(color => {
+        console.log(`  ${color.color_key} (${color.name}): ${color.hex_code}`);
+        if (color.yarn_info) {
+          console.log(`    Yarn: ${color.yarn_info.yarn_name} - ${color.yarn_info.color_name}`);
+        }
+      });
+    }
+    
+    // Show a few grid cells with color information
+    console.log('- Sample grid cells with colors:');
+    for (let row = 0; row < Math.min(2, chartData.grid.length); row++) {
+      for (let col = 0; col < Math.min(4, chartData.grid[row].length); col++) {
+        const cell = chartData.grid[row][col];
+        console.log(`  [${row},${col}]: ${cell.symbol_key}${cell.color_key ? ` (${cell.color_key})` : ''}`);
+      }
+    }
     
     return chartData;
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    console.log('Expected error for oversized chart:', errorMessage);
+    console.error('Error generating colorwork chart:', error);
+  }
+}
+
+/**
+ * Example 3: Generate color legend separately (US_12.7)
+ */
+async function generateColorLegendExample() {
+  console.log('=== Example 3: Generate Color Legend ===');
+  
+  try {
+    // Mock pattern color palette
+    const colorPalette = [
+      { key: 'MC', name: 'Main Color', default_hex: '#000080' },
+      { key: 'CC1', name: 'Contrast Color 1', default_hex: '#ffffff' },
+      { key: 'CC2', name: 'Contrast Color 2', default_hex: '#ff0000' }
+    ];
+
+    // Mock yarn profiles
+    const yarnProfiles: YarnProfile[] = [
+      {
+        id: 'yarn-1',
+        user_id: 'user-1',
+        yarn_name: 'Deep Navy Merino',
+        color_name: 'Midnight',
+        color_hex_code: '#0f172a',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      },
+      {
+        id: 'yarn-2',
+        user_id: 'user-1',
+        yarn_name: 'Pure White Cotton',
+        color_name: 'Snow White',
+        color_hex_code: '#ffffff',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+      // Note: CC2 intentionally not assigned to show default behavior
+    ];
+
+    // Color assignments (CC2 not assigned)
+    const colorAssignments: ColorAssignment[] = [
+      { color_key: 'MC', yarn_profile_id: 'yarn-1' },
+      { color_key: 'CC1', yarn_profile_id: 'yarn-2' }
+    ];
+
+    // Generate color legend
+    const colorLegend = await generateColorLegend(
+      colorPalette,
+      colorAssignments,
+      yarnProfiles
+    );
+
+    console.log('Generated Color Legend:');
+    colorLegend.forEach(entry => {
+      console.log(`- ${entry.color_key} (${entry.name}):`);
+      console.log(`  Color: ${entry.hex_code}`);
+      if (entry.yarn_info) {
+        console.log(`  Assigned Yarn: ${entry.yarn_info.yarn_name} - ${entry.yarn_info.color_name}`);
+      } else {
+        console.log('  Using default pattern color (no yarn assigned)');
+      }
+    });
+
+    return colorLegend;
+  } catch (error) {
+    console.error('Error generating color legend:', error);
+  }
+}
+
+/**
+ * Example 4: Detect and extract colorwork information (US_12.7)
+ */
+async function analyzeColorworkPattern() {
+  console.log('=== Example 4: Analyze Colorwork Pattern ===');
+  
+  try {
+    // Mock chart symbols with colorwork
+    const colorworkChartSymbols: ChartSymbolsDefinition = {
+      width: 6,
+      height: 3,
+      palette: [
+        { key: 'A', name: 'Color A', default_hex: '#ff6b6b' },
+        { key: 'B', name: 'Color B', default_hex: '#4ecdc4' },
+        { key: 'C', name: 'Color C', default_hex: '#ffe66d' }
+      ],
+      grid: [
+        [
+          { symbol_key: 'k', color_key: 'A' },
+          { symbol_key: 'k', color_key: 'B' },
+          { symbol_key: 'k', color_key: 'C' },
+          { symbol_key: 'k', color_key: 'C' },
+          { symbol_key: 'k', color_key: 'B' },
+          { symbol_key: 'k', color_key: 'A' }
+        ],
+        [
+          { symbol_key: 'k', color_key: 'B' },
+          { symbol_key: 'k', color_key: 'A' },
+          { symbol_key: 'k', color_key: 'B' },
+          { symbol_key: 'k', color_key: 'B' },
+          { symbol_key: 'k', color_key: 'A' },
+          { symbol_key: 'k', color_key: 'B' }
+        ],
+        [
+          { symbol_key: 'k', color_key: 'C' },
+          { symbol_key: 'k', color_key: 'C' },
+          { symbol_key: 'k', color_key: 'A' },
+          { symbol_key: 'k', color_key: 'A' },
+          { symbol_key: 'k', color_key: 'C' },
+          { symbol_key: 'k', color_key: 'C' }
+        ]
+      ],
+      legend: [
+        { symbol_key: 'k', definition: 'Knit', graphic_ref: '/assets/symbols/knit.svg' }
+      ],
+      reading_direction_rs: 'right_to_left',
+      reading_direction_ws: 'left_to_right',
+      default_craft_type: 'knitting'
+    };
+
+    // Analyze colorwork
+    const isColorwork = hasColorwork(colorworkChartSymbols);
+    console.log('Is colorwork pattern:', isColorwork);
+
+    if (isColorwork) {
+      const colorKeys = extractColorKeys(colorworkChartSymbols.grid);
+      console.log('Color keys used in pattern:', colorKeys);
+      console.log('Pattern palette:', colorworkChartSymbols.palette);
+      
+      // Show color distribution in the pattern
+      const colorUsage = colorKeys.reduce((acc, colorKey) => {
+        let count = 0;
+        colorworkChartSymbols.grid.forEach(row => {
+          row.forEach(cell => {
+            if (cell.color_key === colorKey) count++;
+          });
+        });
+        acc[colorKey] = count;
+        return acc;
+      }, {} as Record<string, number>);
+      
+      console.log('Color usage count:', colorUsage);
+    }
+
+  } catch (error) {
+    console.error('Error analyzing colorwork pattern:', error);
+  }
+}
+
+/**
+ * Example 5: Working with colorwork assignments in sessions (US_12.7)
+ */
+async function manageColorworkAssignments() {
+  console.log('=== Example 5: Manage Colorwork Assignments ===');
+  
+  try {
+    const sessionId = 'pattern-session-789';
+    const stitchPatternId = 'intarsia-flower-pattern';
+
+    // Get current assignments (might be empty initially)
+    let currentAssignments = await getColorworkAssignments(sessionId, stitchPatternId);
+    console.log('Current assignments:', currentAssignments);
+
+    // Update assignments
+    const newAssignments: ColorAssignment[] = [
+      { color_key: 'Background', yarn_profile_id: 'yarn-white-123' },
+      { color_key: 'Flower', yarn_profile_id: 'yarn-pink-456' },
+      { color_key: 'Leaves', yarn_profile_id: 'yarn-green-789' }
+    ];
+
+    const updatedData = await updateColorworkAssignments(sessionId, stitchPatternId, newAssignments);
+    console.log('Updated assignments:', updatedData);
+
+    // Retrieve assignments again to verify
+    currentAssignments = await getColorworkAssignments(sessionId, stitchPatternId);
+    console.log('Verified assignments:', currentAssignments);
+
+  } catch (error) {
+    console.error('Error managing colorwork assignments:', error);
   }
 }
 
@@ -222,32 +332,34 @@ async function generateChartWithLimits() {
  * Run all examples
  */
 async function runAllExamples() {
-  console.log('🧶 Stitch Chart Generation Examples (US_11.5) 🧶\n');
+  console.log('Stitch Chart Generation Examples (US_11.5 & US_12.7)\n');
   
   await generateBasicRibbingChart();
-  await validateLaceChart();
-  await generateCableLegend();
-  buildChartFromInstructionsExample();
-  await generateChartWithLimits();
+  console.log('\n');
   
-  console.log('\n✅ All examples completed!');
-  console.log('\nNext steps:');
-  console.log('- The generated chart data structures are ready for rendering (US_11.6)');
-  console.log('- Chart data can be integrated into pattern assembly (US_9.1)');
-  console.log('- Charts will be included in PDF export (US_9.2)');
+  await generateColorworkChartWithAssignments();
+  console.log('\n');
+  
+  await generateColorLegendExample();
+  console.log('\n');
+  
+  await analyzeColorworkPattern();
+  console.log('\n');
+  
+  await manageColorworkAssignments();
+  console.log('\nAll examples completed!');
 }
-
-// Export for potential use in tests or other modules
-export {
-  generateBasicRibbingChart,
-  validateLaceChart,
-  generateCableLegend,
-  buildChartFromInstructionsExample,
-  generateChartWithLimits,
-  runAllExamples
-};
 
 // Run examples if this file is executed directly
 if (require.main === module) {
   runAllExamples().catch(console.error);
-} 
+}
+
+export {
+  generateBasicRibbingChart,
+  generateColorworkChartWithAssignments,
+  generateColorLegendExample,
+  analyzeColorworkPattern,
+  manageColorworkAssignments,
+  runAllExamples
+}; 

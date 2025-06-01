@@ -1,6 +1,6 @@
 /**
- * Tests for Stitch Chart Generator Service (US_11.5)
- * Tests chart generation, validation, and utility functions
+ * Tests for Stitch Chart Generator Service (US_11.5 & US_12.7)
+ * Tests chart generation, validation, colorwork features, and utility functions
  */
 
 import {
@@ -9,7 +9,10 @@ import {
   hasNoStitchCells,
   generateChartLegend,
   buildChartFromInstructions,
-  extractSymbolKeys
+  extractSymbolKeys,
+  generateColorLegend,
+  hasColorwork,
+  extractColorKeys
 } from '../stitchChartGeneratorService';
 import { getStitchPattern } from '../stitchPatternService';
 import type { 
@@ -19,12 +22,23 @@ import type {
 import type {
   ChartSymbolsDefinition,
   ChartGridCell,
-  StandardStitchSymbol
+  StandardStitchSymbol,
+  ColorDefinition
 } from '@/types/stitchChart';
+import type { 
+  ColorAssignment 
+} from '@/types/colorworkAssignments';
+import type { YarnProfile } from '@/types/yarn';
 
 // Mock the stitchPatternService
 jest.mock('../stitchPatternService');
-const mockGetStitchPattern = getStitchPattern as jest.MockedFunction<typeof getStitchPattern>;
+const mockedGetStitchPattern = getStitchPattern as jest.MockedFunction<typeof getStitchPattern>;
+
+// Mock colorwork assignment service
+jest.mock('../colorworkAssignmentService', () => ({
+  resolveColorInformation: jest.fn(),
+  validateColorworkAssignments: jest.fn()
+}));
 
 // Mock fetch for API calls
 global.fetch = jest.fn();
@@ -150,7 +164,7 @@ describe('StitchChartGeneratorService', () => {
     });
 
     it('should generate chart data for valid stitch pattern', async () => {
-      mockGetStitchPattern.mockResolvedValue(mockStitchPattern);
+      mockedGetStitchPattern.mockResolvedValue(mockStitchPattern);
 
       const chartData = await generateStitchChart('test-pattern-1');
 
@@ -168,7 +182,7 @@ describe('StitchChartGeneratorService', () => {
     });
 
     it('should throw error when pattern not found', async () => {
-      mockGetStitchPattern.mockResolvedValue(null as any);
+      mockedGetStitchPattern.mockResolvedValue(null as any);
 
       await expect(generateStitchChart('non-existent-pattern'))
         .rejects.toThrow('Stitch pattern with ID non-existent-pattern not found');
@@ -176,7 +190,7 @@ describe('StitchChartGeneratorService', () => {
 
     it('should throw error when pattern has no chart symbols', async () => {
       const patternWithoutChart = { ...mockStitchPattern, chart_symbols: undefined };
-      mockGetStitchPattern.mockResolvedValue(patternWithoutChart);
+      mockedGetStitchPattern.mockResolvedValue(patternWithoutChart);
 
       await expect(generateStitchChart('test-pattern-1'))
         .rejects.toThrow("Stitch pattern 'Test Cable Pattern' does not have chart symbols definition");
@@ -191,7 +205,7 @@ describe('StitchChartGeneratorService', () => {
           height: 100
         }
       };
-      mockGetStitchPattern.mockResolvedValue(largePattern);
+      mockedGetStitchPattern.mockResolvedValue(largePattern);
 
       await expect(generateStitchChart('test-pattern-1', {
         max_dimensions: { width: 50, height: 50 }
@@ -207,7 +221,7 @@ describe('StitchChartGeneratorService', () => {
           legend: [] // Empty legend should cause validation error
         }
       };
-      mockGetStitchPattern.mockResolvedValue(invalidPattern);
+      mockedGetStitchPattern.mockResolvedValue(invalidPattern);
 
       // Should succeed when validation is disabled
       const chartData = await generateStitchChart('test-pattern-1', {
@@ -509,6 +523,264 @@ describe('StitchChartGeneratorService', () => {
       const legend = await generateChartLegend([], 'knitting');
 
       expect(legend).toHaveLength(0);
+    });
+  });
+
+  describe('Colorwork functionality (US_12.7)', () => {
+    const mockColorworkPattern: StitchPattern = {
+      id: 'colorwork-test-pattern',
+      stitch_name: 'Simple Fair Isle',
+      craft_type: 'knitting',
+      is_basic: false,
+      created_at: '2024-01-01T00:00:00Z',
+      updated_at: '2024-01-01T00:00:00Z',
+      chart_symbols: {
+        width: 4,
+        height: 2,
+        palette: [
+          { key: 'MC', name: 'Main Color', default_hex: '#000080' },
+          { key: 'CC1', name: 'Contrast Color 1', default_hex: '#FFFDD0' }
+        ],
+        grid: [
+          [
+            { symbol_key: 'k', color_key: 'MC' },
+            { symbol_key: 'k', color_key: 'CC1' },
+            { symbol_key: 'k', color_key: 'CC1' },
+            { symbol_key: 'k', color_key: 'MC' }
+          ],
+          [
+            { symbol_key: 'k', color_key: 'CC1' },
+            { symbol_key: 'k', color_key: 'MC' },
+            { symbol_key: 'k', color_key: 'MC' },
+            { symbol_key: 'k', color_key: 'CC1' }
+          ]
+        ],
+        legend: [
+          { symbol_key: 'k', definition: 'Knit on RS, purl on WS', graphic_ref: '/assets/symbols/knit.svg' }
+        ],
+        reading_direction_rs: 'right_to_left',
+        reading_direction_ws: 'left_to_right',
+        default_craft_type: 'knitting'
+      }
+    };
+
+    const mockYarnProfiles: YarnProfile[] = [
+      {
+        id: 'yarn-1',
+        user_id: 'user-1',
+        yarn_name: 'Navy Wool',
+        color_name: 'Navy Blue',
+        color_hex_code: '#001122',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      },
+      {
+        id: 'yarn-2',
+        user_id: 'user-1',
+        yarn_name: 'Cream Wool',
+        color_name: 'Natural Cream',
+        color_hex_code: '#F5F5DC',
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z'
+      }
+    ];
+
+    const mockColorAssignments: ColorAssignment[] = [
+      { color_key: 'MC', yarn_profile_id: 'yarn-1' },
+      { color_key: 'CC1', yarn_profile_id: 'yarn-2' }
+    ];
+
+    test('should detect colorwork patterns correctly', () => {
+      expect(hasColorwork(mockColorworkPattern.chart_symbols!)).toBe(true);
+      
+      // Non-colorwork pattern
+      const nonColorworkSymbols: ChartSymbolsDefinition = {
+        width: 2,
+        height: 2,
+        grid: [
+          [{ symbol_key: 'k' }, { symbol_key: 'p' }],
+          [{ symbol_key: 'p' }, { symbol_key: 'k' }]
+        ],
+        legend: [
+          { symbol_key: 'k', definition: 'Knit', graphic_ref: '/assets/symbols/knit.svg' }
+        ],
+        reading_direction_rs: 'right_to_left',
+        reading_direction_ws: 'left_to_right'
+      };
+      expect(hasColorwork(nonColorworkSymbols)).toBe(false);
+    });
+
+    test('should extract color keys from grid', () => {
+      const colorKeys = extractColorKeys(mockColorworkPattern.chart_symbols!.grid);
+      expect(colorKeys).toEqual(expect.arrayContaining(['MC', 'CC1']));
+      expect(colorKeys).toHaveLength(2);
+    });
+
+    test('should generate color legend with yarn assignments', async () => {
+      const { resolveColorInformation, validateColorworkAssignments } = require('../colorworkAssignmentService');
+      
+      resolveColorInformation.mockResolvedValue([
+        {
+          color_key: 'MC',
+          color_name: 'Main Color',
+          hex_code: '#001122',
+          source: 'yarn_profile',
+          yarn_profile: {
+            id: 'yarn-1',
+            yarn_name: 'Navy Wool',
+            color_name: 'Navy Blue'
+          }
+        },
+        {
+          color_key: 'CC1',
+          color_name: 'Contrast Color 1',
+          hex_code: '#F5F5DC',
+          source: 'yarn_profile',
+          yarn_profile: {
+            id: 'yarn-2',
+            yarn_name: 'Cream Wool',
+            color_name: 'Natural Cream'
+          }
+        }
+      ]);
+
+      validateColorworkAssignments.mockReturnValue({ isValid: true, errors: [] });
+
+      const colorLegend = await generateColorLegend(
+        mockColorworkPattern.chart_symbols!.palette!,
+        mockColorAssignments,
+        mockYarnProfiles
+      );
+
+      expect(colorLegend).toHaveLength(2);
+      expect(colorLegend[0]).toEqual({
+        color_key: 'MC',
+        name: 'Main Color',
+        hex_code: '#001122',
+        yarn_info: {
+          yarn_profile_id: 'yarn-1',
+          yarn_name: 'Navy Wool',
+          color_name: 'Navy Blue'
+        }
+      });
+    });
+
+    test('should generate colorwork chart with color legend', async () => {
+      mockedGetStitchPattern.mockResolvedValue(mockColorworkPattern);
+      
+      const { resolveColorInformation, validateColorworkAssignments } = require('../colorworkAssignmentService');
+      
+      resolveColorInformation.mockResolvedValue([
+        {
+          color_key: 'MC',
+          color_name: 'Main Color',
+          hex_code: '#001122',
+          source: 'yarn_profile',
+          yarn_profile: {
+            id: 'yarn-1',
+            yarn_name: 'Navy Wool',
+            color_name: 'Navy Blue'
+          }
+        },
+        {
+          color_key: 'CC1',
+          color_name: 'Contrast Color 1',
+          hex_code: '#F5F5DC',
+          source: 'yarn_profile',
+          yarn_profile: {
+            id: 'yarn-2',
+            yarn_name: 'Cream Wool',
+            color_name: 'Natural Cream'
+          }
+        }
+      ]);
+
+      validateColorworkAssignments.mockReturnValue({ isValid: true, errors: [] });
+
+      const chartData = await generateStitchChart(
+        'colorwork-test-pattern',
+        { validate_symbols: false },
+        mockColorAssignments,
+        mockYarnProfiles
+      );
+
+      expect(chartData.metadata.has_colorwork).toBe(true);
+      expect(chartData.color_legend).toBeDefined();
+      expect(chartData.color_legend).toHaveLength(2);
+      expect(chartData.grid[0][0].color_key).toBe('MC');
+      expect(chartData.grid[0][1].color_key).toBe('CC1');
+    });
+
+    test('should handle colorwork pattern without assignments', async () => {
+      mockedGetStitchPattern.mockResolvedValue(mockColorworkPattern);
+      
+      const { resolveColorInformation, validateColorworkAssignments } = require('../colorworkAssignmentService');
+      
+      resolveColorInformation.mockResolvedValue([
+        {
+          color_key: 'MC',
+          color_name: 'Main Color',
+          hex_code: '#000080',
+          source: 'default_palette'
+        },
+        {
+          color_key: 'CC1',
+          color_name: 'Contrast Color 1',
+          hex_code: '#FFFDD0',
+          source: 'default_palette'
+        }
+      ]);
+
+      validateColorworkAssignments.mockReturnValue({ isValid: true, errors: [] });
+
+      const chartData = await generateStitchChart(
+        'colorwork-test-pattern',
+        { validate_symbols: false },
+        [], // No assignments
+        []  // No yarn profiles
+      );
+
+      expect(chartData.metadata.has_colorwork).toBe(true);
+      expect(chartData.color_legend).toBeDefined();
+      expect(chartData.color_legend![0].hex_code).toBe('#000080'); // Default color
+      expect(chartData.color_legend![0].yarn_info).toBeUndefined();
+    });
+
+    test('should maintain backward compatibility with non-colorwork patterns', async () => {
+      const nonColorworkPattern: StitchPattern = {
+        id: 'ribbing-2x2',
+        stitch_name: '2x2 Ribbing',
+        craft_type: 'knitting',
+        is_basic: true,
+        created_at: '2024-01-01T00:00:00Z',
+        updated_at: '2024-01-01T00:00:00Z',
+        chart_symbols: {
+          width: 4,
+          height: 2,
+          grid: [
+            [{ symbol_key: 'k' }, { symbol_key: 'k' }, { symbol_key: 'p' }, { symbol_key: 'p' }],
+            [{ symbol_key: 'p' }, { symbol_key: 'p' }, { symbol_key: 'k' }, { symbol_key: 'k' }]
+          ],
+          legend: [
+            { symbol_key: 'k', definition: 'Knit on RS, purl on WS', graphic_ref: '/assets/symbols/knit.svg' },
+            { symbol_key: 'p', definition: 'Purl on RS, knit on WS', graphic_ref: '/assets/symbols/purl.svg' }
+          ],
+          reading_direction_rs: 'right_to_left',
+          reading_direction_ws: 'left_to_right',
+          default_craft_type: 'knitting'
+        }
+      };
+
+      mockedGetStitchPattern.mockResolvedValue(nonColorworkPattern);
+
+      const chartData = await generateStitchChart(
+        'ribbing-2x2',
+        { validate_symbols: false }
+      );
+
+      expect(chartData.metadata.has_colorwork).toBe(false);
+      expect(chartData.color_legend).toBeUndefined();
+      expect(chartData.grid[0][0].color_key).toBeUndefined();
     });
   });
 }); 
