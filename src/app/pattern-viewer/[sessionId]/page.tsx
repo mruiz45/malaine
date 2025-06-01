@@ -1,6 +1,6 @@
 /**
- * Pattern Viewer Page (US_9.1)
- * Main page for viewing assembled pattern documents
+ * Pattern Viewer Page (US_9.1 + US_11.7)
+ * Main page for viewing assembled pattern documents with progress tracking
  */
 
 'use client';
@@ -13,6 +13,7 @@ import { AssembledPattern, PatternViewerState } from '@/types/assembled-pattern'
 import { patternViewerService } from '@/services/patternViewerService';
 import PatternViewer from '@/components/pattern-viewer/PatternViewer';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { PatternProgressProvider } from '@/contexts/PatternProgressContext';
 
 /**
  * Pattern Viewer Page Component
@@ -21,7 +22,7 @@ export default function PatternViewerPage() {
   const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
-  const sessionId = params.sessionId as string;
+  const sessionId = params?.sessionId as string;
 
   const [state, setState] = useState<PatternViewerState>({
     pattern: null,
@@ -163,12 +164,22 @@ export default function PatternViewerPage() {
 
   return (
     <div className={`min-h-screen ${state.printMode ? 'bg-white' : 'bg-gray-50'}`}>
-      <PatternViewer
+      <PatternProgressProvider
+        sessionId={sessionId}
         pattern={state.pattern}
-        printMode={state.printMode}
-        onPrintModeChange={handlePrintModeChange}
-        className={state.printMode ? 'shadow-none' : 'shadow-lg'}
-      />
+        options={{
+          loadExisting: true,
+          enableAutoSave: true,
+          autoSaveInterval: 2000
+        }}
+      >
+        <PatternViewer
+          pattern={state.pattern}
+          printMode={state.printMode}
+          onPrintModeChange={handlePrintModeChange}
+          className={state.printMode ? 'shadow-none' : 'shadow-lg'}
+        />
+      </PatternProgressProvider>
     </div>
   );
 } 

@@ -169,6 +169,13 @@ export default function SleeveSelector({
 }: SleeveSelectorProps) {
   const { t } = useTranslation();
   
+  // Debug logs - TEMPORARY
+  console.log('SleeveSelector Debug:', {
+    selectedConstructionMethod,
+    selectedSleeveAttributes,
+    availableSleeveStyles: selectedConstructionMethod ? (DEFAULT_SLEEVE_CONFIG.styles_by_construction[selectedConstructionMethod] || []) : []
+  });
+  
   // Local state for custom inputs
   const [customLength, setCustomLength] = useState<number>(selectedSleeveAttributes?.custom_length_cm || 55);
   const [cuffParameters, setCuffParameters] = useState<CuffParameters>({
@@ -311,8 +318,11 @@ export default function SleeveSelector({
           <h3 className="text-lg font-medium text-yellow-800 mb-2">
             {t('sleeve.constructionRequired.title', 'Construction Method Required')}
           </h3>
-          <p className="text-yellow-700">
-            {t('sleeve.constructionRequired.description', 'Please select a construction method first to see available sleeve options.')}
+          <p className="text-yellow-700 mb-4">
+            {t('sleeve.constructionRequired.description', 'Please select a construction method first to see available sleeve options. You need to complete the "Garment Structure" step before configuring sleeves.')}
+          </p>
+          <p className="text-sm text-yellow-600">
+            {t('sleeve.constructionRequired.help', 'Click "Previous" to go back to the Garment Structure step and select a construction method like "Drop Shoulder", "Set-in Sleeve", or "Raglan".')}
           </p>
         </div>
       </div>

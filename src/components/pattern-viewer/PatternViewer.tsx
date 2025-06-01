@@ -1,6 +1,6 @@
 /**
- * Pattern Viewer Component (US_9.1)
- * Main component for displaying assembled pattern documents
+ * Pattern Viewer Component (US_9.1 + US_11.7)
+ * Main component for displaying assembled pattern documents with progress tracking
  */
 
 'use client';
@@ -22,6 +22,8 @@ import MeasurementsSection from './MeasurementsSection';
 import ComponentInstructionsSection from './ComponentInstructionsSection';
 import AssemblySection from './AssemblySection';
 import PatternWarnings from './PatternWarnings';
+import PatternProgressControls from './PatternProgressControls';
+import { usePatternProgressContext } from '@/contexts/PatternProgressContext';
 
 interface PatternViewerProps {
   /** The assembled pattern to display */
@@ -55,6 +57,9 @@ export default function PatternViewer({
   const { t } = useTranslation();
   const [showTableOfContents, setShowTableOfContents] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+  
+  // Get pattern progress context (will be null if not wrapped in provider)
+  const progressContext = usePatternProgressContext();
 
   // Generate table of contents
   const tableOfContents: TableOfContentsSection[] = [
@@ -163,8 +168,22 @@ export default function PatternViewer({
         </div>
       )}
 
+      {/* Progress Controls - Only show if progress context is available and not in print mode */}
+      {progressContext && !printMode && (
+        <div className="sticky top-[73px] z-10 bg-gray-50 border-b border-gray-200 px-6 py-3 print:hidden">
+          <PatternProgressControls
+            navigation={progressContext.navigation}
+            isEnabled={true}
+            onPreviousStep={progressContext.goToPreviousStep}
+            onNextStep={progressContext.goToNextStep}
+            onResetProgress={progressContext.clearProgress}
+            compact={true}
+          />
+        </div>
+      )}
+
       {/* Main Content */}
-      <div 
+      <div
         ref={contentRef}
         className={`space-y-8 ${printMode ? 'p-8 print:p-0' : 'p-6'}`}
       >
@@ -212,6 +231,7 @@ export default function PatternViewer({
           components={pattern.components}
           printMode={printMode}
           sessionId={pattern.session_id}
+          progressContext={progressContext}
         />
 
         {/* Assembly & Finishing */}

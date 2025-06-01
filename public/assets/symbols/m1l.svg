@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <!-- M1L symbol: left-leaning increase -->
+  <rect x="2" y="2" width="20" height="20" 
+        fill="white" 
+        stroke="#333" 
+        stroke-width="1"/>
+  <!-- Increase line slanting left -->
+  <path d="M8 16 Q6 12 8 8" 
+        fill="none" 
+        stroke="#333" 
+        stroke-width="2"/>
+  <!-- Arrow pointing left -->
+  <path d="M16 10 L14 8 L14 9 L12 9 L12 11 L14 11 L14 12 Z" 
+        fill="#333"/>
+</svg> 

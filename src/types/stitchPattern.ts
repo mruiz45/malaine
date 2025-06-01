@@ -3,6 +3,8 @@
  * Defines interfaces for stitch pattern selection, definition, preview, and library
  */
 
+import type { ChartSymbolsDefinition } from './stitchChart';
+
 /**
  * Supported craft types
  */
@@ -95,6 +97,8 @@ export interface StitchPattern {
   properties?: StitchPatternProperties;
   /** Structured row-by-row instructions (US_8.1) */
   instructions_written?: StitchPatternInstructions;
+  /** Chart symbols definition for diagram generation (US_11.5) */
+  chart_symbols?: ChartSymbolsDefinition;
   /** Keywords for search functionality (US_8.1) */
   search_keywords?: string[];
   /** Difficulty level of the pattern (US_8.1) */
@@ -121,6 +125,7 @@ export interface CreateStitchPattern {
   swatch_image_url?: string;
   properties?: StitchPatternProperties;
   instructions_written?: StitchPatternInstructions;
+  chart_symbols?: ChartSymbolsDefinition;
   search_keywords?: string[];
   difficulty_level?: DifficultyLevel;
   common_uses?: string[];
@@ -140,6 +145,7 @@ export interface UpdateStitchPattern {
   swatch_image_url?: string;
   properties?: StitchPatternProperties;
   instructions_written?: StitchPatternInstructions;
+  chart_symbols?: ChartSymbolsDefinition;
   search_keywords?: string[];
   difficulty_level?: DifficultyLevel;
   common_uses?: string[];

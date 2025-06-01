@@ -3,6 +3,8 @@
  * Defines interfaces for the assembled pattern document structure
  */
 
+import type { StitchChartData } from './stitchChart';
+
 /**
  * Standard abbreviation used in patterns
  */
@@ -127,6 +129,8 @@ export interface PatternComponent {
   shaping_summary?: string;
   /** Optional special notes for this component */
   notes?: string[];
+  /** Optional stitch chart for this component (US_11.6) */
+  stitch_chart?: StitchChartData;
 }
 
 /**

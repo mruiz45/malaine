@@ -1,7 +1,9 @@
 /**
- * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2 + US_8.3)
+ * Pattern Calculator API Route (US_6.1 + US_6.2 + US_6.3 + US_7.2 + US_8.3 + US_11.1 + US_11.3)
  * Handles pattern calculation requests and interfaces with the Core Pattern Calculation Engine
  * Extended for US_8.3: Stitch pattern integration
+ * Extended for US_11.1: Neckline shaping calculations
+ * Extended for US_11.3: Armhole shaping calculations
  */
 
 import { NextRequest, NextResponse } from 'next/server';
@@ -33,6 +35,18 @@ import { calculateShaping } from '@/utils/shaping-calculator';
 import { ShapingCalculationInput } from '@/types/shaping';
 import { InstructionGeneratorService } from '@/services/instructionGeneratorService';
 import { InstructionGenerationContext } from '@/types/instruction-generation';
+import { calculateNecklineShaping } from '@/utils/neckline-shaping-calculator';
+import { 
+  extractNecklineShapingInput, 
+  componentRequiresNecklineShaping 
+} from '@/utils/neckline-shaping-helpers';
+import { NecklineShapingSchedule } from '@/types/neckline-shaping';
+import { calculateArmholeShaping } from '@/utils/armhole-shaping-calculator';
+import { 
+  extractArmholeShapingInput, 
+  componentRequiresArmholeShaping 
+} from '@/utils/armhole-shaping-helpers';
+import { ArmholeShapingSchedule } from '@/types/armhole-shaping';
 
 /**
  * POST /api/pattern-calculator/calculate-pattern
@@ -428,6 +442,80 @@ async function calculateRectangularComponent(
     ];
   }
   
+  // Calculate neckline shaping if required (US_11.1)
+  let necklineShapingSchedule: NecklineShapingSchedule | undefined;
+  
+  if (componentRequiresNecklineShaping(component)) {
+    const necklineShapingInput = extractNecklineShapingInput(
+      {
+        ...component,
+        stitchCount: rectangularResult.calculations.castOnStitches,
+        detailedCalculations: rectangularResult.calculations
+      },
+      gauge,
+      component.componentKey
+    );
+    
+    if (necklineShapingInput) {
+      const necklineShapingResult = calculateNecklineShaping(necklineShapingInput);
+      
+      if (necklineShapingResult.success && necklineShapingResult.schedule) {
+        necklineShapingSchedule = necklineShapingResult.schedule;
+        
+        // Add neckline shaping warnings to component warnings
+        if (necklineShapingResult.warnings) {
+          rectangularResult.warnings = [
+            ...(rectangularResult.warnings || []),
+            ...necklineShapingResult.warnings
+          ];
+        }
+      } else if (necklineShapingResult.error) {
+        // Add neckline shaping errors to component errors
+        rectangularResult.errors = [
+          ...(rectangularResult.errors || []),
+          `Neckline shaping calculation failed: ${necklineShapingResult.error}`
+        ];
+      }
+    }
+  }
+  
+  // Calculate armhole shaping if required (US_11.3)
+  let armholeShapingSchedule: ArmholeShapingSchedule | undefined;
+  
+  if (componentRequiresArmholeShaping(component)) {
+    const armholeShapingInput = extractArmholeShapingInput(
+      {
+        ...component,
+        stitchCount: rectangularResult.calculations.castOnStitches,
+        detailedCalculations: rectangularResult.calculations
+      },
+      gauge,
+      component.componentKey
+    );
+    
+    if (armholeShapingInput) {
+      const armholeShapingResult = calculateArmholeShaping(armholeShapingInput);
+      
+      if (armholeShapingResult.success && armholeShapingResult.schedule) {
+        armholeShapingSchedule = armholeShapingResult.schedule;
+        
+        // Add armhole shaping warnings to component warnings
+        if (armholeShapingResult.warnings) {
+          rectangularResult.warnings = [
+            ...(rectangularResult.warnings || []),
+            ...armholeShapingResult.warnings
+          ];
+        }
+      } else if (armholeShapingResult.error) {
+        // Add armhole shaping errors to component errors
+        rectangularResult.errors = [
+          ...(rectangularResult.errors || []),
+          `Armhole shaping calculation failed: ${armholeShapingResult.error}`
+        ];
+      }
+    }
+  }
+  
   // Generate detailed instructions with stitch pattern integration (US_8.3)
   let instructions: Array<{ step: number; text: string }> | undefined;
   let detailedInstructions: Array<any> | undefined;
@@ -583,6 +671,8 @@ async function calculateRectangularComponent(
     rowCount: rectangularResult.calculations.totalRows,
     shapingInstructions,
     shapingSchedule, // Add shaping schedule to result (US_7.2)
+    necklineShapingSchedule, // Add neckline shaping schedule to result (US_11.1)
+    armholeShapingSchedule, // Add armhole shaping schedule to result (US_11.3)
     detailedCalculations: {
       targetWidthUsed_cm: rectangularResult.calculations.targetWidthUsed_cm,
       targetLengthUsed_cm: rectangularResult.calculations.targetLengthUsed_cm,
@@ -608,6 +698,8 @@ async function calculateRectangularComponent(
         actualLength: rectangularResult.calculations.actualCalculatedLength_cm,
       },
       hasShaping: shapingSchedule?.hasShaping || false,
+      hasNecklineShaping: !!necklineShapingSchedule, // Add neckline shaping indicator (US_11.1)
+      hasArmholeShaping: !!armholeShapingSchedule, // Add armhole shaping indicator (US_11.3)
       hasStitchPatternIntegration: !!integratedStitchPattern // US_8.3
     }
   };

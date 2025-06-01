@@ -171,6 +171,10 @@ export interface ComponentCalculationResult {
   shapingInstructions?: string[];
   /** Shaping schedule for this component (US 7.2) */
   shapingSchedule?: ShapingSchedule;
+  /** Neckline shaping schedule for this component (US_11.1) */
+  necklineShapingSchedule?: import('./neckline-shaping').NecklineShapingSchedule;
+  /** Armhole shaping schedule for this component (US_11.3) */
+  armholeShapingSchedule?: import('./armhole-shaping').ArmholeShapingSchedule;
   /** Stitch pattern context for instruction generation (US_8.3) */
   stitchPatternContext?: StitchPatternInstructionContext;
   /** Additional calculation metadata */

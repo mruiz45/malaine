@@ -24,7 +24,7 @@ import { ColorScheme } from '@/types/colorScheme';
 import { PatternOutline } from '@/types/patternDefinition';
 import { ComponentForIntegration } from '@/types/stitch-integration';
 import { patternDefinitionService } from '@/services/patternDefinitionService';
-import { SwatchIcon, DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { SwatchIcon, DocumentTextIcon, SparklesIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -80,7 +80,7 @@ export default function PatternDefinitionWorkspace() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Main Content Area */}
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 order-2 lg:order-1">
               <div className="bg-white rounded-lg shadow-md">
                 {/* Step Navigation */}
                 <div className="border-b border-gray-200 p-6">
@@ -106,7 +106,7 @@ export default function PatternDefinitionWorkspace() {
             </div>
 
             {/* Sidebar - Summary */}
-            <div className="lg:col-span-1">
+            <div className="lg:col-span-1 order-1 lg:order-2">
               <div className="sticky top-8">
                 <DefinitionSummary />
               </div>
@@ -124,7 +124,7 @@ export default function PatternDefinitionWorkspace() {
  */
 function StepContent({ currentStep }: { currentStep: string }) {
   const { t } = useTranslation();
-  const { currentSession, updateSession } = usePatternDefinition();
+  const { currentSession, updateSession, navigation, previousStep, nextStep } = usePatternDefinition();
   
   // State for color scheme simulator
   const [showColorSimulator, setShowColorSimulator] = useState(false);
@@ -444,727 +444,501 @@ function StepContent({ currentStep }: { currentStep: string }) {
     // For now, we'll just log the success
   };
 
+  /**
+   * Check if current step can proceed to next
+   */
+  const canProceedToNext = () => {
+    const currentIndex = navigation.availableSteps.indexOf(currentStep as any);
+    const isLastStep = currentIndex === navigation.availableSteps.length - 1;
+    
+    // Allow navigation to next step if current step is completed
+    const isCurrentStepCompleted = navigation.completedSteps.includes(currentStep as any);
+    
+    return !isLastStep && isCurrentStepCompleted;
+  };
+
+  /**
+   * Check if can go to previous step
+   */
+  const canGoToPrevious = () => {
+    const currentIndex = navigation.availableSteps.indexOf(currentStep as any);
+    return currentIndex > 0;
+  };
+
+  /**
+   * Navigation buttons component
+   */
+  const NavigationButtons = () => (
+    <div className="flex items-center justify-between pt-6 mt-8 border-t border-gray-200">
+      <button
+        onClick={previousStep}
+        disabled={!canGoToPrevious()}
+        className={`inline-flex items-center px-4 py-2 border rounded-md text-sm font-medium transition-colors ${
+          canGoToPrevious()
+            ? 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            : 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
+        }`}
+      >
+        <ChevronLeftIcon className="h-4 w-4 mr-2" />
+        {t('navigation.previous', 'Précédent')}
+      </button>
+
+      <div className="text-sm text-gray-500">
+        Étape {navigation.availableSteps.indexOf(currentStep as any) + 1} sur {navigation.availableSteps.length}
+      </div>
+
+      <button
+        onClick={nextStep}
+        disabled={!canProceedToNext()}
+        className={`inline-flex items-center px-4 py-2 border rounded-md text-sm font-medium transition-colors ${
+          canProceedToNext()
+            ? 'border-blue-300 text-blue-700 bg-blue-50 hover:bg-blue-100 hover:text-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
+            : 'border-gray-200 text-gray-400 bg-gray-50 cursor-not-allowed'
+        }`}
+      >
+        {t('navigation.next', 'Suivant')}
+        <ChevronRightIcon className="h-4 w-4 ml-2" />
+      </button>
+    </div>
+  );
+
   switch (currentStep) {
     case 'garment-type':
       return (
         <div>
-          <GarmentTypeSelector
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('garmentType.title', 'Select Garment Type')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('garmentType.description', 'Choose the type of garment you want to create. This will determine the available configuration options.')}
+          </p>
+          <GarmentTypeSelector 
             selectedGarmentTypeId={currentSession?.selected_garment_type_id}
             onGarmentTypeSelect={handleGarmentTypeSelect}
           />
+          <NavigationButtons />
         </div>
       );
+
     case 'gauge':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('gauge.title', 'Gauge')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('gauge.title', 'Gauge Information')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('gauge.description', 'Enter your gauge information. This is crucial for accurate pattern calculations.')}
+          </p>
           <form onSubmit={handleGaugeSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="stitchCount" className="block text-sm font-medium text-gray-700 mb-2">
-                  Stitch Count (per 10cm)
+                  {t('gauge.stitchCount', 'Stitch Count')}
                 </label>
                 <input
                   type="number"
                   id="stitchCount"
                   name="stitchCount"
+                  min="1"
                   step="0.1"
                   defaultValue={currentSession?.gauge_stitch_count || ''}
+                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="20"
                 />
               </div>
               <div>
                 <label htmlFor="rowCount" className="block text-sm font-medium text-gray-700 mb-2">
-                  Row Count (per 10cm)
+                  {t('gauge.rowCount', 'Row Count')}
                 </label>
                 <input
                   type="number"
                   id="rowCount"
                   name="rowCount"
+                  min="1"
                   step="0.1"
                   defaultValue={currentSession?.gauge_row_count || ''}
+                  required
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="28"
                 />
               </div>
               <div>
                 <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-2">
-                  Unit
+                  {t('gauge.unit', 'Unit')}
                 </label>
                 <select
                   id="unit"
                   name="unit"
-                  defaultValue={currentSession?.gauge_unit || 'cm'}
+                  defaultValue={currentSession?.gauge_unit || '10cm'}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="cm">Centimeters</option>
-                  <option value="inch">Inches</option>
+                  <option value="10cm">10cm</option>
+                  <option value="4inches">4 inches</option>
                 </select>
               </div>
             </div>
             <button
               type="submit"
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
             >
-              Save Gauge
+              {t('gauge.save', 'Save Gauge')}
             </button>
           </form>
+          <NavigationButtons />
         </div>
       );
 
     case 'measurements':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('measurements.title', 'Measurements')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('measurements.title', 'Measurements')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('measurements.description', 'Select or enter your measurements. These will be used to calculate the pattern dimensions.')}
+          </p>
           <form onSubmit={handleMeasurementsSubmit} className="space-y-6">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <p className="text-green-800 mb-4">
-                For this demo, we'll simulate selecting a measurement set.
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+              <h3 className="font-medium text-blue-900 mb-2">
+                {t('measurements.placeholder.title', 'Measurement Selection')}
+              </h3>
+              <p className="text-sm text-blue-700">
+                {t('measurements.placeholder.description', 'This is a placeholder for the measurements selector component.')}
               </p>
-              <p className="text-sm text-green-600 mb-4">
-                In the full implementation, you would select from your saved measurement sets or create a new one.
-              </p>
-              <button
-                type="submit"
-                className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors duration-200"
-              >
-                Select Measurement Set
-              </button>
             </div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            >
+              {t('measurements.save', 'Save Measurements')}
+            </button>
           </form>
+          <NavigationButtons />
         </div>
       );
 
     case 'ease':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('ease.title', 'Ease')}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('ease.title', 'Ease Preferences')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('ease.description', 'Choose your preferred ease for the garment. This determines how fitted or loose the garment will be.')}
+          </p>
           <form onSubmit={handleEaseSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label htmlFor="easeType" className="block text-sm font-medium text-gray-700 mb-2">
-                  Ease Type
+                  {t('ease.type', 'Ease Type')}
                 </label>
                 <select
                   id="easeType"
                   name="easeType"
                   defaultValue={currentSession?.ease_type || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="">Select ease type</option>
-                  <option value="positive">Positive Ease</option>
-                  <option value="negative">Negative Ease</option>
-                  <option value="zero">Zero Ease</option>
+                  <option value="">{t('ease.selectType', 'Select ease type')}</option>
+                  <option value="negative">Negative</option>
+                  <option value="zero">Zero</option>
+                  <option value="positive">Positive</option>
                 </select>
               </div>
               <div>
                 <label htmlFor="easeValue" className="block text-sm font-medium text-gray-700 mb-2">
-                  Ease Value (Bust)
+                  {t('ease.value', 'Ease Value')}
                 </label>
                 <input
                   type="number"
                   id="easeValue"
                   name="easeValue"
-                  step="0.1"
+                  min="-10"
+                  max="20"
+                  step="0.5"
                   defaultValue={currentSession?.ease_value_bust || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="5.0"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="5"
                 />
               </div>
               <div>
                 <label htmlFor="easeUnit" className="block text-sm font-medium text-gray-700 mb-2">
-                  Unit
+                  {t('ease.unit', 'Unit')}
                 </label>
                 <select
                   id="easeUnit"
                   name="easeUnit"
                   defaultValue={currentSession?.ease_unit || 'cm'}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="cm">Centimeters</option>
-                  <option value="inch">Inches</option>
+                  <option value="cm">cm</option>
+                  <option value="inches">inches</option>
                 </select>
               </div>
             </div>
             <button
               type="submit"
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
             >
-              Save Ease Preferences
+              {t('ease.save', 'Save Ease Preferences')}
             </button>
           </form>
+          <NavigationButtons />
         </div>
       );
 
     case 'yarn':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('yarn.title', 'Yarn')}</h2>
-          
-          {/* Yarn Selection */}
-          <form onSubmit={handleYarnSubmit} className="space-y-6 mb-8">
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-              <p className="text-orange-800 mb-4">
-                For this demo, we'll simulate selecting a yarn profile.
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('yarn.title', 'Yarn Selection')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('yarn.description', 'Select the yarn you plan to use for this project.')}
+          </p>
+          <form onSubmit={handleYarnSubmit} className="space-y-6">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+              <h3 className="font-medium text-green-900 mb-2">
+                {t('yarn.placeholder.title', 'Yarn Selection')}
+              </h3>
+              <p className="text-sm text-green-700">
+                {t('yarn.placeholder.description', 'This is a placeholder for the yarn selector component.')}
               </p>
-              <p className="text-sm text-orange-600 mb-4">
-                In the full implementation, you would select from your saved yarn profiles or create a new one.
-              </p>
-              <button
-                type="submit"
-                className="bg-orange-600 text-white px-6 py-2 rounded-lg hover:bg-orange-700 transition-colors duration-200"
-              >
-                Select Yarn Profile
-              </button>
             </div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            >
+              {t('yarn.save', 'Save Yarn Selection')}
+            </button>
           </form>
-
-          {/* Color Scheme Simulator Section (US_5.1) */}
-          <div className="border-t border-gray-200 pt-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t('colorScheme.title', 'Color Scheme Simulator')}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {t('colorScheme.description', 'Visualize how different yarn colors work together in your pattern')}
-                </p>
-              </div>
-              <button
-                onClick={() => setShowColorSimulator(true)}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
-              >
-                <SwatchIcon className="h-5 w-5" />
-                <span>{t('colorScheme.openSimulator', 'Open Color Simulator')}</span>
-              </button>
-            </div>
-
-            {/* Show saved color scheme if exists */}
-            {currentSession?.parameter_snapshot?.color_scheme && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-blue-900">
-                      {currentSession.parameter_snapshot.color_scheme.name || t('colorScheme.savedScheme', 'Saved Color Scheme')}
-                    </h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      {t('colorScheme.template', 'Template')}: {currentSession.parameter_snapshot.color_scheme.template_type} • {' '}
-                      {currentSession.parameter_snapshot.color_scheme.selected_colors.length} {t('colorScheme.colors', 'colors')}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowColorSimulator(true)}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    {t('colorScheme.edit', 'Edit')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Color Scheme Simulator Modal */}
-          {showColorSimulator && (
-            <ColorSchemeSimulator
-              availableYarnProfiles={[
-                // Mock data for demo - in real implementation, this would come from user's yarn profiles
-                {
-                  id: '1',
-                  yarn_name: 'Merino Wool',
-                  color_name: 'Ocean Blue',
-                  color_hex_code: '#1E40AF'
-                },
-                {
-                  id: '2',
-                  yarn_name: 'Cotton Blend',
-                  color_name: 'Cream',
-                  color_hex_code: '#FEF3C7'
-                },
-                {
-                  id: '3',
-                  yarn_name: 'Alpaca Silk',
-                  color_name: 'Forest Green',
-                  color_hex_code: '#065F46'
-                },
-                {
-                  id: '4',
-                  yarn_name: 'Bamboo Yarn',
-                  color_name: 'Coral Pink',
-                  color_hex_code: '#F472B6'
-                }
-              ]}
-              initialColorScheme={currentSession?.parameter_snapshot?.color_scheme}
-              onSchemeSaved={handleColorSchemeSave}
-              onClose={() => setShowColorSimulator(false)}
-              isModal={true}
-            />
-          )}
+          <NavigationButtons />
         </div>
       );
 
     case 'stitch-pattern':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('stitchPattern.title', 'Stitch Pattern')}</h2>
-          
-          {/* Stitch Pattern Selection */}
-          <form onSubmit={handleStitchPatternSubmit} className="space-y-6 mb-8">
-            <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
-              <p className="text-indigo-800 mb-4">
-                For this demo, we'll simulate selecting a stitch pattern.
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('stitchPattern.title', 'Stitch Pattern')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('stitchPattern.description', 'Choose the main stitch pattern for your garment.')}
+          </p>
+          <form onSubmit={handleStitchPatternSubmit} className="space-y-6">
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
+              <h3 className="font-medium text-purple-900 mb-2">
+                {t('stitchPattern.placeholder.title', 'Stitch Pattern Selection')}
+              </h3>
+              <p className="text-sm text-purple-700">
+                {t('stitchPattern.placeholder.description', 'This is a placeholder for the stitch pattern selector component.')}
               </p>
-              <p className="text-sm text-indigo-600 mb-4">
-                In the full implementation, you would select from your saved stitch patterns or create a new one.
-              </p>
-              <button
-                type="submit"
-                className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors duration-200"
-              >
-                Select Stitch Pattern
-              </button>
             </div>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+            >
+              {t('stitchPattern.save', 'Save Stitch Pattern')}
+            </button>
           </form>
-
-          {/* Stitch Pattern Integration Advisor Section (US_8.2) */}
-          <div className="border-t border-gray-200 pt-8">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t('stitchIntegration.title', 'Stitch Pattern Integration Advisor')}
-                </h3>
-                <p className="text-sm text-gray-600">
-                  {t('stitchIntegration.description', 'Plan how your stitch patterns fit into your garment components with precise calculations')}
-                </p>
-              </div>
-              <button
-                onClick={handleOpenStitchIntegrationAdvisor}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
-              >
-                <SparklesIcon className="h-5 w-5" />
-                <span>{t('stitchIntegration.openTool', 'Open Integration Tool')}</span>
-              </button>
-            </div>
-            
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-blue-900 mb-2">
-                {t('stitchIntegration.toolFeatures', 'Tool Features')}
-              </h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>• {t('stitchIntegration.feature1', 'Calculate exact pattern repeats for each component')}</li>
-                <li>• {t('stitchIntegration.feature2', 'Handle remaining stitches with smart suggestions')}</li>
-                <li>• {t('stitchIntegration.feature3', 'Manage edge stitches and centering')}</li>
-                <li>• {t('stitchIntegration.feature4', 'Visual preview of stitch distribution')}</li>
-              </ul>
-            </div>
-          </div>
+          <NavigationButtons />
         </div>
       );
 
     case 'garment-structure':
-      // Check if this step should be displayed (only for sweaters/cardigans)
-      const shouldShowSweaterStructure = currentSession?.garment_type?.type_key === 'sweater' || 
-                                        currentSession?.garment_type?.type_key === 'cardigan' ||
-                                        currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
-
-      if (!shouldShowSweaterStructure) {
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{t('sweaterStructure.title', 'Garment Structure')}</h2>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <p className="text-yellow-800">
-                {t('sweaterStructure.notApplicable', 'Garment structure options are only available for sweaters and cardigans. Please select a compatible garment type first.')}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      const sweaterStructure = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
-
       return (
         <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('garmentStructure.title', 'Garment Structure')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('garmentStructure.description', 'Define the construction method and body shape for your garment.')}
+          </p>
           <SweaterStructureSelector
             selectedGarmentTypeId={currentSession?.selected_garment_type_id}
-            selectedConstructionMethod={sweaterStructure?.construction_method}
-            selectedBodyShape={sweaterStructure?.body_shape}
+            selectedConstructionMethod={currentSession?.parameter_snapshot?.sweater_structure?.construction_method}
+            selectedBodyShape={currentSession?.parameter_snapshot?.sweater_structure?.body_shape}
             onConstructionMethodSelect={handleConstructionMethodSelect}
             onBodyShapeSelect={handleBodyShapeSelect}
-            disabled={false}
-            isLoading={false}
           />
+          <NavigationButtons />
         </div>
       );
 
     case 'neckline':
-      // Check if this step should be displayed (only for garments with necklines)
-      const shouldShowNecklineSelector = currentSession?.garment_type?.type_key === 'sweater' || 
-                                        currentSession?.garment_type?.type_key === 'cardigan' ||
-                                        currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
-
-      if (!shouldShowNecklineSelector) {
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{t('neckline.title', 'Neckline Style')}</h2>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <p className="text-yellow-800">
-                {t('neckline.notApplicable', 'Neckline options are only available for garments with defined necklines like sweaters and cardigans. Please select a compatible garment type first.')}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      const necklineAttributes = currentSession?.parameter_snapshot?.neckline as NecklineAttributes;
-      const sweaterStructureForNeckline = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
-
       return (
         <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('neckline.title', 'Neckline Style')}
+          </h2>
+          <p className="text-gray-600 mb-8">
+            {t('neckline.description', 'Choose the neckline style and specify any custom parameters.')}
+          </p>
           <NecklineSelector
             selectedGarmentTypeId={currentSession?.selected_garment_type_id}
-            selectedConstructionMethod={sweaterStructureForNeckline?.construction_method}
-            selectedNecklineStyle={necklineAttributes?.style}
-            selectedNecklineParameters={necklineAttributes?.parameters}
+            selectedConstructionMethod={currentSession?.parameter_snapshot?.sweater_structure?.construction_method}
+            selectedNecklineStyle={currentSession?.parameter_snapshot?.neckline?.style}
+            selectedNecklineParameters={currentSession?.parameter_snapshot?.neckline?.parameters}
             onNecklineStyleSelect={handleNecklineStyleSelect}
             onNecklineParametersUpdate={handleNecklineParametersUpdate}
-            disabled={false}
-            isLoading={false}
           />
+          <NavigationButtons />
         </div>
       );
 
     case 'sleeves':
-      // Check if this step should be displayed (only for garments with sleeves)
-      const shouldShowSleeveSelector = currentSession?.garment_type?.type_key === 'sweater' || 
-                                      currentSession?.garment_type?.type_key === 'cardigan' ||
-                                      currentSession?.selected_garment_type_id; // Show if any garment type is selected for demo
-
-      if (!shouldShowSleeveSelector) {
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{t('sleeve.title', 'Sleeve Style and Length')}</h2>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <p className="text-yellow-800">
-                {t('sleeve.notApplicable', 'Sleeve options are only available for garments with sleeves like sweaters and cardigans. Please select a compatible garment type first.')}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      const sleeveAttributes = currentSession?.parameter_snapshot?.sleeves as SleeveAttributes;
-      const sweaterStructureForSleeves = currentSession?.parameter_snapshot?.sweater_structure as SweaterStructureAttributes;
-
       return (
         <div>
           <SleeveSelector
             selectedGarmentTypeId={currentSession?.selected_garment_type_id}
-            selectedConstructionMethod={sweaterStructureForSleeves?.construction_method}
-            selectedSleeveAttributes={sleeveAttributes}
+            selectedConstructionMethod={currentSession?.parameter_snapshot?.sweater_structure?.construction_method}
+            selectedSleeveAttributes={currentSession?.parameter_snapshot?.sleeves}
             onSleeveStyleSelect={handleSleeveStyleSelect}
             onSleeveLengthSelect={handleSleeveLengthSelect}
             onCuffStyleSelect={handleCuffStyleSelect}
-            disabled={false}
-            isLoading={false}
           />
+          <NavigationButtons />
         </div>
       );
 
     case 'accessory-definition':
-      // Check if this step should be displayed (only for accessory garment types)
+      // For accessories like beanies and scarves/cowls
       const selectedGarmentType = currentSession?.garment_type?.type_key;
-      const isAccessoryType = selectedGarmentType === 'beanie' || selectedGarmentType === 'scarf' || selectedGarmentType === 'scarf_cowl';
-
-      if (!isAccessoryType) {
-        return (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">{t('accessory.title', 'Accessory Definition')}</h2>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-              <p className="text-yellow-800">
-                {t('accessory.notApplicable', 'Accessory definition is only available for accessory garment types like beanies, hats, scarves, and cowls. Please select a compatible garment type first.')}
-              </p>
-            </div>
-          </div>
-        );
-      }
-
-      // Show appropriate form based on garment type
+      
       if (selectedGarmentType === 'beanie') {
-        const beanieAttributes = currentSession?.parameter_snapshot?.beanie;
-        
         return (
           <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {t('beanie.title', 'Beanie Definition')}
+            </h2>
+            <p className="text-gray-600 mb-8">
+              {t('beanie.description', 'Define the specific parameters for your beanie.')}
+            </p>
             <BeanieDefinitionForm
-              selectedAttributes={beanieAttributes}
-              measurementSets={[]} // TODO: Load from user's measurement sets
+              selectedAttributes={currentSession?.parameter_snapshot?.beanie}
               onAttributesChange={handleBeanieAttributesChange}
-              disabled={false}
-              isLoading={false}
             />
+            <NavigationButtons />
           </div>
         );
-      } else if (selectedGarmentType === 'scarf' || selectedGarmentType === 'scarf_cowl') {
-        const scarfCowlAttributes = currentSession?.parameter_snapshot?.scarf_cowl;
-        
+      } else if (selectedGarmentType === 'scarf' || selectedGarmentType === 'cowl') {
         return (
           <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {t('scarfCowl.title', 'Scarf/Cowl Definition')}
+            </h2>
+            <p className="text-gray-600 mb-8">
+              {t('scarfCowl.description', 'Define the specific parameters for your scarf or cowl.')}
+            </p>
             <ScarfCowlDefinitionForm
-              selectedAttributes={scarfCowlAttributes}
+              selectedAttributes={currentSession?.parameter_snapshot?.scarf_cowl}
               onAttributesChange={handleScarfCowlAttributesChange}
-              disabled={false}
-              isLoading={false}
             />
+            <NavigationButtons />
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {t('accessoryDefinition.title', 'Accessory Definition')}
+            </h2>
+            <p className="text-gray-600 mb-8">
+              {t('accessoryDefinition.notRequired', 'No additional accessory definition required for this garment type.')}
+            </p>
+            <NavigationButtons />
           </div>
         );
       }
-
-      return (
-        <div>
-          <h2 className="text-2xl font-bold mb-6">{t('accessory.title', 'Accessory Definition')}</h2>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-            <p className="text-gray-600">
-              {t('accessory.selectType', 'Please select an accessory garment type to continue.')}
-            </p>
-          </div>
-        </div>
-      );
 
     case 'summary':
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('patternDefinition.summary.title', 'Pattern Summary')}</h2>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold mb-4">Your Pattern Definition</h3>
-            <div className="space-y-4">
-              {currentSession?.selected_gauge_profile_id && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Gauge:</span>
-                  <span>{currentSession.gauge_stitch_count} sts, {currentSession.gauge_row_count} rows per {currentSession.gauge_unit}</span>
-                </div>
-              )}
-              {currentSession?.selected_measurement_set_id && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Measurements:</span>
-                  <span>Measurement set selected</span>
-                </div>
-              )}
-              {currentSession?.ease_type && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Ease:</span>
-                  <span>{currentSession.ease_type} ({currentSession.ease_value_bust}{currentSession.ease_unit})</span>
-                </div>
-              )}
-              {currentSession?.selected_yarn_profile_id && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Yarn:</span>
-                  <span>Yarn profile selected</span>
-                </div>
-              )}
-              {currentSession?.selected_stitch_pattern_id && (
-                <div className="flex justify-between">
-                  <span className="font-medium">Stitch Pattern:</span>
-                  <span>Stitch pattern selected</span>
-                </div>
-              )}
-              {currentSession?.parameter_snapshot?.sweater_structure && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Sweater Structure:</span>
-                    <span></span>
-                  </div>
-                  {(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes)?.construction_method && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Construction:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes).construction_method?.replace('_', ' ')}</span>
-                    </div>
-                  )}
-                  {(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes)?.body_shape && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Body Shape:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.sweater_structure as SweaterStructureAttributes).body_shape?.replace('_', ' ')}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              {currentSession?.parameter_snapshot?.neckline && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Neckline:</span>
-                    <span></span>
-                  </div>
-                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.style && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Style:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).style?.replace('_', ' ')}</span>
-                    </div>
-                  )}
-                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.parameters?.depth_cm && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Depth:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).parameters?.depth_cm}cm</span>
-                    </div>
-                  )}
-                  {(currentSession.parameter_snapshot.neckline as NecklineAttributes)?.parameters?.width_at_center_cm && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Width:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.neckline as NecklineAttributes).parameters?.width_at_center_cm}cm</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              {currentSession?.parameter_snapshot?.sleeves && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Sleeves:</span>
-                    <span></span>
-                  </div>
-                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.style && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Style:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.sleeves as SleeveAttributes).style?.replace('_', ' ')}</span>
-                    </div>
-                  )}
-                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.length_key && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Length:</span>
-                      <span className="text-sm">
-                        {(currentSession.parameter_snapshot.sleeves as SleeveAttributes).length_key?.replace('_', ' ')}
-                        {(currentSession.parameter_snapshot.sleeves as SleeveAttributes).length_key === 'custom' && 
-                         (currentSession.parameter_snapshot.sleeves as SleeveAttributes).custom_length_cm && 
-                         ` (${(currentSession.parameter_snapshot.sleeves as SleeveAttributes).custom_length_cm}cm)`
-                        }
-                      </span>
-                    </div>
-                  )}
-                  {(currentSession.parameter_snapshot.sleeves as SleeveAttributes)?.cuff_style && (
-                    <div className="flex justify-between pl-4">
-                      <span className="text-sm text-gray-600">Cuff:</span>
-                      <span className="text-sm">{(currentSession.parameter_snapshot.sleeves as SleeveAttributes).cuff_style?.replace('_', ' ')}</span>
-                    </div>
-                  )}
-                </div>
-              )}
-              {/* Accessory Attributes Display (US_7.1) */}
-              {currentSession?.parameter_snapshot?.beanie && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Beanie:</span>
-                    <span></span>
-                  </div>
-                  <div className="flex justify-between pl-4">
-                    <span className="text-sm text-gray-600">Circumference:</span>
-                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.target_circumference_cm}cm</span>
-                  </div>
-                  <div className="flex justify-between pl-4">
-                    <span className="text-sm text-gray-600">Height:</span>
-                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.body_height_cm}cm</span>
-                  </div>
-                  <div className="flex justify-between pl-4">
-                    <span className="text-sm text-gray-600">Crown:</span>
-                    <span className="text-sm">{currentSession.parameter_snapshot.beanie.crown_style?.replace('_', ' ')}</span>
-                  </div>
-                  <div className="flex justify-between pl-4">
-                    <span className="text-sm text-gray-600">Brim:</span>
-                    <span className="text-sm">
-                      {currentSession.parameter_snapshot.beanie.brim_style?.replace('_', ' ')}
-                      {currentSession.parameter_snapshot.beanie.brim_depth_cm && currentSession.parameter_snapshot.beanie.brim_style !== 'no_brim' && 
-                       ` (${currentSession.parameter_snapshot.beanie.brim_depth_cm}cm)`
-                      }
-                    </span>
-                  </div>
-                </div>
-              )}
-              {currentSession?.parameter_snapshot?.scarf_cowl && (
-                <div className="space-y-2">
-                  <div className="flex justify-between">
-                    <span className="font-medium">{currentSession.parameter_snapshot.scarf_cowl.type === 'scarf' ? 'Scarf' : 'Cowl'}:</span>
-                    <span></span>
-                  </div>
-                  <div className="flex justify-between pl-4">
-                    <span className="text-sm text-gray-600">Work Style:</span>
-                    <span className="text-sm">{currentSession.parameter_snapshot.scarf_cowl.work_style?.replace('_', ' ')}</span>
-                  </div>
-                  {currentSession.parameter_snapshot.scarf_cowl.type === 'scarf' && (
-                    <>
-                      <div className="flex justify-between pl-4">
-                        <span className="text-sm text-gray-600">Width:</span>
-                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).width_cm}cm</span>
-                      </div>
-                      <div className="flex justify-between pl-4">
-                        <span className="text-sm text-gray-600">Length:</span>
-                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).length_cm}cm</span>
-                      </div>
-                    </>
-                  )}
-                  {currentSession.parameter_snapshot.scarf_cowl.type === 'cowl' && (
-                    <>
-                      <div className="flex justify-between pl-4">
-                        <span className="text-sm text-gray-600">Circumference:</span>
-                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).circumference_cm}cm</span>
-                      </div>
-                      <div className="flex justify-between pl-4">
-                        <span className="text-sm text-gray-600">Height:</span>
-                        <span className="text-sm">{(currentSession.parameter_snapshot.scarf_cowl as any).height_cm}cm</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            <div className="mt-6 pt-6 border-t border-gray-300">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button 
-                  onClick={handleGenerateOutline}
-                  disabled={isGeneratingOutline}
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <DocumentTextIcon className="h-5 w-5" />
-                  <span>
-                    {isGeneratingOutline 
-                      ? t('patternDefinition.outline.generating', 'Generating outline...')
-                      : t('patternDefinition.outline.generateButton', 'Generate Outline')
-                    }
-                  </span>
-                </button>
-                <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-                  Proceed to Pattern Calculation
-                </button>
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">
+              {t('patternDefinition.summary.title', 'Pattern Definition Summary')}
+            </h2>
+            <p className="text-gray-600">
+              {t('patternDefinition.summary.description', 'Review your pattern definition before proceeding to calculation.')}
+            </p>
+          </div>
+
+          {/* Pattern Tools */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {/* Color Scheme Simulator */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <SwatchIcon className="h-6 w-6 text-purple-600" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {t('colorScheme.title', 'Color Scheme Simulator')}
+                </h3>
               </div>
+              <p className="text-gray-600 text-sm mb-4">
+                {t('colorScheme.description', 'Visualize different color combinations for your pattern.')}
+              </p>
+              <button
+                onClick={() => setShowColorSimulator(true)}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200 text-sm font-medium"
+              >
+                {t('colorScheme.openSimulator', 'Open Simulator')}
+              </button>
+            </div>
+
+            {/* Stitch Integration Advisor */}
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="flex items-center space-x-3 mb-4">
+                <SparklesIcon className="h-6 w-6 text-amber-600" />
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {t('stitchIntegration.title', 'Stitch Integration Advisor')}
+                </h3>
+              </div>
+              <p className="text-gray-600 text-sm mb-4">
+                {t('stitchIntegration.description', 'Get recommendations for integrating stitch patterns.')}
+              </p>
+              <button
+                onClick={handleOpenStitchIntegrationAdvisor}
+                className="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors duration-200 text-sm font-medium"
+              >
+                {t('stitchIntegration.openAdvisor', 'Open Advisor')}
+              </button>
             </div>
           </div>
 
-          {/* Pattern Outline Viewer */}
-          {currentOutline && (
-            <PatternOutlineViewer
-              outline={currentOutline}
-              isOpen={showOutlineViewer}
-              onClose={handleCloseOutlineViewer}
-            />
-          )}
-
-          {/* Stitch Integration Advisor (US_8.2) */}
-          {showStitchIntegrationAdvisor && (
-            <StitchIntegrationAdvisor
-              sessionId={currentSession?.id || ''}
-              availableComponents={availableComponents}
-              onClose={handleCloseStitchIntegrationAdvisor}
-              onSuccess={handleStitchIntegrationSuccess}
-              isModal={true}
-            />
-          )}
+          {/* Action Buttons */}
+          <div className="mt-6 pt-6 border-t border-gray-300">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button 
+                onClick={handleGenerateOutline}
+                disabled={isGeneratingOutline}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <DocumentTextIcon className="h-5 w-5" />
+                <span>
+                  {isGeneratingOutline 
+                    ? t('patternDefinition.outline.generating', 'Generating outline...')
+                    : t('patternDefinition.outline.generateButton', 'Generate Outline')
+                  }
+                </span>
+              </button>
+              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                Proceed to Pattern Calculation
+              </button>
+            </div>
+          </div>
+          <NavigationButtons />
         </div>
       );
 
     default:
       return (
         <div>
-          <h2 className="text-2xl font-bold mb-6">{t('common.unknown', 'Unknown Step')}</h2>
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <p className="text-red-800">
-              {t('patternDefinition.unknownStep', 'Unknown step: ')} {currentStep}
-            </p>
-          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            {t('patternDefinition.unknownStep', 'Unknown Step')}
+          </h2>
+          <p className="text-gray-600">
+            {t('patternDefinition.unknownStepDescription', 'This step is not implemented yet.')}
+          </p>
+          <NavigationButtons />
         </div>
       );
   }

@@ -1,17 +1,59 @@
 /**
  * Types for Instruction Generation with Shaping (US 7.3)
+ * Extended for US_11.2: Neckline instruction generation
+ * Extended for US_11.4: Armhole instruction generation
  * Defines interfaces for generating detailed textual instructions including shaping
  */
 
 import { ShapingSchedule } from './shaping';
+import { NecklineShapingSchedule } from './neckline-shaping';
+import { ArmholeShapingSchedule, SleeveCapShapingSchedule } from './armhole-shaping';
 
 /**
  * Type of instruction step
+ * Extended for US_11.2 with neckline-specific instruction types
+ * Extended for US_11.4 with armhole-specific instruction types
  */
-export type InstructionType = 'shaping_row' | 'plain_segment' | 'cast_on' | 'cast_off' | 'setup_row' | 'pattern_row' | 'finishing';
+export type InstructionType = 
+  | 'shaping_row' 
+  | 'plain_segment' 
+  | 'cast_on' 
+  | 'cast_off' 
+  | 'setup_row' 
+  | 'pattern_row' 
+  | 'finishing'
+  | 'neckline_center_divide'
+  | 'neckline_shaping'
+  | 'neckline_side_work'
+  | 'armhole_base_bind_off'
+  | 'armhole_shaping'
+  | 'armhole_raglan_shaping'
+  | 'sleeve_cap_shaping';
+
+/**
+ * Side indicator for neckline instructions (US_11.2)
+ */
+export type NecklineSide = 'center' | 'left_front' | 'right_front';
+
+/**
+ * Side indicator for armhole instructions (US_11.4)
+ */
+export type ArmholeSide = 'left_armhole' | 'right_armhole' | 'both_armholes';
+
+/**
+ * Type of neckline shaping step (US_11.2)
+ */
+export type NecklineStepType = 'center_bind_off' | 'side_shaping' | 'side_completion';
+
+/**
+ * Type of armhole shaping step (US_11.4)
+ */
+export type ArmholeStepType = 'base_bind_off' | 'decrease_shaping' | 'raglan_line_shaping' | 'sleeve_cap_increases' | 'sleeve_cap_decreases';
 
 /**
  * Detailed instruction with shaping information
+ * Extended for US_11.2 with neckline-specific metadata
+ * Extended for US_11.4 with armhole-specific metadata
  */
 export interface DetailedInstruction {
   /** Step number in the overall sequence */
@@ -34,11 +76,39 @@ export interface DetailedInstruction {
     shapingType?: 'increase' | 'decrease';
     /** Current stitch pattern row index (US_8.3) */
     stitchPatternRowIndex?: number;
+    /** Neckline-specific metadata (US_11.2) */
+    neckline?: {
+      /** Which side this instruction applies to */
+      for_side: NecklineSide;
+      /** Type of neckline shaping step */
+      step_type: NecklineStepType;
+      /** Step number within neckline shaping sequence */
+      neckline_step: number;
+      /** Stitches remaining on this side after the instruction */
+      stitches_remaining_on_side?: number;
+    };
+    /** Armhole-specific metadata (US_11.4) */
+    armhole?: {
+      /** Which armhole(s) this instruction applies to */
+      for_side: ArmholeSide;
+      /** Type of armhole shaping step */
+      step_type: ArmholeStepType;
+      /** Step number within armhole shaping sequence */
+      armhole_step: number;
+      /** Stitches remaining after the instruction */
+      stitches_remaining?: number;
+      /** For raglan: position relative to raglan marker */
+      raglan_marker_position?: 'before' | 'after' | 'both_sides';
+      /** For sleeve cap: current cap height */
+      sleeve_cap_height_cm?: number;
+    };
   };
 }
 
 /**
  * Context for instruction generation
+ * Extended for US_11.2 with neckline shaping support
+ * Extended for US_11.4 with armhole shaping support
  */
 export interface InstructionGenerationContext {
   /** Craft type (knitting or crochet) */
@@ -55,6 +125,12 @@ export interface InstructionGenerationContext {
   totalRows?: number;
   /** Shaping schedule to process */
   shapingSchedule?: ShapingSchedule;
+  /** Neckline shaping schedule to process (US_11.2) */
+  necklineShapingSchedule?: NecklineShapingSchedule;
+  /** Armhole shaping schedule to process (US_11.4) */
+  armholeShapingSchedule?: ArmholeShapingSchedule;
+  /** Sleeve cap shaping schedule to process (US_11.4) */
+  sleeveCapShapingSchedule?: SleeveCapShapingSchedule;
   /** Additional context metadata */
   metadata?: {
     /** Pattern repeat information */

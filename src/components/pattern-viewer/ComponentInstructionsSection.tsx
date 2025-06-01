@@ -1,6 +1,6 @@
 /**
- * Component Instructions Section (US_9.1 + US_9.3)
- * Displays detailed instructions for each garment component with schematic diagrams
+ * Component Instructions Section (US_9.1 + US_9.3 + US_11.6 + US_11.7)
+ * Displays detailed instructions for each garment component with schematic diagrams, stitch charts, and progress tracking
  */
 
 'use client';
@@ -12,6 +12,10 @@ import { PatternComponent } from '@/types/assembled-pattern';
 import { SchematicDiagram } from '@/types/schematics';
 import { schematicService } from '@/services/schematicService';
 import SchematicDisplay from '@/components/knitting/SchematicDisplay';
+import StitchChartDisplay from './StitchChartDisplay';
+import RepetitionCounter from './RepetitionCounter';
+import { parseRepetitionInstructions, hasRepetitionPattern } from '@/services/patternProgressService';
+import type { PatternProgressContextType } from '@/types/pattern-progress';
 
 interface ComponentInstructionsSectionProps {
   /** List of pattern components */
@@ -22,16 +26,19 @@ interface ComponentInstructionsSectionProps {
   id?: string;
   /** Session ID for generating schematics */
   sessionId?: string;
+  /** Pattern progress context for tracking user progress */
+  progressContext?: PatternProgressContextType | null;
 }
 
 /**
- * Component for displaying component instructions with schematics
+ * Component for displaying component instructions with schematics and progress tracking
  */
 export default function ComponentInstructionsSection({
   components,
   printMode = false,
   id,
-  sessionId
+  sessionId,
+  progressContext
 }: ComponentInstructionsSectionProps) {
   const { t } = useTranslation();
   const [expandedComponents, setExpandedComponents] = useState<Set<number>>(
@@ -49,6 +56,20 @@ export default function ComponentInstructionsSection({
       loadSchematics();
     }
   }, [sessionId, components]);
+
+  /**
+   * Auto-expand component based on current progress
+   */
+  useEffect(() => {
+    if (progressContext?.progress?.currentComponent && !printMode) {
+      const componentIndex = components.findIndex(
+        c => c.componentName === progressContext.progress?.currentComponent
+      );
+      if (componentIndex >= 0) {
+        setExpandedComponents(prev => new Set(prev).add(componentIndex));
+      }
+    }
+  }, [progressContext?.progress?.currentComponent, components, printMode]);
 
   const loadSchematics = async () => {
     if (!sessionId) return;
@@ -104,6 +125,26 @@ export default function ComponentInstructionsSection({
       newExpanded.add(index);
     }
     setExpandedComponents(newExpanded);
+  };
+
+  /**
+   * Handle instruction click for progress tracking
+   */
+  const handleInstructionClick = (componentName: string, instructionStep: number) => {
+    if (progressContext && !printMode) {
+      progressContext.goToStep(componentName, instructionStep);
+    }
+  };
+
+  /**
+   * Check if instruction is currently active
+   */
+  const isInstructionActive = (componentName: string, instructionStep: number): boolean => {
+    if (!progressContext?.progress) return false;
+    return (
+      progressContext.progress.currentComponent === componentName &&
+      progressContext.progress.currentInstructionStep === instructionStep
+    );
   };
 
   return (
@@ -245,6 +286,26 @@ export default function ComponentInstructionsSection({
                     </div>
                   )}
 
+                  {/* Stitch Chart Display (US_11.6) */}
+                  {component.stitch_chart && (
+                    <div>
+                      <StitchChartDisplay
+                        chartData={component.stitch_chart}
+                        cellSize={printMode ? 24 : 32}
+                        showRowNumbers={true}
+                        showStitchNumbers={true}
+                        showLegend={true}
+                        printMode={printMode}
+                        theme={{
+                          backgroundColor: '#ffffff',
+                          gridColor: '#374151',
+                          noStitchColor: '#e5e7eb',
+                          textColor: '#374151'
+                        }}
+                      />
+                    </div>
+                  )}
+
                   {/* Shaping Summary */}
                   {component.shaping_summary && (
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -264,38 +325,91 @@ export default function ComponentInstructionsSection({
                         {t('patternViewer.stepByStepInstructions', 'Step-by-Step Instructions')}
                       </h4>
                       <div className="space-y-3">
-                        {component.instructions.map((instruction, instrIndex) => (
-                          <div 
-                            key={instrIndex} 
-                            className="flex space-x-4 p-3 bg-gray-50 rounded-lg"
-                          >
-                            <div className="flex-shrink-0">
-                              <span className="inline-flex items-center justify-center w-6 h-6 bg-blue-600 text-white text-xs font-bold rounded-full">
-                                {instruction.step}
-                              </span>
+                        {component.instructions.map((instruction, instrIndex) => {
+                          const isActive = isInstructionActive(component.componentName, instrIndex);
+                          const hasRepetitions = hasRepetitionPattern(instruction.text);
+                          const repetitionInstructions = hasRepetitions 
+                            ? parseRepetitionInstructions(instruction.text, component.componentName, instrIndex)
+                            : [];
+
+                          return (
+                            <div 
+                              key={instrIndex} 
+                              className={`flex space-x-4 p-3 rounded-lg transition-colors ${
+                                isActive 
+                                  ? 'bg-blue-100 border-2 border-blue-300' 
+                                  : 'bg-gray-50 hover:bg-gray-100'
+                              } ${
+                                progressContext && !printMode ? 'cursor-pointer' : ''
+                              }`}
+                              onClick={() => handleInstructionClick(component.componentName, instrIndex)}
+                            >
+                              <div className="flex-shrink-0">
+                                <span className={`inline-flex items-center justify-center w-6 h-6 text-xs font-bold rounded-full ${
+                                  isActive 
+                                    ? 'bg-blue-600 text-white' 
+                                    : 'bg-blue-600 text-white'
+                                }`}>
+                                  {instruction.step}
+                                </span>
+                              </div>
+                              <div className="flex-1 space-y-2">
+                                <p className="text-sm text-gray-900">
+                                  {instruction.text}
+                                </p>
+                                
+                                {/* Instruction metadata */}
+                                {(instruction.rowNumber || instruction.stitchCount) && (
+                                  <div className="mt-1 flex space-x-4 text-xs text-gray-600">
+                                    {instruction.rowNumber && (
+                                      <span>{t('patternViewer.row', 'Row')} {instruction.rowNumber}</span>
+                                    )}
+                                    {instruction.stitchCount && (
+                                      <span>{instruction.stitchCount} {t('patternViewer.stitches', 'stitches')}</span>
+                                    )}
+                                    {instruction.isShapingRow && (
+                                      <span className="text-orange-600 font-medium">
+                                        {t('patternViewer.shapingRow', 'Shaping Row')}
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+
+                                {/* Repetition Counters (US_11.7) */}
+                                {progressContext && repetitionInstructions.length > 0 && !printMode && (
+                                  <div className="space-y-2">
+                                    {repetitionInstructions.map((repetition) => {
+                                      const currentCount = progressContext.progress?.repetitionCounters[repetition.id] || 0;
+                                      
+                                      return (
+                                        <RepetitionCounter
+                                          key={repetition.id}
+                                          repetition={repetition}
+                                          currentCount={currentCount}
+                                          onCountChange={(counterId, newCount) => {
+                                            const increment = newCount - currentCount;
+                                            progressContext.updateRepetitionCounter(counterId, increment);
+                                          }}
+                                          onReset={(counterId) => {
+                                            progressContext.resetRepetitionCounter(counterId);
+                                          }}
+                                          size="sm"
+                                        />
+                                      );
+                                    })}
+                                  </div>
+                                )}
+
+                                {/* Progress hint for interactive mode */}
+                                {progressContext && !printMode && isActive && (
+                                  <div className="text-xs text-blue-600 font-medium">
+                                    {t('patternProgress.currentRow', 'Current Row')}
+                                  </div>
+                                )}
+                              </div>
                             </div>
-                            <div className="flex-1">
-                              <p className="text-sm text-gray-900">
-                                {instruction.text}
-                              </p>
-                              {(instruction.rowNumber || instruction.stitchCount) && (
-                                <div className="mt-1 flex space-x-4 text-xs text-gray-600">
-                                  {instruction.rowNumber && (
-                                    <span>{t('patternViewer.row', 'Row')} {instruction.rowNumber}</span>
-                                  )}
-                                  {instruction.stitchCount && (
-                                    <span>{instruction.stitchCount} {t('patternViewer.stitches', 'stitches')}</span>
-                                  )}
-                                  {instruction.isShapingRow && (
-                                    <span className="text-orange-600 font-medium">
-                                      {t('patternViewer.shapingRow', 'Shaping Row')}
-                                    </span>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   )}

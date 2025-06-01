@@ -1,6 +1,6 @@
 /**
- * Types pour l'export PDF des patrons - US_9.2
- * Préparé pour l'intégration future des diagrammes schématiques (US_9.3)
+ * Types pour l'export PDF des patrons - US_9.2 + US_11.6
+ * Préparé pour l'intégration future des diagrammes schématiques (US_9.3) et des diagrammes de tricot (US_11.6)
  */
 
 export interface PdfExportOptions {
@@ -10,6 +10,8 @@ export interface PdfExportOptions {
   includePageNumbers?: boolean;
   /** Inclure les diagrammes schématiques (US_9.3 future) */
   includeSchematics?: boolean;
+  /** Inclure les diagrammes de tricot/crochet (US_11.6) */
+  includeStitchCharts?: boolean;
   /** Format de page (défaut: A4) */
   pageFormat?: 'A4' | 'Letter';
   /** Orientation (défaut: portrait) */

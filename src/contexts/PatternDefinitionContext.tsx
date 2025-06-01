@@ -378,7 +378,9 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
     completed.push('garment-type');
   }
 
-  if (session.selected_gauge_profile_id) {
+  // Check for gauge - either from profile or direct input
+  if (session.selected_gauge_profile_id || 
+      (session.gauge_stitch_count && session.gauge_row_count && session.gauge_unit)) {
     completed.push('gauge');
   }
   
@@ -409,12 +411,24 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
   }
 
   // Check for sleeve selection (US_4.5)
-  if (session.parameter_snapshot?.sleeves?.style) {
+  if (session.parameter_snapshot?.sleeves && (
+      session.parameter_snapshot.sleeves.style || 
+      session.parameter_snapshot.sleeves.length_key || 
+      session.parameter_snapshot.sleeves.cuff_style
+    )) {
     completed.push('sleeves');
   }
 
   // Check for accessory definition (US_7.1)
-  if (session.parameter_snapshot?.beanie || session.parameter_snapshot?.scarf_cowl) {
+  // Mark as completed if:
+  // 1. Specific accessories are defined (beanie, scarf_cowl), OR
+  // 2. The garment type doesn't require accessory definition
+  const garmentTypeKey = session.garment_type?.type_key;
+  const requiresAccessoryDefinition = garmentTypeKey === 'beanie' || garmentTypeKey === 'scarf' || garmentTypeKey === 'cowl';
+  
+  if (session.parameter_snapshot?.beanie || 
+      session.parameter_snapshot?.scarf_cowl || 
+      !requiresAccessoryDefinition) {
     completed.push('accessory-definition');
   }
 
@@ -432,9 +446,12 @@ function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionW
         undefined;
     
     case 'gauge':
-      return session.selected_gauge_profile_id ? 
-        `Gauge Profile Selected${session.gauge_stitch_count ? ` (${session.gauge_stitch_count} sts, ${session.gauge_row_count} rows)` : ''}` : 
-        undefined;
+      if (session.selected_gauge_profile_id) {
+        return `Gauge Profile Selected${session.gauge_stitch_count ? ` (${session.gauge_stitch_count} sts, ${session.gauge_row_count} rows)` : ''}`;
+      } else if (session.gauge_stitch_count && session.gauge_row_count && session.gauge_unit) {
+        return `Gauge: ${session.gauge_stitch_count} sts, ${session.gauge_row_count} rows per ${session.gauge_unit}`;
+      }
+      return undefined;
     
     case 'measurements':
       return session.selected_measurement_set_id ? 'Measurement Set Selected' : undefined;
@@ -468,10 +485,15 @@ function getStepSummary(step: DefinitionStep, session: PatternDefinitionSessionW
     case 'accessory-definition':
       const beanieAttrs = session.parameter_snapshot?.beanie;
       const scarfCowlAttrs = session.parameter_snapshot?.scarf_cowl;
+      const garmentTypeKey = session.garment_type?.type_key;
+      const requiresAccessoryDefinition = garmentTypeKey === 'beanie' || garmentTypeKey === 'scarf' || garmentTypeKey === 'cowl';
+      
       if (beanieAttrs) {
         return `Beanie: ${beanieAttrs.target_circumference_cm}cm circumference, ${beanieAttrs.crown_style} crown`;
       } else if (scarfCowlAttrs) {
         return `${scarfCowlAttrs.type}: ${scarfCowlAttrs.type === 'scarf' ? `${scarfCowlAttrs.width_cm}x${scarfCowlAttrs.length_cm}cm` : `${scarfCowlAttrs.circumference_cm}cm circumference`}`;
+      } else if (!requiresAccessoryDefinition) {
+        return 'No accessory definition required for this garment type';
       }
       return undefined;
     
@@ -496,12 +518,21 @@ function getStepData(step: DefinitionStep, session: PatternDefinitionSessionWith
       } : undefined;
     
     case 'gauge':
-      return session.selected_gauge_profile_id ? { 
-        id: session.selected_gauge_profile_id,
-        stitch_count: session.gauge_stitch_count,
-        row_count: session.gauge_row_count,
-        unit: session.gauge_unit
-      } : undefined;
+      if (session.selected_gauge_profile_id) {
+        return { 
+          id: session.selected_gauge_profile_id,
+          stitch_count: session.gauge_stitch_count,
+          row_count: session.gauge_row_count,
+          unit: session.gauge_unit
+        };
+      } else if (session.gauge_stitch_count && session.gauge_row_count && session.gauge_unit) {
+        return { 
+          stitch_count: session.gauge_stitch_count,
+          row_count: session.gauge_row_count,
+          unit: session.gauge_unit
+        };
+      }
+      return undefined;
     
     case 'measurements':
       return session.selected_measurement_set_id ? { id: session.selected_measurement_set_id } : undefined;
@@ -529,9 +560,17 @@ function getStepData(step: DefinitionStep, session: PatternDefinitionSessionWith
       return session.parameter_snapshot?.sleeves ? session.parameter_snapshot.sleeves : undefined;
     
     case 'accessory-definition':
-      return session.parameter_snapshot?.beanie || session.parameter_snapshot?.scarf_cowl ? 
-        { beanie: session.parameter_snapshot.beanie, scarf_cowl: session.parameter_snapshot.scarf_cowl } : 
-        undefined;
+      const beanieData = session.parameter_snapshot?.beanie;
+      const scarfCowlData = session.parameter_snapshot?.scarf_cowl;
+      const garmentTypeKey = session.garment_type?.type_key;
+      const requiresAccessoryDefinition = garmentTypeKey === 'beanie' || garmentTypeKey === 'scarf' || garmentTypeKey === 'cowl';
+      
+      if (beanieData || scarfCowlData) {
+        return { beanie: beanieData, scarf_cowl: scarfCowlData };
+      } else if (!requiresAccessoryDefinition) {
+        return { not_required: true, garment_type: garmentTypeKey };
+      }
+      return undefined;
     
     default:
       return undefined;
