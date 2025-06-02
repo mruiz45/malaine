@@ -53,18 +53,31 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     // Récupération des données du motif de mailles
-    const { data: stitchPattern, error: stitchPatternError } = await supabase
+    // Essaie d'abord les patterns de l'utilisateur, puis les patterns de base
+    let { data: stitchPattern, error: stitchPatternError } = await supabase
       .from('stitch_patterns')
       .select('id, name, stitch_repeat_width, row_repeat_height')
       .eq('id', selectedStitchPatternId)
       .eq('user_id', user.id)
       .single();
 
+    // Si pas trouvé dans les patterns de l'utilisateur, chercher dans les patterns de base
     if (stitchPatternError || !stitchPattern) {
-      return NextResponse.json(
-        { error: 'Stitch pattern not found or access denied' },
-        { status: 404 }
-      );
+      const { data: basicPattern, error: basicPatternError } = await supabase
+        .from('stitch_patterns')
+        .select('id, name, stitch_repeat_width, row_repeat_height')
+        .eq('id', selectedStitchPatternId)
+        .is('user_id', null) // Patterns de base n'ont pas de user_id
+        .single();
+
+      if (basicPatternError || !basicPattern) {
+        return NextResponse.json(
+          { error: 'Stitch pattern not found or access denied' },
+          { status: 404 }
+        );
+      }
+
+      stitchPattern = basicPattern;
     }
 
     const stitchPatternData: StitchPatternForIntegration = stitchPattern;

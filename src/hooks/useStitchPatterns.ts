@@ -3,7 +3,7 @@
  * Implements US_1.5 requirements for stitch pattern selection and definition
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { StitchPattern, StitchPatternFilters, StitchPatternSelection } from '@/types/stitchPattern';
 import { getStitchPatterns, getBasicStitchPatterns, getStitchPattern, searchStitchPatterns } from '@/services/stitchPatternService';
 

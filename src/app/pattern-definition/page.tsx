@@ -67,7 +67,8 @@ function PatternDefinitionPageContent() {
   const handleCreateNewSession = async () => {
     try {
       const newSession = await createSession({
-        session_name: `Pattern ${new Date().toLocaleDateString()}`
+        session_name: `Pattern ${new Date().toLocaleDateString()}`,
+        craft_type: 'knitting'
       });
       
       // Update URL with new session ID

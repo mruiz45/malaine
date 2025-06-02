@@ -154,7 +154,7 @@ export default function DefinitionStepper() {
     const nextStatus = getStepStatus(nextStep);
     const isCompleted = nextStatus === 'completed' || nextStatus === 'current';
     
-    return `flex-1 h-0.5 mx-4 ${isCompleted ? 'bg-blue-600' : 'bg-gray-300'}`;
+    return `flex-1 h-1 mx-4 ${isCompleted ? 'bg-blue-600 shadow-sm' : 'bg-gray-300'}`;
   };
 
   return (
@@ -163,52 +163,68 @@ export default function DefinitionStepper() {
         {t('patternDefinition.progress', 'Pattern Definition Progress')}
       </h3>
       
-      <div className="flex items-center">
-        {availableSteps.map((step, index) => {
-          const status = getStepStatus(step);
-          const config = STEP_CONFIG[step];
-          const Icon = status === 'completed' ? config.iconSolid : config.icon;
-          
-          return (
-            <React.Fragment key={step}>
-              {/* Step */}
-              <div className="flex flex-col items-center">
-                <button
-                  onClick={() => navigateToStep(step)}
-                  className={`${getStepClasses(step, status)} hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
-                  title={t(`patternDefinition.steps.${step}.label`, config.label)}
-                >
-                  <Icon className="w-5 h-5" />
-                </button>
-                <span className={`mt-2 text-xs font-medium ${
-                  status === 'current' ? `text-${config.color}-600` :
-                  status === 'completed' ? 'text-gray-900' :
-                  'text-gray-500'
-                }`}>
-                  {t(`patternDefinition.steps.${step}.label`, config.label)}
-                </span>
-              </div>
+      {/* Steps container with horizontal scroll */}
+      <div className="relative">
+        <div className="overflow-x-auto horizontal-scroll">
+          <div className="flex items-center min-w-max px-4 py-2">
+            {availableSteps.map((step, index) => {
+              const status = getStepStatus(step);
+              const config = STEP_CONFIG[step];
+              const Icon = status === 'completed' ? config.iconSolid : config.icon;
               
-              {/* Connector */}
-              {index < availableSteps.length - 1 && (
-                <div className={getConnectorClasses(index)} />
-              )}
-            </React.Fragment>
-          );
-        })}
+              return (
+                <React.Fragment key={step}>
+                  {/* Step */}
+                  <div className="flex flex-col items-center min-w-0 flex-shrink-0">
+                    <button
+                      onClick={() => navigateToStep(step)}
+                      className={`${getStepClasses(step, status)} hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+                      title={t(`patternDefinition.steps.${step}.label`, config.label)}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </button>
+                    <span className={`mt-2 text-xs font-medium text-center max-w-16 sm:max-w-20 leading-tight ${
+                      status === 'current' ? `text-${config.color}-600` :
+                      status === 'completed' ? 'text-gray-900' :
+                      'text-gray-500'
+                    }`}>
+                      {t(`patternDefinition.steps.${step}.label`, config.label)}
+                    </span>
+                  </div>
+                  
+                  {/* Connector */}
+                  {index < availableSteps.length - 1 && (
+                    <div className={`${getConnectorClasses(index)} flex-shrink-0 min-w-8 sm:min-w-12`} />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Gradient overlays for scroll indication on mobile */}
+        <div className="absolute left-0 top-0 bottom-0 w-6 bg-gradient-to-r from-white to-transparent pointer-events-none sm:hidden" />
+        <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden" />
       </div>
       
       {/* Progress percentage */}
       <div className="mt-6">
         <div className="flex justify-between text-sm text-gray-600 mb-2">
           <span>{t('patternDefinition.completed', 'Completed')}</span>
-          <span>{Math.round((completedSteps.length / availableSteps.length) * 100)}%</span>
+          <span className="font-bold text-blue-600">{Math.round((completedSteps.length / availableSteps.length) * 100)}%</span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
           <div 
-            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            className="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full transition-all duration-500 ease-out shadow-sm"
             style={{ width: `${(completedSteps.length / availableSteps.length) * 100}%` }}
           />
+        </div>
+        
+        {/* Progress indicator with visual feedback */}
+        <div className="mt-2 text-center">
+          <span className="text-xs text-gray-500">
+            {completedSteps.length} {t('patternDefinition.of', 'of')} {availableSteps.length} {t('patternDefinition.stepsCompleted', 'steps completed')}
+          </span>
         </div>
       </div>
     </div>

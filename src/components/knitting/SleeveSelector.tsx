@@ -7,6 +7,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePatternDefinition } from '@/contexts/PatternDefinitionContext';
 import {
   SleeveStyle,
   SleeveLength,
@@ -168,6 +169,7 @@ export default function SleeveSelector({
   error
 }: SleeveSelectorProps) {
   const { t } = useTranslation();
+  const { saveSession } = usePatternDefinition();
   
   // Debug logs - TEMPORARY
   console.log('SleeveSelector Debug:', {
@@ -184,6 +186,8 @@ export default function SleeveSelector({
     flare_width_cm: selectedSleeveAttributes?.flare_width_cm || 10,
     band_width_cm: selectedSleeveAttributes?.band_width_cm || 3
   });
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
   // For now, use default configuration. In full implementation, this would be fetched from the component template
   const sleeveConfig = DEFAULT_SLEEVE_CONFIG;
@@ -197,6 +201,37 @@ export default function SleeveSelector({
     }
     return sleeveConfig.styles_by_construction[selectedConstructionMethod];
   }, [selectedConstructionMethod, sleeveConfig]);
+
+  /**
+   * Check if sleeve configuration summary should be shown
+   */
+  const hasSleeveConfiguration = useMemo(() => {
+    return !!(selectedSleeveAttributes?.style || 
+              selectedSleeveAttributes?.length_key || 
+              selectedSleeveAttributes?.cuff_style);
+  }, [selectedSleeveAttributes]);
+
+  /**
+   * Auto-save when sleeve configuration summary appears
+   */
+  useEffect(() => {
+    if (hasSleeveConfiguration && !disabled && !isLoading) {
+      setIsSaving(true);
+      // Trigger save with a short delay to ensure all updates are complete
+      const timeoutId = setTimeout(async () => {
+        try {
+          await saveSession();
+          setLastSavedAt(new Date());
+        } catch (error) {
+          console.error('Error saving sleeve configuration:', error);
+        } finally {
+          setIsSaving(false);
+        }
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [hasSleeveConfiguration, disabled, isLoading, saveSession]);
 
   /**
    * Handle sleeve style selection
@@ -367,7 +402,7 @@ export default function SleeveSelector({
             return (
               <button
                 key={styleOption.key}
-                onClick={() => handleSleeveStyleSelect(styleOption.key)}
+                onClick={() => onSleeveStyleSelect(styleOption.key)}
                 disabled={disabled}
                 className={`
                   p-4 rounded-lg border-2 transition-all duration-200 text-left
@@ -462,7 +497,7 @@ export default function SleeveSelector({
             return (
               <button
                 key={cuffOption.key}
-                onClick={() => handleCuffStyleSelect(cuffOption.key)}
+                onClick={() => onCuffStyleSelect(cuffOption.key)}
                 disabled={disabled}
                 className={`
                   p-4 rounded-lg border-2 transition-all duration-200 text-left
@@ -516,9 +551,25 @@ export default function SleeveSelector({
       {/* Summary */}
       {(selectedSleeveAttributes?.style || selectedSleeveAttributes?.length_key || selectedSleeveAttributes?.cuff_style) && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-          <h4 className="text-md font-medium text-gray-900 mb-3">
-            {t('sleeve.summary.title', 'Sleeve Configuration Summary')}
-          </h4>
+          <div className="flex items-center justify-between mb-3">
+            <h4 className="text-md font-medium text-gray-900">
+              {t('sleeve.summary.title', 'Sleeve Configuration Summary')}
+            </h4>
+            {isSaving && (
+              <div className="flex items-center text-sm text-blue-600">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                {t('sleeve.summary.saving', 'Saving...')}
+              </div>
+            )}
+            {!isSaving && lastSavedAt && (
+              <div className="flex items-center text-sm text-green-600">
+                <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+                {t('sleeve.summary.saved', 'Saved')}
+              </div>
+            )}
+          </div>
           <div className="space-y-2 text-sm">
             {selectedSleeveAttributes.style && (
               <div className="flex justify-between">

@@ -6,6 +6,7 @@
 export { default as MeasurementSetCard } from './MeasurementSetCard';
 export { default as MeasurementSetList } from './MeasurementSetList';
 export { default as MeasurementSetForm } from './MeasurementSetForm';
+export { default as MeasurementSelector } from './MeasurementSelector';
 
 // US 3.1: Measurement Guide Components
 export { default as MeasurementGuideButton } from './MeasurementGuideButton';

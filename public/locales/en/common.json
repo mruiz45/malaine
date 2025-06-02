@@ -1535,6 +1535,8 @@
     "noSessionDescription": "Please create or select a pattern definition session to continue.",
     "progress": "Pattern Definition Progress",
     "completed": "Completed",
+    "of": "of",
+    "stepsCompleted": "steps completed",
     "steps": {
       "garment-type": {
         "label": "Garment Type"
@@ -1901,6 +1903,16 @@
     "approximation": {
       "title": "Approximation Notice",
       "description": "This is a very basic wireframe representation and not a realistic rendering of the final garment."
+    }
+  },
+  "sleeve": {
+    "summary": {
+      "title": "Sleeve Configuration Summary",
+      "saving": "Saving...",
+      "saved": "Saved",
+      "style": "Style:",
+      "length": "Length:",
+      "cuff": "Cuff:"
     }
   }
 } 

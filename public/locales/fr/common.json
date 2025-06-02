@@ -1230,5 +1230,68 @@
       "title": "Avis d'Approximation",
       "description": "Ceci est une représentation fil de fer très basique et non un rendu réaliste du vêtement final."
     }
+  },
+  "sleeve": {
+    "summary": {
+      "title": "Résumé de Configuration des Manches",
+      "saving": "Sauvegarde...",
+      "saved": "Sauvegardé",
+      "style": "Style :",
+      "length": "Longueur :",
+      "cuff": "Manchette :"
+    }
+  },
+  "patternDefinition": {
+    "title": "Définition de Patron",
+    "getStarted": "Commencer",
+    "description": "Créez une nouvelle session de définition de patron ou continuez à travailler sur une session existante.",
+    "createNew": "Créer un Nouveau Patron",
+    "existingSessions": "Vos Définitions de Patron",
+    "untitledSession": "Session Sans Titre",
+    "lastUpdated": "Dernière mise à jour",
+    "noSession": "Aucune Session Active",
+    "noSessionDescription": "Veuillez créer ou sélectionner une session de définition de patron pour continuer.",
+    "progress": "Progression de la Définition de Patron",
+    "completed": "Terminé",
+    "of": "sur",
+    "stepsCompleted": "étapes terminées",
+    "steps": {
+      "garment-type": {
+        "label": "Type de Vêtement"
+      },
+      "gauge": {
+        "label": "Échantillon"
+      },
+      "measurements": {
+        "label": "Mesures"
+      },
+      "ease": {
+        "label": "Aisance"
+      },
+      "yarn": {
+        "label": "Laine"
+      },
+      "stitch-pattern": {
+        "label": "Motif de Points"
+      },
+      "garment-structure": {
+        "label": "Structure du Vêtement"
+      },
+      "neckline": {
+        "label": "Encolure"
+      },
+      "sleeves": {
+        "label": "Manches"
+      },
+      "summary": {
+        "label": "Résumé"
+      }
+    },
+    "status": {
+      "draft": "Brouillon",
+      "ready_for_calculation": "Prêt pour Calcul",
+      "completed": "Terminé",
+      "archived": "Archivé"
+    }
   }
 }

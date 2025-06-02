@@ -5,6 +5,7 @@ import { PatternOutline, PatternFoundations, GarmentOverview, ComponentBreakdown
 /**
  * GET /api/pattern-definition-sessions/[id]/outline
  * Generate a structured outline/summary for a pattern definition session
+ * Updated: Fixed params await and gauge_profiles column issues
  */
 export async function GET(
   request: NextRequest,
@@ -21,18 +22,18 @@ export async function GET(
     }
 
     const { supabase } = sessionResult;
-    const { id } = params;
+    const { id } = await params;
 
-    // Fetch the pattern definition session with related data
+    // First, fetch the pattern definition session with basic joins
+    // We'll handle the garment_types join separately in case the column doesn't exist
     const { data: session, error: sessionError } = await supabase
       .from('pattern_definition_sessions')
       .select(`
         *,
-        gauge_profiles:selected_gauge_profile_id(name, description),
-        measurement_sets:selected_measurement_set_id(name, description),
-        yarn_profiles:selected_yarn_profile_id(name, weight, fiber_content),
-        stitch_patterns:selected_stitch_pattern_id(name, description, repeat_info),
-        garment_types:selected_garment_type_id(display_name, description, metadata)
+        gauge_profiles:selected_gauge_profile_id(profile_name),
+        measurement_sets:selected_measurement_set_id(*),
+        yarn_profiles:selected_yarn_profile_id(*),
+        stitch_patterns:selected_stitch_pattern_id(*)
       `)
       .eq('id', id)
       .single();
@@ -51,6 +52,25 @@ export async function GET(
       );
     }
 
+    // Try to fetch garment type information if the column exists
+    let garmentType = null;
+    try {
+      // Check if the session has a selected_garment_type_id field
+      if (session && 'selected_garment_type_id' in session && session.selected_garment_type_id) {
+        const { data: garmentTypeData, error: garmentTypeError } = await supabase
+          .from('garment_types')
+          .select('display_name, description, metadata')
+          .eq('id', session.selected_garment_type_id)
+          .single();
+        
+        if (!garmentTypeError) {
+          garmentType = garmentTypeData;
+        }
+      }
+    } catch (error) {
+      console.warn('Could not fetch garment type (this is normal if selected_garment_type_id column does not exist yet):', error);
+    }
+
     // Fetch pattern definition components for this session
     const { data: components, error: componentsError } = await supabase
       .from('pattern_definition_components')
@@ -67,7 +87,7 @@ export async function GET(
     }
 
     // Generate the pattern outline
-    const outline = await generatePatternOutline(session, components || []);
+    const outline = await generatePatternOutline(session, components || [], garmentType);
 
     return NextResponse.json({
       success: true,
@@ -86,7 +106,7 @@ export async function GET(
 /**
  * Generate pattern outline from session data
  */
-async function generatePatternOutline(session: any, components: any[]): Promise<PatternOutline> {
+async function generatePatternOutline(session: any, components: any[], garmentType: any = null): Promise<PatternOutline> {
   // Build foundations section
   const foundations: PatternFoundations = {};
   
@@ -96,14 +116,14 @@ async function generatePatternOutline(session: any, components: any[]): Promise<
       stitch_count: session.gauge_stitch_count,
       row_count: session.gauge_row_count,
       unit: session.gauge_unit || 'cm',
-      profile_name: session.gauge_profiles?.name
+      profile_name: session.gauge_profiles?.profile_name
     };
   }
 
   // Measurement set information
   if (session.selected_measurement_set_id) {
     foundations.measurements = {
-      set_name: session.measurement_sets?.name,
+      set_name: session.measurement_sets?.name || session.measurement_sets?.set_name || session.measurement_sets?.title || 'Unknown Set',
       key_measurements: ['bust', 'waist', 'hip'] // Simplified for now
     };
   }
@@ -120,33 +140,37 @@ async function generatePatternOutline(session: any, components: any[]): Promise<
   // Yarn information
   if (session.selected_yarn_profile_id) {
     foundations.yarn = {
-      name: session.yarn_profiles?.name,
-      weight: session.yarn_profiles?.weight,
-      fiber: session.yarn_profiles?.fiber_content
+      name: session.yarn_profiles?.name || session.yarn_profiles?.yarn_name || session.yarn_profiles?.brand || 'Unknown Yarn',
+      weight: session.yarn_profiles?.weight || session.yarn_profiles?.yarn_weight,
+      fiber: session.yarn_profiles?.fiber_content || session.yarn_profiles?.fiber
     };
   }
 
   // Stitch pattern information
   if (session.selected_stitch_pattern_id) {
     foundations.stitch_pattern = {
-      name: session.stitch_patterns?.name,
+      name: session.stitch_patterns?.name || session.stitch_patterns?.pattern_name || session.stitch_patterns?.title || 'Unknown Pattern',
       repeat_info: session.stitch_patterns?.repeat_info
     };
   }
 
   // Build garment overview
   const garment_overview: GarmentOverview = {};
-  if (session.selected_garment_type_id) {
-    garment_overview.type = {
-      name: session.garment_types?.display_name || 'Unknown',
-      description: session.garment_types?.description,
-      difficulty: session.garment_types?.metadata?.difficulty_level
-    };
-    
-    // Extract construction method from parameter snapshot if available
-    if (session.parameter_snapshot?.sweater_structure?.construction_method) {
-      garment_overview.construction_method = session.parameter_snapshot.sweater_structure.construction_method;
+  try {
+    if (session && 'selected_garment_type_id' in session && session.selected_garment_type_id && garmentType) {
+      garment_overview.type = {
+        name: garmentType.display_name || 'Unknown',
+        description: garmentType.description,
+        difficulty: garmentType.metadata?.difficulty_level
+      };
+      
+      // Extract construction method from parameter snapshot if available
+      if (session.parameter_snapshot?.sweater_structure?.construction_method) {
+        garment_overview.construction_method = session.parameter_snapshot.sweater_structure.construction_method;
+      }
     }
+  } catch (error) {
+    console.warn('Could not build garment overview:', error);
   }
 
   // Build component breakdown

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseSessionAppRouter } from '@/lib/getSupabaseSession';
+import { supabaseServer } from '@/lib/supabaseServer';
 import type { 
   StitchPattern, 
   StitchPatternFilters, 
@@ -30,26 +31,24 @@ export async function GET(request: NextRequest) {
       offset: searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined,
     };
 
-    // Try to get session (optional for basic patterns)
-    const sessionResult = await getSupabaseSessionAppRouter(request);
+    let supabase;
     
-    // If no session and not requesting basic only, return unauthorized
-    if (!sessionResult && !filters.basicOnly) {
-      return NextResponse.json(
-        { success: false, error: 'Authentication required for non-basic patterns' },
-        { status: 401 }
-      );
-    }
-
-    const supabase = sessionResult?.supabase;
-    
-    // If no session, create anonymous client for basic patterns only
-    if (!supabase) {
-      // For now, return error as we need proper anonymous client setup
-      return NextResponse.json(
-        { success: false, error: 'Authentication required' },
-        { status: 401 }
-      );
+    // If requesting basic patterns only, use anonymous client to avoid authentication rate limits
+    if (filters.basicOnly) {
+      supabase = supabaseServer; // Use anonymous client for basic patterns
+    } else {
+      // Try to get session for non-basic patterns
+      const sessionResult = await getSupabaseSessionAppRouter(request);
+      
+      // If no session and not requesting basic only, return unauthorized
+      if (!sessionResult) {
+        return NextResponse.json(
+          { success: false, error: 'Authentication required for non-basic patterns' },
+          { status: 401 }
+        );
+      }
+      
+      supabase = sessionResult.supabase;
     }
 
     // Build query

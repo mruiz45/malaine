@@ -15,6 +15,7 @@ import ScarfCowlDefinitionForm from './ScarfCowlDefinitionForm';
 import ColorSchemeSimulator from '../tools/ColorSchemeSimulator';
 import PatternOutlineViewer from './PatternOutlineViewer';
 import StitchIntegrationAdvisor from './StitchIntegrationAdvisor';
+import StitchPatternSelector from './StitchPatternSelector';
 import { GarmentType } from '@/types/garment';
 import { ConstructionMethod, BodyShape, SweaterStructureAttributes } from '@/types/sweaterStructure';
 import { NecklineStyle, NecklineParameters, NecklineAttributes } from '@/types/neckline';
@@ -25,6 +26,15 @@ import { PatternOutline } from '@/types/patternDefinition';
 import { ComponentForIntegration } from '@/types/stitch-integration';
 import { patternDefinitionService } from '@/services/patternDefinitionService';
 import { SwatchIcon, DocumentTextIcon, SparklesIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { MeasurementSelector } from '@/components/measurements';
+import { YarnSelector } from '@/components/yarn';
+import { GaugeSelector } from '@/components/gauge';
+import { EaseSelector } from '@/components/ease';
+import { MeasurementSet } from '@/types/measurements';
+import { YarnProfile } from '@/types/yarn';
+import { GaugeProfile } from '@/types/gauge';
+import { EasePreference, EaseType } from '@/types/ease';
+import { StitchPattern, CraftType } from '@/types/stitchPattern';
 
 /**
  * Pattern Definition Workspace Component (US_1.6)
@@ -161,55 +171,51 @@ function StepContent({ currentStep }: { currentStep: string }) {
     }
   ];
 
-  const handleGaugeSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
-    // TODO: In a full implementation, this would use an actual selected gauge profile ID
+  const handleGaugeProfileSelect = async (gaugeProfile: GaugeProfile | null) => {
     await updateSession({
-      selected_gauge_profile_id: undefined, // Set to undefined to avoid foreign key constraint violations
-      gauge_stitch_count: parseFloat(formData.get('stitchCount') as string),
-      gauge_row_count: parseFloat(formData.get('rowCount') as string),
-      gauge_unit: formData.get('unit') as string
+      selected_gauge_profile_id: gaugeProfile?.id || undefined
     });
   };
 
-  const handleMeasurementsSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // TODO: In a full implementation, this would use an actual selected measurement set ID
+  const handleManualGaugeChange = async (gauge: { stitch_count: number; row_count: number; unit: string } | null) => {
     await updateSession({
-      selected_measurement_set_id: undefined // Set to undefined to avoid foreign key constraint violations
+      gauge_stitch_count: gauge?.stitch_count || undefined,
+      gauge_row_count: gauge?.row_count || undefined,
+      gauge_unit: gauge?.unit || undefined
     });
   };
 
-  const handleEaseSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+  const handleMeasurementSetSelect = async (measurementSet: MeasurementSet | null) => {
     await updateSession({
-      ease_type: formData.get('easeType') as string,
-      ease_value_bust: parseFloat(formData.get('easeValue') as string),
-      ease_unit: formData.get('easeUnit') as string
+      selected_measurement_set_id: measurementSet?.id || undefined
     });
   };
 
-  const handleYarnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // TODO: In a full implementation, this would use an actual selected yarn profile ID
-    // For now, we set it to undefined to avoid foreign key constraint violations
+  const handleEasePreferenceSelect = async (easePreference: EasePreference | null) => {
     await updateSession({
-      selected_yarn_profile_id: undefined
+      ease_type: easePreference?.ease_type || undefined,
+      ease_value_bust: easePreference?.bust_ease || undefined,
+      ease_unit: easePreference?.measurement_unit || undefined
     });
   };
 
-  const handleStitchPatternSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    // TODO: In a full implementation, this would use an actual selected stitch pattern ID
+  const handleQuickEaseChange = async (ease: { type: EaseType; value_bust: number; unit?: string } | null) => {
     await updateSession({
-      selected_stitch_pattern_id: undefined // Set to undefined to avoid foreign key constraint violations
+      ease_type: ease?.type || undefined,
+      ease_value_bust: ease?.value_bust || undefined,
+      ease_unit: ease?.unit || undefined
+    });
+  };
+
+  const handleYarnProfileSelect = async (yarnProfile: YarnProfile | null) => {
+    await updateSession({
+      selected_yarn_profile_id: yarnProfile?.id || undefined
+    });
+  };
+
+  const handleStitchPatternSelect = async (stitchPattern: StitchPattern | null) => {
+    await updateSession({
+      selected_stitch_pattern_id: stitchPattern?.id || undefined
     });
   };
 
@@ -529,62 +535,31 @@ function StepContent({ currentStep }: { currentStep: string }) {
           <p className="text-gray-600 mb-8">
             {t('gauge.description', 'Enter your gauge information. This is crucial for accurate pattern calculations.')}
           </p>
-          <form onSubmit={handleGaugeSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label htmlFor="stitchCount" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('gauge.stitchCount', 'Stitch Count')}
-                </label>
-                <input
-                  type="number"
-                  id="stitchCount"
-                  name="stitchCount"
-                  min="1"
-                  step="0.1"
-                  defaultValue={currentSession?.gauge_stitch_count || ''}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="20"
-                />
-              </div>
-              <div>
-                <label htmlFor="rowCount" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('gauge.rowCount', 'Row Count')}
-                </label>
-                <input
-                  type="number"
-                  id="rowCount"
-                  name="rowCount"
-                  min="1"
-                  step="0.1"
-                  defaultValue={currentSession?.gauge_row_count || ''}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="28"
-                />
-              </div>
-              <div>
-                <label htmlFor="unit" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('gauge.unit', 'Unit')}
-                </label>
-                <select
-                  id="unit"
-                  name="unit"
-                  defaultValue={currentSession?.gauge_unit || '10cm'}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="10cm">10cm</option>
-                  <option value="4inches">4 inches</option>
-                </select>
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-            >
-              {t('gauge.save', 'Save Gauge')}
-            </button>
-          </form>
+          <GaugeSelector
+            selectedGaugeProfile={currentSession?.selected_gauge_profile_id ? {
+              id: currentSession.selected_gauge_profile_id,
+              profile_name: 'Selected Gauge Profile', // This would be fetched in a real implementation
+              stitch_count: currentSession.gauge_stitch_count || 20,
+              row_count: currentSession.gauge_row_count || 28,
+              measurement_unit: 'cm',
+              swatch_width: 10,
+              swatch_height: 10,
+              user_id: '',
+              created_at: '',
+              updated_at: ''
+            } : null}
+            onGaugeProfileSelect={handleGaugeProfileSelect}
+            manualGauge={currentSession?.gauge_stitch_count ? {
+              stitch_count: currentSession.gauge_stitch_count,
+              row_count: currentSession.gauge_row_count || 28,
+              unit: currentSession.gauge_unit || '10cm'
+            } : null}
+            onManualGaugeChange={handleManualGaugeChange}
+            onCreateNew={() => {
+              // TODO: Navigate to gauge profile creation
+              console.log('Create new gauge profile');
+            }}
+          />
           <NavigationButtons />
         </div>
       );
@@ -598,22 +573,21 @@ function StepContent({ currentStep }: { currentStep: string }) {
           <p className="text-gray-600 mb-8">
             {t('measurements.description', 'Select or enter your measurements. These will be used to calculate the pattern dimensions.')}
           </p>
-          <form onSubmit={handleMeasurementsSubmit} className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h3 className="font-medium text-blue-900 mb-2">
-                {t('measurements.placeholder.title', 'Measurement Selection')}
-              </h3>
-              <p className="text-sm text-blue-700">
-                {t('measurements.placeholder.description', 'This is a placeholder for the measurements selector component.')}
-              </p>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-            >
-              {t('measurements.save', 'Save Measurements')}
-            </button>
-          </form>
+          <MeasurementSelector
+            selectedMeasurementSet={currentSession?.selected_measurement_set_id ? {
+              id: currentSession.selected_measurement_set_id,
+              set_name: 'Selected Measurement Set', // This would be fetched in a real implementation
+              measurement_unit: 'cm',
+              created_at: '',
+              updated_at: '',
+              user_id: ''
+            } : null}
+            onMeasurementSetSelect={handleMeasurementSetSelect}
+            onCreateNew={() => {
+              // TODO: Navigate to measurement set creation
+              console.log('Create new measurement set');
+            }}
+          />
           <NavigationButtons />
         </div>
       );
@@ -625,64 +599,31 @@ function StepContent({ currentStep }: { currentStep: string }) {
             {t('ease.title', 'Ease Preferences')}
           </h2>
           <p className="text-gray-600 mb-8">
-            {t('ease.description', 'Choose your preferred ease for the garment. This determines how fitted or loose the garment will be.')}
+            {t('ease.description', 'Choose your ease preferences. This determines how fitted or loose your garment will be.')}
           </p>
-          <form onSubmit={handleEaseSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <label htmlFor="easeType" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('ease.type', 'Ease Type')}
-                </label>
-                <select
-                  id="easeType"
-                  name="easeType"
-                  defaultValue={currentSession?.ease_type || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="">{t('ease.selectType', 'Select ease type')}</option>
-                  <option value="negative">Negative</option>
-                  <option value="zero">Zero</option>
-                  <option value="positive">Positive</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="easeValue" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('ease.value', 'Ease Value')}
-                </label>
-                <input
-                  type="number"
-                  id="easeValue"
-                  name="easeValue"
-                  min="-10"
-                  max="20"
-                  step="0.5"
-                  defaultValue={currentSession?.ease_value_bust || ''}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="5"
-                />
-              </div>
-              <div>
-                <label htmlFor="easeUnit" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('ease.unit', 'Unit')}
-                </label>
-                <select
-                  id="easeUnit"
-                  name="easeUnit"
-                  defaultValue={currentSession?.ease_unit || 'cm'}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                >
-                  <option value="cm">cm</option>
-                  <option value="inches">inches</option>
-                </select>
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-            >
-              {t('ease.save', 'Save Ease Preferences')}
-            </button>
-          </form>
+          <EaseSelector
+            selectedEasePreference={currentSession?.ease_type ? {
+              id: 'current-ease',
+              preference_name: 'Current Ease',
+              ease_type: currentSession.ease_type as EaseType,
+              bust_ease: currentSession.ease_value_bust || 5,
+              measurement_unit: (currentSession.ease_unit || 'cm') as any,
+              user_id: '',
+              created_at: '',
+              updated_at: ''
+            } : null}
+            onEasePreferenceSelect={handleEasePreferenceSelect}
+            quickEase={currentSession?.ease_type ? {
+              type: currentSession.ease_type as EaseType,
+              value_bust: currentSession.ease_value_bust || 5,
+              unit: currentSession.ease_unit
+            } : null}
+            onQuickEaseChange={handleQuickEaseChange}
+            onCreateNew={() => {
+              // TODO: Navigate to ease preference creation
+              console.log('Create new ease preference');
+            }}
+          />
           <NavigationButtons />
         </div>
       );
@@ -694,24 +635,25 @@ function StepContent({ currentStep }: { currentStep: string }) {
             {t('yarn.title', 'Yarn Selection')}
           </h2>
           <p className="text-gray-600 mb-8">
-            {t('yarn.description', 'Select the yarn you plan to use for this project.')}
+            {t('yarn.description', 'Select your yarn. This information helps with pattern calculations and recommendations.')}
           </p>
-          <form onSubmit={handleYarnSubmit} className="space-y-6">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <h3 className="font-medium text-green-900 mb-2">
-                {t('yarn.placeholder.title', 'Yarn Selection')}
-              </h3>
-              <p className="text-sm text-green-700">
-                {t('yarn.placeholder.description', 'This is a placeholder for the yarn selector component.')}
-              </p>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-            >
-              {t('yarn.save', 'Save Yarn Selection')}
-            </button>
-          </form>
+          <YarnSelector
+            selectedYarnProfile={currentSession?.selected_yarn_profile_id ? {
+              id: currentSession.selected_yarn_profile_id,
+              yarn_name: 'Selected Yarn', // This would be fetched in a real implementation
+              brand_name: 'Selected Brand',
+              yarn_weight_category: 'DK' as any,
+              fiber_content: [{ fiber: 'Wool', percentage: 100 }],
+              user_id: '',
+              created_at: '',
+              updated_at: ''
+            } : null}
+            onYarnProfileSelect={handleYarnProfileSelect}
+            onCreateNew={() => {
+              // TODO: Navigate to yarn profile creation
+              console.log('Create new yarn profile');
+            }}
+          />
           <NavigationButtons />
         </div>
       );
@@ -723,24 +665,20 @@ function StepContent({ currentStep }: { currentStep: string }) {
             {t('stitchPattern.title', 'Stitch Pattern')}
           </h2>
           <p className="text-gray-600 mb-8">
-            {t('stitchPattern.description', 'Choose the main stitch pattern for your garment.')}
+            {t('stitchPattern.description', 'Choose your main stitch pattern. This will be used throughout the garment.')}
           </p>
-          <form onSubmit={handleStitchPatternSubmit} className="space-y-6">
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-6">
-              <h3 className="font-medium text-purple-900 mb-2">
-                {t('stitchPattern.placeholder.title', 'Stitch Pattern Selection')}
-              </h3>
-              <p className="text-sm text-purple-700">
-                {t('stitchPattern.placeholder.description', 'This is a placeholder for the stitch pattern selector component.')}
-              </p>
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
-            >
-              {t('stitchPattern.save', 'Save Stitch Pattern')}
-            </button>
-          </form>
+          <StitchPatternSelector
+            selectedPattern={currentSession?.selected_stitch_pattern_id ? {
+              id: currentSession.selected_stitch_pattern_id,
+              stitch_name: 'Selected Pattern', // This would be fetched in a real implementation
+              craft_type: 'knitting' as CraftType,
+              is_basic: true,
+              created_at: '',
+              updated_at: ''
+            } : null}
+            onPatternSelect={handleStitchPatternSelect}
+            basicOnly={true}
+          />
           <NavigationButtons />
         </div>
       );
@@ -926,6 +864,35 @@ function StepContent({ currentStep }: { currentStep: string }) {
             </div>
           </div>
           <NavigationButtons />
+
+          {/* Modal Components - These were missing! */}
+          {/* Color Scheme Simulator Modal */}
+          {showColorSimulator && (
+            <ColorSchemeSimulator
+              onClose={() => setShowColorSimulator(false)}
+              onSchemeSaved={handleColorSchemeSave}
+              isModal={true}
+            />
+          )}
+
+          {/* Pattern Outline Viewer Modal */}
+          {showOutlineViewer && currentOutline && (
+            <PatternOutlineViewer
+              outline={currentOutline}
+              isOpen={showOutlineViewer}
+              onClose={handleCloseOutlineViewer}
+            />
+          )}
+
+          {/* Stitch Integration Advisor Modal */}
+          {showStitchIntegrationAdvisor && (
+            <StitchIntegrationAdvisor
+              sessionId={currentSession?.id || ''}
+              availableComponents={availableComponents}
+              onClose={handleCloseStitchIntegrationAdvisor}
+              onSuccess={handleStitchIntegrationSuccess}
+            />
+          )}
         </div>
       );
 
