@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
 import { usePatternDefinition } from '@/contexts/PatternDefinitionContext';
+import { PatternCalculatorService } from '@/services/patternCalculatorService';
 import DefinitionStepper from './DefinitionStepper';
 import DefinitionSummary from './DefinitionSummary';
 import SessionHeader from './SessionHeader';
@@ -147,6 +149,13 @@ function StepContent({ currentStep }: { currentStep: string }) {
   // State for stitch integration advisor (US_8.2)
   const [showStitchIntegrationAdvisor, setShowStitchIntegrationAdvisor] = useState(false);
 
+  // State for pattern calculation
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationError, setCalculationError] = useState<string | null>(null);
+
+  // Router for navigation
+  const router = useRouter();
+
   // Mock data for available components (in real implementation, this would come from the session)
   const availableComponents: ComponentForIntegration[] = [
     {
@@ -172,51 +181,65 @@ function StepContent({ currentStep }: { currentStep: string }) {
   ];
 
   const handleGaugeProfileSelect = async (gaugeProfile: GaugeProfile | null) => {
-    await updateSession({
-      selected_gauge_profile_id: gaugeProfile?.id || undefined
-    });
+    if (gaugeProfile?.id) {
+      await updateSession({
+        selected_gauge_profile_id: gaugeProfile.id
+      });
+    }
   };
 
   const handleManualGaugeChange = async (gauge: { stitch_count: number; row_count: number; unit: string } | null) => {
-    await updateSession({
-      gauge_stitch_count: gauge?.stitch_count || undefined,
-      gauge_row_count: gauge?.row_count || undefined,
-      gauge_unit: gauge?.unit || undefined
-    });
+    if (gauge) {
+      await updateSession({
+        gauge_stitch_count: gauge.stitch_count,
+        gauge_row_count: gauge.row_count,
+        gauge_unit: gauge.unit
+      });
+    }
   };
 
   const handleMeasurementSetSelect = async (measurementSet: MeasurementSet | null) => {
-    await updateSession({
-      selected_measurement_set_id: measurementSet?.id || undefined
-    });
+    if (measurementSet?.id) {
+      await updateSession({
+        selected_measurement_set_id: measurementSet.id
+      });
+    }
   };
 
   const handleEasePreferenceSelect = async (easePreference: EasePreference | null) => {
-    await updateSession({
-      ease_type: easePreference?.ease_type || undefined,
-      ease_value_bust: easePreference?.bust_ease || undefined,
-      ease_unit: easePreference?.measurement_unit || undefined
-    });
+    if (easePreference) {
+      await updateSession({
+        ease_type: easePreference.ease_type,
+        ease_value_bust: easePreference.bust_ease,
+        ease_unit: easePreference.measurement_unit
+      });
+    }
   };
 
   const handleQuickEaseChange = async (ease: { type: EaseType; value_bust: number; unit?: string } | null) => {
-    await updateSession({
-      ease_type: ease?.type || undefined,
-      ease_value_bust: ease?.value_bust || undefined,
-      ease_unit: ease?.unit || undefined
-    });
+    if (ease) {
+      await updateSession({
+        ease_type: ease.type,
+        ease_value_bust: ease.value_bust,
+        ease_unit: ease.unit
+      });
+    }
   };
 
   const handleYarnProfileSelect = async (yarnProfile: YarnProfile | null) => {
-    await updateSession({
-      selected_yarn_profile_id: yarnProfile?.id || undefined
-    });
+    if (yarnProfile?.id) {
+      await updateSession({
+        selected_yarn_profile_id: yarnProfile.id
+      });
+    }
   };
 
   const handleStitchPatternSelect = async (stitchPattern: StitchPattern | null) => {
-    await updateSession({
-      selected_stitch_pattern_id: stitchPattern?.id || undefined
-    });
+    if (stitchPattern?.id) {
+      await updateSession({
+        selected_stitch_pattern_id: stitchPattern.id
+      });
+    }
   };
 
   const handleGarmentTypeSelect = async (garmentType: GarmentType) => {
@@ -229,120 +252,232 @@ function StepContent({ currentStep }: { currentStep: string }) {
    * Handle sweater structure selections (US_4.3)
    */
   const handleConstructionMethodSelect = async (method: ConstructionMethod) => {
-    // For now, we'll store this in the session's parameter_snapshot
-    // In a full implementation, this would be stored in pattern_definition_components
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const sweaterStructure: SweaterStructureAttributes = {
-      ...currentSnapshot.sweater_structure,
-      construction_method: method
-    };
+    console.log('🏗️ [UI] Construction method selected:', method);
+    console.log('🏗️ [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      // For now, we'll store this in the session's parameter_snapshot
+      // In a full implementation, this would be stored in pattern_definition_components
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('🏗️ [UI] Current snapshot before merge:', currentSnapshot);
+      
+      const sweaterStructure: SweaterStructureAttributes = {
+        ...currentSnapshot.sweater_structure,
+        construction_method: method
+      };
+      console.log('🏗️ [UI] New sweater structure:', sweaterStructure);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         sweater_structure: sweaterStructure
-      }
-    });
+      };
+      console.log('🏗️ [UI] New parameter snapshot:', newParameterSnapshot);
+
+      console.log('🏗️ [UI] Calling updateSession...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('🏗️ [UI] updateSession completed successfully');
+    } catch (error) {
+      console.error('🏗️ [UI] Error in handleConstructionMethodSelect:', error);
+    }
   };
 
   const handleBodyShapeSelect = async (shape: BodyShape) => {
-    // For now, we'll store this in the session's parameter_snapshot
-    // In a full implementation, this would be stored in pattern_definition_components
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const sweaterStructure: SweaterStructureAttributes = {
-      ...currentSnapshot.sweater_structure,
-      body_shape: shape
-    };
+    console.log('👤 [UI] Body shape selected:', shape);
+    console.log('👤 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      // For now, we'll store this in the session's parameter_snapshot
+      // In a full implementation, this would be stored in pattern_definition_components
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👤 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      const sweaterStructure: SweaterStructureAttributes = {
+        ...currentSnapshot.sweater_structure,
+        body_shape: shape
+      };
+      console.log('👤 [UI] New sweater structure:', sweaterStructure);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         sweater_structure: sweaterStructure
-      }
-    });
+      };
+      console.log('👤 [UI] New parameter snapshot:', newParameterSnapshot);
+
+      console.log('👤 [UI] Calling updateSession...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👤 [UI] updateSession completed successfully');
+    } catch (error) {
+      console.error('👤 [UI] Error in handleBodyShapeSelect:', error);
+    }
   };
 
   /**
    * Handle neckline selections (US_4.4)
+   * Now accepts defaultParameters to update style and its defaults atomically.
    */
-  const handleNecklineStyleSelect = async (style: NecklineStyle) => {
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const neckline: NecklineAttributes = {
-      ...currentSnapshot.neckline,
-      style: style
-    };
+  const handleNecklineStyleSelect = async (style: NecklineStyle, defaultParameters: NecklineParameters) => {
+    console.log('👔 [UI] Neckline style selected (atomic):', style, 'with defaults:', defaultParameters);
+    console.log('👔 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👔 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      // Create the new neckline attribute with the selected style and its default parameters
+      const neckline: NecklineAttributes = {
+        ...currentSnapshot.neckline, // Preserve any existing parameters not part of defaults if needed, or just overwrite
+        style: style,
+        parameters: defaultParameters 
+      };
+      console.log('👔 [UI] New neckline (atomic):', neckline);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         neckline: neckline
-      }
-    });
+      };
+      console.log('👔 [UI] New parameter snapshot (atomic):', newParameterSnapshot);
+
+      console.log('👔 [UI] Calling updateSession (atomic for neckline style + defaults)...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👔 [UI] updateSession completed successfully (atomic for neckline)');
+    } catch (error) {
+      console.error('👔 [UI] Error in handleNecklineStyleSelect (atomic):', error);
+    }
   };
 
   const handleNecklineParametersUpdate = async (parameters: NecklineParameters) => {
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const neckline: NecklineAttributes = {
-      ...currentSnapshot.neckline,
-      parameters: parameters
-    };
+    console.log('👔📐 [UI] Neckline parameters updated (user-driven):', parameters);
+    console.log('👔📐 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👔📐 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      // Merge new parameters with existing style and other parameters if any
+      const neckline: NecklineAttributes = {
+        ...currentSnapshot.neckline, // This ensures we keep the currently selected style
+        parameters: {
+          ...(currentSnapshot.neckline?.parameters || {}),
+          ...parameters
+        }
+      };
+      console.log('👔📐 [UI] New neckline (user-driven parameters):', neckline);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         neckline: neckline
-      }
-    });
+      };
+      console.log('👔📐 [UI] New parameter snapshot (user-driven parameters):', newParameterSnapshot);
+
+      console.log('👔📐 [UI] Calling updateSession (user-driven neckline parameters)...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👔📐 [UI] updateSession completed successfully (user-driven neckline parameters)');
+    } catch (error) {
+      console.error('👔📐 [UI] Error in handleNecklineParametersUpdate (user-driven):', error);
+    }
   };
 
   /**
    * Handle sleeve selections (US_4.5)
    */
   const handleSleeveStyleSelect = async (style: SleeveStyle) => {
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const sleeves: SleeveAttributes = {
-      ...currentSnapshot.sleeves,
-      style: style
-    };
+    console.log('👕 [UI] Sleeve style selected:', style);
+    console.log('👕 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👕 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      const sleeves: SleeveAttributes = {
+        ...currentSnapshot.sleeves,
+        style: style
+      };
+      console.log('👕 [UI] New sleeves:', sleeves);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         sleeves: sleeves
-      }
-    });
+      };
+      console.log('👕 [UI] New parameter snapshot:', newParameterSnapshot);
+
+      console.log('👕 [UI] Calling updateSession...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👕 [UI] updateSession completed successfully');
+    } catch (error) {
+      console.error('👕 [UI] Error in handleSleeveStyleSelect:', error);
+    }
   };
 
   const handleSleeveLengthSelect = async (length: SleeveLength, customLength?: number) => {
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const sleeves: SleeveAttributes = {
-      ...currentSnapshot.sleeves,
-      length_key: length,
-      ...(length === 'custom' && customLength ? { custom_length_cm: customLength } : {})
-    };
+    console.log('👕📏 [UI] Sleeve length selected:', length, customLength);
+    console.log('👕📏 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👕📏 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      const sleeves: SleeveAttributes = {
+        ...currentSnapshot.sleeves,
+        length_key: length,
+        ...(length === 'custom' && customLength ? { custom_length_cm: customLength } : {})
+      };
+      console.log('👕📏 [UI] New sleeves:', sleeves);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         sleeves: sleeves
-      }
-    });
+      };
+      console.log('👕📏 [UI] New parameter snapshot:', newParameterSnapshot);
+
+      console.log('👕📏 [UI] Calling updateSession...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👕📏 [UI] updateSession completed successfully');
+    } catch (error) {
+      console.error('👕📏 [UI] Error in handleSleeveLengthSelect:', error);
+    }
   };
 
   const handleCuffStyleSelect = async (cuffStyle: CuffStyle, parameters?: CuffParameters) => {
-    const currentSnapshot = currentSession?.parameter_snapshot || {};
-    const sleeves: SleeveAttributes = {
-      ...currentSnapshot.sleeves,
-      cuff_style: cuffStyle,
-      ...(parameters || {})
-    };
+    console.log('👕🔗 [UI] Cuff style selected:', cuffStyle, parameters);
+    console.log('👕🔗 [UI] Current session before update:', currentSession?.id, currentSession?.parameter_snapshot);
+    
+    try {
+      const currentSnapshot = currentSession?.parameter_snapshot || {};
+      console.log('👕🔗 [UI] Current snapshot before merge:', currentSnapshot);
+      
+      const sleeves: SleeveAttributes = {
+        ...currentSnapshot.sleeves,
+        cuff_style: cuffStyle,
+        ...(parameters || {})
+      };
+      console.log('👕🔗 [UI] New sleeves:', sleeves);
 
-    await updateSession({
-      parameter_snapshot: {
+      const newParameterSnapshot = {
         ...currentSnapshot,
         sleeves: sleeves
-      }
-    });
+      };
+      console.log('👕🔗 [UI] New parameter snapshot:', newParameterSnapshot);
+
+      console.log('👕🔗 [UI] Calling updateSession...');
+      await updateSession({
+        parameter_snapshot: newParameterSnapshot
+      });
+      console.log('👕🔗 [UI] updateSession completed successfully');
+    } catch (error) {
+      console.error('👕🔗 [UI] Error in handleCuffStyleSelect:', error);
+    }
   };
 
   /**
@@ -448,6 +583,316 @@ function StepContent({ currentStep }: { currentStep: string }) {
     console.log('Stitch integration applied successfully:', { componentId, integration });
     // In a real implementation, this would update the session state
     // For now, we'll just log the success
+  };
+
+  /**
+   * Apply sensible default parameters for unconfigured steps before pattern calculation
+   */
+  const applyDefaultParameters = (sessionData: any) => {
+    console.log('🔧 Applying default parameters for unconfigured steps...');
+    
+    const garmentTypeKey = sessionData.garment_type?.type_key;
+    const isSweaterType = garmentTypeKey === 'sweater' || garmentTypeKey === 'cardigan';
+    
+    if (!isSweaterType) {
+      console.log('ℹ️ Not a sweater type, no defaults needed');
+      return sessionData;
+    }
+
+    const currentSnapshot = sessionData.parameter_snapshot || {};
+    let needsUpdate = false;
+    const newSnapshot = { ...currentSnapshot };
+
+    // Apply default sweater structure if missing
+    if (!currentSnapshot.sweater_structure?.construction_method) {
+      console.log('🔧 Applying default sweater structure: drop_shoulder + straight');
+      newSnapshot.sweater_structure = {
+        construction_method: 'drop_shoulder', // Beginner-friendly default
+        body_shape: 'straight' // Classic, versatile default
+      };
+      needsUpdate = true;
+    }
+
+    // Apply default neckline if missing
+    if (!currentSnapshot.neckline?.style) {
+      console.log('🔧 Applying default neckline: crew_neck');
+      newSnapshot.neckline = {
+        style: 'crew_neck', // Most common neckline
+        parameters: {
+          depth_cm: 8, // Standard crew neck depth
+          width_cm: 20 // Standard crew neck width
+        }
+      };
+      needsUpdate = true;
+    }
+
+    // Apply default sleeves if missing
+    if (!currentSnapshot.sleeves || (!currentSnapshot.sleeves.style && !currentSnapshot.sleeves.length_key)) {
+      console.log('🔧 Applying default sleeves: straight + long + ribbed_cuff');
+      newSnapshot.sleeves = {
+        style: 'straight', // Simple, classic sleeve
+        length_key: 'long', // Full-length sleeves
+        cuff_style: 'ribbed', // Standard ribbed cuff
+        cuff_length_cm: 5 // Standard cuff length
+      };
+      needsUpdate = true;
+    }
+
+    if (needsUpdate) {
+      console.log('✅ Default parameters applied successfully');
+      return {
+        ...sessionData,
+        parameter_snapshot: newSnapshot
+      };
+    } else {
+      console.log('ℹ️ No default parameters needed');
+      return sessionData;
+    }
+  };
+
+  /**
+   * Handles the "Proceed to Pattern Calculation" button click
+   * Validates session completeness, calculates pattern, and navigates to PatternViewer with 2D/3D visualizations
+   */
+  const handleProceedToCalculation = async () => {
+    if (!currentSession) {
+      setCalculationError('No active session found');
+      return;
+    }
+
+    setIsCalculating(true);
+    setCalculationError(null);
+
+    try {
+      // Initialize the pattern calculator service
+      const calculatorService = new PatternCalculatorService();
+
+      // First, fetch complete session data with all relationships
+      let completeSessionData = await patternDefinitionService.getSession(currentSession.id);
+      
+      if (!completeSessionData) {
+        throw new Error('Failed to fetch complete session data');
+      }
+
+      // Apply default parameters for unconfigured steps
+      completeSessionData = applyDefaultParameters(completeSessionData);
+
+      // Validate session completeness (should pass now with defaults)
+      const summary = generateSessionSummary(completeSessionData);
+      if (!summary.readyForCalculation) {
+        const missingSteps = navigation.availableSteps.filter(
+          step => !summary.completedSteps.includes(step as any)
+        );
+        
+        console.error('❌ Pattern definition incomplete:', {
+          completionPercentage: summary.completionPercentage,
+          completedSteps: summary.completedSteps,
+          missingSteps,
+          totalSteps: navigation.availableSteps.length
+        });
+        
+        const stepsText = missingSteps.map(step => {
+          const stepTranslations: { [key: string]: string } = {
+            'garment-type': 'Type de vêtement',
+            'gauge': 'Échantillon',
+            'measurements': 'Mesures',
+            'ease': 'Aisance',
+            'yarn': 'Laine',
+            'stitch-pattern': 'Point de tricot',
+            'garment-structure': 'Structure du vêtement',
+            'neckline': 'Encolure',
+            'sleeves': 'Manches',
+            'accessory-definition': 'Définition accessoire'
+          };
+          return stepTranslations[step] || step;
+        }).join(', ');
+        
+        throw new Error(
+          `Définition de patron incomplète (${summary.completionPercentage}%). Étapes manquantes: ${stepsText}. Veuillez compléter toutes les étapes requises.`
+        );
+      }
+
+      // Perform pattern calculation
+      console.log('Starting pattern calculation...');
+      const calculationResult = await calculatorService.calculatePatternFromSession(
+        completeSessionData,
+        {
+          includeShaping: true,
+          includeYarnEstimate: true,
+          instructionFormat: 'text',
+          validateInput: true
+        }
+      );
+
+      console.log('Pattern calculation completed:', calculationResult);
+
+      // Navigate to pattern viewer with calculated results
+      // The PatternViewer will automatically include 2D Assembly View and 3D Preview sections
+      router.push(`/pattern-viewer/${currentSession.id}`);
+
+    } catch (error) {
+      console.error('Pattern calculation failed:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Pattern calculation failed';
+      setCalculationError(errorMessage);
+    } finally {
+      setIsCalculating(false);
+    }
+  };
+
+  /**
+   * Helper function to generate session summary for validation
+   */
+  const generateSessionSummary = (sessionData: any) => {
+    console.log('🔍 Analyzing session data for calculation readiness...');
+    console.log('📊 Session data:', {
+      id: sessionData.id,
+      session_name: sessionData.session_name,
+      selected_garment_type_id: sessionData.selected_garment_type_id,
+      selected_gauge_profile_id: sessionData.selected_gauge_profile_id,
+      gauge_stitch_count: sessionData.gauge_stitch_count,
+      gauge_row_count: sessionData.gauge_row_count,
+      gauge_unit: sessionData.gauge_unit,
+      selected_measurement_set_id: sessionData.selected_measurement_set_id,
+      ease_type: sessionData.ease_type,
+      selected_yarn_profile_id: sessionData.selected_yarn_profile_id,
+      selected_stitch_pattern_id: sessionData.selected_stitch_pattern_id,
+      parameter_snapshot: sessionData.parameter_snapshot,
+      garment_type: sessionData.garment_type
+    });
+
+    const completedSteps = calculateCompletedSteps(sessionData);
+    
+    // Use navigation.availableSteps for the actual total
+    const totalSteps = navigation.availableSteps.length;
+    const completionPercentage = Math.round((completedSteps.length / totalSteps) * 100);
+    const readyForCalculation = completionPercentage >= 80; // Allow 80%+ to be ready (was 90%)
+
+    console.log('📊 Available steps from navigation:', navigation.availableSteps);
+    console.log('✅ Completed steps:', completedSteps);
+    console.log('📈 Completion percentage:', completionPercentage, '%');
+    console.log('🎯 Ready for calculation:', readyForCalculation);
+
+    return {
+      completionPercentage,
+      readyForCalculation,
+      completedSteps
+    };
+  };
+
+  /**
+   * Helper function to calculate completed steps (mirrors PatternDefinitionContext logic)
+   */
+  const calculateCompletedSteps = (session: any): string[] => {
+    const completed: string[] = [];
+
+    // Check each step individually with detailed logging
+    console.log('🔎 Checking individual steps...');
+
+    if (session.selected_garment_type_id) {
+      console.log('✅ garment-type: COMPLETED');
+      completed.push('garment-type');
+    } else {
+      console.log('❌ garment-type: MISSING');
+    }
+
+    if (session.selected_gauge_profile_id || (session.gauge_stitch_count && session.gauge_row_count && session.gauge_unit)) {
+      console.log('✅ gauge: COMPLETED');
+      completed.push('gauge');
+    } else {
+      console.log('❌ gauge: MISSING (need profile ID or manual gauge data)');
+    }
+
+    if (session.selected_measurement_set_id) {
+      console.log('✅ measurements: COMPLETED');
+      completed.push('measurements');
+    } else {
+      console.log('❌ measurements: MISSING');
+    }
+
+    if (session.ease_type) {
+      console.log('✅ ease: COMPLETED');
+      completed.push('ease');
+    } else {
+      console.log('❌ ease: MISSING');
+    }
+
+    if (session.selected_yarn_profile_id) {
+      console.log('✅ yarn: COMPLETED');
+      completed.push('yarn');
+    } else {
+      console.log('❌ yarn: MISSING');
+    }
+
+    if (session.selected_stitch_pattern_id) {
+      console.log('✅ stitch-pattern: COMPLETED');
+      completed.push('stitch-pattern');
+    } else {
+      console.log('❌ stitch-pattern: MISSING');
+    }
+
+    // Get garment type to determine which steps are required vs optional
+    const garmentTypeKey = session.garment_type?.type_key;
+    console.log('🎨 Garment type key:', garmentTypeKey);
+
+    // For sweater/cardigan types, these steps have sensible defaults
+    const isSweaterType = garmentTypeKey === 'sweater' || garmentTypeKey === 'cardigan';
+    
+    // For garment structure: allow default construction method for sweaters
+    if (session.parameter_snapshot?.sweater_structure?.construction_method) {
+      console.log('✅ garment-structure: COMPLETED (explicit selection)');
+      completed.push('garment-structure');
+    } else if (isSweaterType) {
+      console.log('✅ garment-structure: COMPLETED (default for sweater type)');
+      completed.push('garment-structure');
+    } else {
+      console.log('❌ garment-structure: MISSING (construction method)');
+      console.log('🔍 parameter_snapshot.sweater_structure:', session.parameter_snapshot?.sweater_structure);
+    }
+
+    // For neckline: allow default neckline for sweaters  
+    if (session.parameter_snapshot?.neckline?.style) {
+      console.log('✅ neckline: COMPLETED (explicit selection)');
+      completed.push('neckline');
+    } else if (isSweaterType) {
+      console.log('✅ neckline: COMPLETED (default for sweater type)');
+      completed.push('neckline');
+    } else {
+      console.log('❌ neckline: MISSING');
+      console.log('🔍 parameter_snapshot.neckline:', session.parameter_snapshot?.neckline);
+    }
+
+    // For sleeves: allow default sleeves for sweaters
+    if (session.parameter_snapshot?.sleeves && (
+        session.parameter_snapshot.sleeves.style || 
+        session.parameter_snapshot.sleeves.length_key || 
+        session.parameter_snapshot.sleeves.cuff_style
+      )) {
+      console.log('✅ sleeves: COMPLETED (explicit selection)');
+      completed.push('sleeves');
+    } else if (isSweaterType) {
+      console.log('✅ sleeves: COMPLETED (default for sweater type)');
+      completed.push('sleeves');
+    } else {
+      console.log('❌ sleeves: MISSING');
+      console.log('🔍 parameter_snapshot.sleeves:', session.parameter_snapshot?.sleeves);
+      console.log('🔍 Full parameter_snapshot:', session.parameter_snapshot);
+    }
+
+    // Check for accessory definition requirement
+    const requiresAccessoryDefinition = garmentTypeKey === 'beanie' || garmentTypeKey === 'scarf' || garmentTypeKey === 'cowl';
+    
+    console.log('🏷️ Requires accessory definition:', requiresAccessoryDefinition);
+
+    if (!requiresAccessoryDefinition || 
+        (requiresAccessoryDefinition && (session.parameter_snapshot?.beanie || session.parameter_snapshot?.scarf_cowl))) {
+      console.log('✅ accessory-definition: COMPLETED (or not required)');
+      completed.push('accessory-definition');
+    } else {
+      console.log('❌ accessory-definition: MISSING (required for this garment type)');
+    }
+
+    console.log('📝 Final completed steps:', completed);
+    return completed;
   };
 
   /**
@@ -858,10 +1303,40 @@ function StepContent({ currentStep }: { currentStep: string }) {
                   }
                 </span>
               </button>
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
-                Proceed to Pattern Calculation
+              <button 
+                onClick={handleProceedToCalculation}
+                disabled={isCalculating}
+                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span>
+                  {isCalculating 
+                    ? t('patternDefinition.calculation.calculating', 'Calculating Pattern...')
+                    : t('patternDefinition.calculation.proceedButton', 'Proceed to Pattern Calculation')
+                  }
+                </span>
               </button>
             </div>
+
+            {/* Calculation Error Display */}
+            {calculationError && (
+              <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-sm font-medium text-red-800">
+                      {t('patternDefinition.calculation.error', 'Calculation Error')}
+                    </h3>
+                    <div className="mt-2 text-sm text-red-700">
+                      <p>{calculationError}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <NavigationButtons />
 

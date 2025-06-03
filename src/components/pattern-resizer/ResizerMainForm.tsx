@@ -330,9 +330,6 @@ export default function ResizerMainForm({
     <div className="space-y-8">
       {/* Template Selection */}
       <section>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          {t('tools.pattern_resizer.template_selection')}
-        </h3>
         <ResizerTemplateSelector
           selectedTemplate={selectedTemplate}
           onTemplateChange={handleTemplateChange}
@@ -394,6 +391,12 @@ export default function ResizerMainForm({
             <>
               {/* Original Gauge Section */}
               <section>
+                {/* Step instruction */}
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-md">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    {t('tools.pattern_resizer.form.step_instructions.original_gauge')}
+                  </p>
+                </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {t('tools.pattern_resizer.form.original_gauge_section')}
                 </h3>
@@ -431,6 +434,12 @@ export default function ResizerMainForm({
 
               {/* Original Pattern Values Section */}
               <section>
+                {/* Step instruction */}
+                <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-md">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    {t('tools.pattern_resizer.form.step_instructions.original_pattern')}
+                  </p>
+                </div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {t('tools.pattern_resizer.original_pattern_section')}
                 </h3>
@@ -452,6 +461,12 @@ export default function ResizerMainForm({
 
           {/* New Gauge Section - Always visible */}
           <section>
+            {/* Step instruction */}
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-md">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                {t('tools.pattern_resizer.form.step_instructions.new_gauge')}
+              </p>
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('tools.pattern_resizer.new_gauge_section')}
             </h3>
@@ -489,6 +504,12 @@ export default function ResizerMainForm({
 
           {/* New Dimensions Section - Always visible */}
           <section>
+            {/* Step instruction */}
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-md">
+              <p className="text-sm text-blue-800 dark:text-blue-200">
+                {t('tools.pattern_resizer.form.step_instructions.new_dimensions')}
+              </p>
+            </div>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
               {t('tools.pattern_resizer.new_dimensions_section')}
             </h3>
@@ -505,21 +526,29 @@ export default function ResizerMainForm({
           </section>
 
           {/* Action Buttons */}
-          <section className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={handleCalculate}
-              disabled={disabled || isCalculating || !selectedTemplate}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              {isCalculating ? t('tools.pattern_resizer.calculating') : t('tools.pattern_resizer.calculate')}
-            </button>
-            <button
-              onClick={handleReset}
-              disabled={disabled || isCalculating}
-              className="flex-1 sm:flex-none bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-            >
-              {t('tools.pattern_resizer.reset')}
-            </button>
+          <section>
+            {/* Step instruction for calculate button */}
+            <div className="mb-4 p-3 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-400 rounded-r-md">
+              <p className="text-sm text-green-800 dark:text-green-200">
+                {t('tools.pattern_resizer.form.step_instructions.calculate')}
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleCalculate}
+                disabled={disabled || isCalculating || !selectedTemplate}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-medium py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              >
+                {isCalculating ? t('tools.pattern_resizer.calculating') : t('tools.pattern_resizer.calculate')}
+              </button>
+              <button
+                onClick={handleReset}
+                disabled={disabled || isCalculating}
+                className="flex-1 sm:flex-none bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                {t('tools.pattern_resizer.reset')}
+              </button>
+            </div>
           </section>
 
           {/* General Error Display */}

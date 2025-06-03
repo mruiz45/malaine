@@ -49,7 +49,7 @@ const initialState: PatternDefinitionContextState = {
   navigation: initialNavigation,
   isLoading: false,
   error: undefined,
-  autoSave: true
+  autoSave: false // Disabled for memory-only mode
 };
 
 /**
@@ -66,6 +66,70 @@ type PatternDefinitionAction =
   | { type: 'CLEAR_SESSION' };
 
 /**
+ * Enhanced logging function for pattern definition dumps
+ */
+function logPatternDefinitionDump(
+  action: string, 
+  currentStep: DefinitionStep, 
+  sessionData: PatternDefinitionSessionWithData | undefined,
+  updateData?: UpdatePatternDefinitionSessionData
+) {
+  console.group(`🏗️ [PATTERN DEFINITION DUMP] - ${action}`);
+  
+  console.log('📍 Current Step:', currentStep);
+  console.log('⏰ Timestamp:', new Date().toISOString());
+  
+  if (updateData) {
+    console.log('📝 Update Data:', updateData);
+  }
+  
+  if (sessionData) {
+    console.log('🗄️ Complete Session State:');
+    console.log('  ├── Session ID:', sessionData.id);
+    console.log('  ├── Session Name:', sessionData.session_name);
+    console.log('  ├── Garment Type ID:', sessionData.selected_garment_type_id);
+    console.log('  ├── Gauge Data:');
+    console.log('  │   ├── Profile ID:', sessionData.selected_gauge_profile_id);
+    console.log('  │   ├── Stitch Count:', sessionData.gauge_stitch_count);
+    console.log('  │   ├── Row Count:', sessionData.gauge_row_count);
+    console.log('  │   └── Unit:', sessionData.gauge_unit);
+    console.log('  ├── Measurements:');
+    console.log('  │   └── Set ID:', sessionData.selected_measurement_set_id);
+    console.log('  ├── Ease Data:');
+    console.log('  │   ├── Type:', sessionData.ease_type);
+    console.log('  │   ├── Bust Value:', sessionData.ease_value_bust);
+    console.log('  │   └── Unit:', sessionData.ease_unit);
+    console.log('  ├── Yarn Profile ID:', sessionData.selected_yarn_profile_id);
+    console.log('  ├── Stitch Pattern ID:', sessionData.selected_stitch_pattern_id);
+    console.log('  └── Parameter Snapshot:');
+    
+    if (sessionData.parameter_snapshot) {
+      console.log('      ├── Sweater Structure:', sessionData.parameter_snapshot.sweater_structure);
+      console.log('      ├── Neckline:', sessionData.parameter_snapshot.neckline);
+      console.log('      ├── Sleeves:', sessionData.parameter_snapshot.sleeves);
+      console.log('      ├── Beanie:', sessionData.parameter_snapshot.beanie);
+      console.log('      ├── Scarf/Cowl:', sessionData.parameter_snapshot.scarf_cowl);
+      console.log('      └── Color Scheme:', sessionData.parameter_snapshot.color_scheme);
+    } else {
+      console.log('      (empty)');
+    }
+    
+    // Calculate and show completion status
+    const completedSteps = calculateCompletedSteps(sessionData);
+    console.log('📊 Progress Analysis:');
+    console.log('  ├── Completed Steps:', completedSteps);
+    console.log('  ├── Total Steps:', DEFINITION_STEPS.length);
+    console.log('  ├── Completion %:', Math.round((completedSteps.length / DEFINITION_STEPS.length) * 100));
+    console.log('  └── Ready for Calculation:', completedSteps.length >= 6);
+    
+  } else {
+    console.log('❌ No session data available');
+  }
+  
+  console.groupEnd();
+}
+
+/**
  * Reducer for pattern definition state management
  */
 function patternDefinitionReducer(
@@ -80,6 +144,7 @@ function patternDefinitionReducer(
       return { ...state, error: action.payload, isLoading: false };
     
     case 'SET_SESSION':
+      logPatternDefinitionDump('SESSION_LOADED', state.navigation.currentStep, action.payload);
       return { 
         ...state, 
         currentSession: action.payload,
@@ -88,6 +153,7 @@ function patternDefinitionReducer(
       };
     
     case 'SET_CURRENT_STEP':
+      logPatternDefinitionDump('STEP_CHANGED', action.payload, state.currentSession);
       return {
         ...state,
         navigation: {
@@ -112,15 +178,21 @@ function patternDefinitionReducer(
     
     case 'UPDATE_SESSION_DATA':
       if (!state.currentSession) return state;
+      
+      const updatedSession = {
+        ...state.currentSession,
+        ...action.payload
+      };
+      
+      logPatternDefinitionDump('SESSION_UPDATED', state.navigation.currentStep, updatedSession, action.payload);
+      
       return {
         ...state,
-        currentSession: {
-          ...state.currentSession,
-          ...action.payload
-        }
+        currentSession: updatedSession
       };
     
     case 'CLEAR_SESSION':
+      logPatternDefinitionDump('SESSION_CLEARED', state.navigation.currentStep, undefined);
       return {
         ...state,
         currentSession: undefined,
@@ -152,23 +224,44 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
   const [state, dispatch] = useReducer(patternDefinitionReducer, initialState);
 
   /**
-   * Create a new pattern definition session
+   * Create a new pattern definition session (memory-only)
    */
   const createSession = useCallback(async (data?: CreatePatternDefinitionSessionData) => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: undefined });
 
-      const newSession = await patternDefinitionService.createSession(data);
+      // Create a mock session in memory instead of hitting the database
+      const mockSession: PatternDefinitionSessionWithData = {
+        id: `mock-session-${Date.now()}`,
+        session_name: data?.session_name || 'Unnamed Pattern',
+        user_id: 'mock-user',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        craft_type: data?.craft_type || 'knitting',
+        status: data?.status || 'draft',
+        selected_garment_type_id: undefined,
+        selected_gauge_profile_id: undefined,
+        gauge_stitch_count: undefined,
+        gauge_row_count: undefined,
+        gauge_unit: undefined,
+        selected_measurement_set_id: undefined,
+        ease_type: undefined,
+        ease_value_bust: undefined,
+        ease_unit: undefined,
+        selected_yarn_profile_id: undefined,
+        selected_stitch_pattern_id: undefined,
+        parameter_snapshot: undefined,
+        components: []
+      };
       
-      // Load the full session data
-      const fullSession = await patternDefinitionService.getSession(newSession.id);
-      
-      dispatch({ type: 'SET_SESSION', payload: fullSession });
+      dispatch({ type: 'SET_SESSION', payload: mockSession });
       dispatch({ type: 'SET_CURRENT_STEP', payload: 'garment-type' });
       dispatch({ type: 'SET_COMPLETED_STEPS', payload: [] });
 
-      return newSession;
+      logPatternDefinitionDump('SESSION_CREATED', 'garment-type', mockSession);
+
+      return mockSession;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create session';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
@@ -177,7 +270,7 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
   }, []);
 
   /**
-   * Load an existing session
+   * Load an existing session (fallback to database if needed)
    */
   const loadSession = useCallback(async (sessionId: string) => {
     try {
@@ -200,10 +293,13 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
   }, []);
 
   /**
-   * Update the current session
+   * Update the current session (memory-only, no database save)
    */
   const updateSession = useCallback(async (data: UpdatePatternDefinitionSessionData) => {
+    console.log('🔄 [CONTEXT] updateSession called with data:', data);
+    
     if (!state.currentSession) {
+      console.error('🔄 [CONTEXT] No active session to update');
       throw new Error('No active session to update');
     }
 
@@ -211,20 +307,23 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: undefined });
 
-      const updatedSession = await patternDefinitionService.updateSession(
-        state.currentSession.id,
-        data
-      );
+      // Create the updated session data immediately
+      const updatedSession = { ...state.currentSession, ...data };
 
-      // Reload full session data
-      const fullSession = await patternDefinitionService.getSession(updatedSession.id);
-      dispatch({ type: 'SET_SESSION', payload: fullSession });
+      // Update session data directly in memory
+      dispatch({ type: 'UPDATE_SESSION_DATA', payload: data });
 
-      // Recalculate completed steps
-      const completedSteps = calculateCompletedSteps(fullSession);
-      dispatch({ type: 'SET_COMPLETED_STEPS', payload: completedSteps });
+      // Recalculate completed steps using the updated session data
+      setTimeout(() => {
+        const completedSteps = calculateCompletedSteps(updatedSession);
+        dispatch({ type: 'SET_COMPLETED_STEPS', payload: completedSteps });
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }, 100);
+
+      console.log('🔄 [CONTEXT] updateSession completed (memory-only)');
 
     } catch (error) {
+      console.error('🔄 [CONTEXT] Error in updateSession:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to update session';
       dispatch({ type: 'SET_ERROR', payload: errorMessage });
       throw error;
@@ -232,24 +331,18 @@ export function PatternDefinitionProvider({ children }: PatternDefinitionProvide
   }, [state.currentSession]);
 
   /**
-   * Save the current session
+   * Save the current session (optional database save)
    */
   const saveSession = useCallback(async () => {
     if (!state.currentSession) {
       throw new Error('No active session to save');
     }
 
-    try {
-      await patternDefinitionService.saveSessionWithSnapshot(
-        state.currentSession.id,
-        state.currentSession
-      );
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to save session';
-      dispatch({ type: 'SET_ERROR', payload: errorMessage });
-      throw error;
-    }
-  }, [state.currentSession]);
+    // For now, this is a no-op in memory-only mode
+    // Could be extended to save to localStorage or database on demand
+    console.log('💾 [CONTEXT] saveSession called (memory-only mode, no action taken)');
+    logPatternDefinitionDump('SAVE_REQUESTED', state.navigation.currentStep, state.currentSession);
+  }, [state.currentSession, state.navigation.currentStep]);
 
   /**
    * Navigate to a specific step
@@ -374,49 +467,86 @@ export function usePatternDefinition(): IPatternDefinitionContext {
 function calculateCompletedSteps(session: PatternDefinitionSessionWithData): DefinitionStep[] {
   const completed: DefinitionStep[] = [];
 
+  console.log('📊 [CALCULATE_STEPS] Starting calculation for session:', session.id);
+
   if (session.selected_garment_type_id) {
     completed.push('garment-type');
+    console.log('✅ [CALCULATE_STEPS] garment-type completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] garment-type missing');
   }
 
   // Check for gauge - either from profile or direct input
   if (session.selected_gauge_profile_id || 
       (session.gauge_stitch_count && session.gauge_row_count && session.gauge_unit)) {
     completed.push('gauge');
+    console.log('✅ [CALCULATE_STEPS] gauge completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] gauge missing');
   }
   
   if (session.selected_measurement_set_id) {
     completed.push('measurements');
+    console.log('✅ [CALCULATE_STEPS] measurements completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] measurements missing');
   }
   
   if (session.ease_type) {
     completed.push('ease');
+    console.log('✅ [CALCULATE_STEPS] ease completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] ease missing');
   }
   
   if (session.selected_yarn_profile_id) {
     completed.push('yarn');
+    console.log('✅ [CALCULATE_STEPS] yarn completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] yarn missing');
   }
   
   if (session.selected_stitch_pattern_id) {
     completed.push('stitch-pattern');
+    console.log('✅ [CALCULATE_STEPS] stitch-pattern completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] stitch-pattern missing');
   }
 
   // Check for garment structure (sweater structure)
+  console.log('🔍 [CALCULATE_STEPS] Checking garment-structure...');
+  console.log('🔍 [CALCULATE_STEPS] parameter_snapshot:', session.parameter_snapshot);
+  console.log('🔍 [CALCULATE_STEPS] sweater_structure:', session.parameter_snapshot?.sweater_structure);
   if (session.parameter_snapshot?.sweater_structure?.construction_method) {
     completed.push('garment-structure');
+    console.log('✅ [CALCULATE_STEPS] garment-structure completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] garment-structure missing');
   }
 
   // Check for neckline selection (US_4.4)
+  console.log('🔍 [CALCULATE_STEPS] Checking neckline...');
+  console.log('🔍 [CALCULATE_STEPS] neckline data:', session.parameter_snapshot?.neckline);
+  console.log('🔍 [CALCULATE_STEPS] neckline style:', session.parameter_snapshot?.neckline?.style);
   if (session.parameter_snapshot?.neckline?.style) {
     completed.push('neckline');
+    console.log('✅ [CALCULATE_STEPS] neckline completed with style:', session.parameter_snapshot.neckline.style);
+  } else {
+    console.log('❌ [CALCULATE_STEPS] neckline missing - no style found');
   }
 
   // Check for sleeve selection (US_4.5)
+  console.log('🔍 [CALCULATE_STEPS] Checking sleeves...');
+  console.log('🔍 [CALCULATE_STEPS] sleeves data:', session.parameter_snapshot?.sleeves);
   if (session.parameter_snapshot?.sleeves && (
       session.parameter_snapshot.sleeves.style || 
       session.parameter_snapshot.sleeves.length_key || 
       session.parameter_snapshot.sleeves.cuff_style
     )) {
     completed.push('sleeves');
+    console.log('✅ [CALCULATE_STEPS] sleeves completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] sleeves missing');
   }
 
   // Check for accessory definition (US_7.1)
@@ -426,12 +556,20 @@ function calculateCompletedSteps(session: PatternDefinitionSessionWithData): Def
   const garmentTypeKey = session.garment_type?.type_key;
   const requiresAccessoryDefinition = garmentTypeKey === 'beanie' || garmentTypeKey === 'scarf' || garmentTypeKey === 'cowl';
   
+  console.log('🔍 [CALCULATE_STEPS] Checking accessory-definition...');
+  console.log('🔍 [CALCULATE_STEPS] garmentTypeKey:', garmentTypeKey);
+  console.log('🔍 [CALCULATE_STEPS] requiresAccessoryDefinition:', requiresAccessoryDefinition);
+  
   if (session.parameter_snapshot?.beanie || 
       session.parameter_snapshot?.scarf_cowl || 
       !requiresAccessoryDefinition) {
     completed.push('accessory-definition');
+    console.log('✅ [CALCULATE_STEPS] accessory-definition completed');
+  } else {
+    console.log('❌ [CALCULATE_STEPS] accessory-definition missing');
   }
 
+  console.log('📊 [CALCULATE_STEPS] Final completed steps:', completed);
   return completed;
 }
 

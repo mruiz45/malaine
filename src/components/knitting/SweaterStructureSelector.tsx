@@ -201,16 +201,20 @@ export default function SweaterStructureSelector({
   /**
    * Handle construction method selection
    */
-  const handleConstructionMethodSelect = (method: ConstructionMethod) => {
+  const handleConstructionMethodSelectInternal = (method: ConstructionMethod) => {
+    console.log('🔵 [SweaterStructureSelector] onClick - Construction Method:', method);
     if (disabled || isLoading) return;
     onConstructionMethodSelect(method);
     
     // If the current body shape is not compatible with the new construction method, clear it
+    // The parent component (Workspace) is responsible for actually clearing the body shape data in the context
+    // This logic here is more for immediate UI feedback or chained selections if needed locally.
     if (selectedBodyShape) {
-      const selectedShape = BODY_SHAPES.find(shape => shape.key === selectedBodyShape);
-      if (selectedShape && !selectedShape.compatible_construction_methods?.includes(method)) {
-        // The parent component should handle clearing the body shape
-        // This is just for UX feedback
+      const selectedShapeData = BODY_SHAPES.find(shape => shape.key === selectedBodyShape);
+      if (selectedShapeData && !selectedShapeData.compatible_construction_methods?.includes(method)) {
+        // Consider calling onBodyShapeSelect(undefined) or similar if direct clearing is desired from here
+        // For now, we rely on the parent to manage the state consistency.
+        console.log('🔵 [SweaterStructureSelector] Selected body shape ', selectedBodyShape, ' might be incompatible with new method ', method);
       }
     }
   };
@@ -218,7 +222,8 @@ export default function SweaterStructureSelector({
   /**
    * Handle body shape selection
    */
-  const handleBodyShapeSelect = (shape: BodyShape) => {
+  const handleBodyShapeSelectInternal = (shape: BodyShape) => {
+    console.log('🔵 [SweaterStructureSelector] onClick - Body Shape:', shape);
     if (disabled || isLoading) return;
     onBodyShapeSelect(shape);
   };
@@ -259,26 +264,26 @@ export default function SweaterStructureSelector({
           {t('sweaterStructure.constructionMethod', 'Construction Method')}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredConstructionMethods.map((method) => {
-            const isSelected = selectedConstructionMethod === method.key;
+          {filteredConstructionMethods.map((methodOption) => {
+            const isSelected = selectedConstructionMethod === methodOption.key;
             
             return (
               <div
-                key={method.key}
+                key={methodOption.key}
                 className={`
                   relative cursor-pointer rounded-lg border-2 p-4 transition-all duration-200
                   ${isSelected 
-                    ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500 ring-opacity-50' 
-                    : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-emerald-50'
+                    ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-500 ring-opacity-50' 
+                    : 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50'
                   }
-                  ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+                  ${disabled || isLoading ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
-                onClick={() => handleConstructionMethodSelect(method.key)}
+                onClick={() => handleConstructionMethodSelectInternal(methodOption.key)}
               >
                 {/* Selection indicator */}
                 {isSelected && (
                   <div className="absolute top-3 right-3">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500">
                       <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
@@ -289,20 +294,20 @@ export default function SweaterStructureSelector({
                 {/* Content */}
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    {getConstructionMethodIcon(method.key, isSelected)}
+                    {getConstructionMethodIcon(methodOption.key, isSelected)}
                     <h5 className="text-sm font-medium text-gray-900">
-                      {method.display_name}
+                      {methodOption.display_name}
                     </h5>
                   </div>
                   
                   <p className="text-xs text-gray-600">
-                    {method.description}
+                    {methodOption.description}
                   </p>
                   
-                  {method.difficulty && (
+                  {methodOption.difficulty && (
                     <div className="flex items-center">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getDifficultyBadgeColor(method.difficulty)}`}>
-                        {t(`sweaterStructure.difficulty.${method.difficulty}`, method.difficulty)}
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getDifficultyBadgeColor(methodOption.difficulty)}`}>
+                        {t(`sweaterStructure.difficulty.${methodOption.difficulty}`, methodOption.difficulty)}
                       </span>
                     </div>
                   )}
@@ -319,28 +324,28 @@ export default function SweaterStructureSelector({
           {t('sweaterStructure.bodyShape', 'Body Shape')}
         </h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredBodyShapes.map((shape) => {
-            const isSelected = selectedBodyShape === shape.key;
+          {filteredBodyShapes.map((shapeOption) => {
+            const isSelected = selectedBodyShape === shapeOption.key;
             const isDisabled = disabled || (selectedConstructionMethod && 
-              !shape.compatible_construction_methods?.includes(selectedConstructionMethod));
+              !shapeOption.compatible_construction_methods?.includes(selectedConstructionMethod));
             
             return (
               <div
-                key={shape.key}
+                key={shapeOption.key}
                 className={`
                   relative cursor-pointer rounded-lg border-2 p-4 transition-all duration-200
                   ${isSelected 
-                    ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500 ring-opacity-50' 
-                    : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-emerald-50'
+                    ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-500 ring-opacity-50' 
+                    : 'border-gray-200 bg-white hover:border-indigo-300 hover:bg-indigo-50'
                   }
                   ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}
                 `}
-                onClick={() => !isDisabled && handleBodyShapeSelect(shape.key)}
+                onClick={() => !isDisabled && handleBodyShapeSelectInternal(shapeOption.key)}
               >
                 {/* Selection indicator */}
                 {isSelected && (
                   <div className="absolute top-3 right-3">
-                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-500">
                       <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
@@ -351,20 +356,20 @@ export default function SweaterStructureSelector({
                 {/* Content */}
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
-                    {getBodyShapeIcon(shape.key, isSelected)}
+                    {getBodyShapeIcon(shapeOption.key, isSelected)}
                     <h5 className="text-sm font-medium text-gray-900">
-                      {shape.display_name}
+                      {shapeOption.display_name}
                     </h5>
                   </div>
                   
                   <p className="text-xs text-gray-600">
-                    {shape.description}
+                    {shapeOption.description}
                   </p>
                   
-                  {shape.fit_type && (
+                  {shapeOption.fit_type && (
                     <div className="flex items-center">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {t(`sweaterStructure.fitType.${shape.fit_type}`, shape.fit_type)}
+                        {t(`sweaterStructure.fitType.${shapeOption.fit_type}`, shapeOption.fit_type)}
                       </span>
                     </div>
                   )}

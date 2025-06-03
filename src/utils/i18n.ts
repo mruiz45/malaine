@@ -7,6 +7,15 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 const i18nConfig = {
   fallbackLng: 'en',
   debug: process.env.NODE_ENV === 'development',
+  // debug: false, // Temporairement désactivé pour réduire les logs
+  
+  // Gestionnaire personnalisé pour les clés manquantes - supprime les logs
+  missingKeyHandler: () => {
+    // Ne rien faire - supprime les logs de clés manquantes
+  },
+  
+  // Alternative : simplement désactiver les logs de debug
+  // missingKeyHandler: undefined,
   
   interpolation: {
     escapeValue: false, // not needed for react as it escapes by default

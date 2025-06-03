@@ -42,6 +42,12 @@ export default function ResizerTemplateSelector({
         <h3 className="text-lg font-medium text-gray-900 mb-2">
           {t('tools.pattern_resizer.template_selection')}
         </h3>
+        {/* Step 1 instruction */}
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-400 rounded-r-md">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            {t('tools.pattern_resizer.form.step_instructions.template_selection')}
+          </p>
+        </div>
         <p className="text-sm text-gray-600 mb-4">
           {t('tools.pattern_resizer.select_template')}
         </p>

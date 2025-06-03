@@ -63,7 +63,10 @@ export class PatternDefinitionService {
    * Fetch a specific pattern definition session by ID
    */
   async getSession(sessionId: string): Promise<PatternDefinitionSessionWithData> {
+    console.log('🗄️ [SERVICE] getSession called for sessionId:', sessionId);
+    
     try {
+      console.log('🗄️ [SERVICE] Making fetch request to:', `${this.baseUrl}/${sessionId}`);
       const response = await fetch(`${this.baseUrl}/${sessionId}`, {
         method: 'GET',
         credentials: 'include',
@@ -71,6 +74,8 @@ export class PatternDefinitionService {
           'Content-Type': 'application/json',
         },
       });
+
+      console.log('🗄️ [SERVICE] Response status:', response.status, response.ok);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -80,6 +85,12 @@ export class PatternDefinitionService {
       }
 
       const result: PatternDefinitionSessionResponse = await response.json();
+      console.log('🗄️ [SERVICE] Response data received:', {
+        success: result.success,
+        hasData: !!result.data,
+        dataId: result.data?.id,
+        parameterSnapshot: result.data?.parameter_snapshot
+      });
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to fetch session');
@@ -89,9 +100,10 @@ export class PatternDefinitionService {
         throw new Error('No session data received');
       }
 
+      console.log('🗄️ [SERVICE] getSession completed successfully');
       return result.data as PatternDefinitionSessionWithData;
     } catch (error) {
-      console.error('Error fetching pattern definition session:', error);
+      console.error('🗄️ [SERVICE] Error in getSession:', error);
       throw error;
     }
   }
@@ -132,21 +144,69 @@ export class PatternDefinitionService {
   }
 
   /**
+   * Clean data by removing undefined values and empty objects
+   */
+  private cleanUpdateData(data: UpdatePatternDefinitionSessionData): UpdatePatternDefinitionSessionData {
+    const cleaned: UpdatePatternDefinitionSessionData = {};
+    
+    // Iterate through all properties and only include defined values
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        // For objects, check if they have any defined properties
+        if (typeof value === 'object' && !Array.isArray(value)) {
+          const cleanedObject = Object.entries(value).reduce((acc, [subKey, subValue]) => {
+            if (subValue !== undefined && subValue !== null) {
+              acc[subKey] = subValue;
+            }
+            return acc;
+          }, {} as any);
+          
+          // Only include the object if it has at least one property
+          if (Object.keys(cleanedObject).length > 0) {
+            cleaned[key as keyof UpdatePatternDefinitionSessionData] = cleanedObject;
+          }
+        } else {
+          cleaned[key as keyof UpdatePatternDefinitionSessionData] = value;
+        }
+      }
+    });
+    
+    return cleaned;
+  }
+
+  /**
    * Update a pattern definition session
    */
   async updateSession(
     sessionId: string,
     data: UpdatePatternDefinitionSessionData
   ): Promise<PatternDefinitionSession> {
+    console.log('💾 [SERVICE] updateSession called for sessionId:', sessionId);
+    console.log('💾 [SERVICE] Raw update data:', data);
+    
+    // Clean the data to remove undefined values
+    const cleanedData = this.cleanUpdateData(data);
+    console.log('💾 [SERVICE] Cleaned update data:', cleanedData);
+    
+    // If no valid data remains after cleaning, skip the update
+    if (Object.keys(cleanedData).length === 0) {
+      console.log('💾 [SERVICE] No valid data to update, skipping update');
+      // Return current session data instead
+      return this.getSession(sessionId);
+    }
+    
     try {
+      console.log('💾 [SERVICE] Making fetch request to:', `${this.baseUrl}/${sessionId}`);
       const response = await fetch(`${this.baseUrl}/${sessionId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(cleanedData),
       });
+
+      console.log('💾 [SERVICE] Response status:', response.status, response.ok);
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -156,6 +216,12 @@ export class PatternDefinitionService {
       }
 
       const result: PatternDefinitionSessionResponse = await response.json();
+      console.log('💾 [SERVICE] Response data received:', {
+        success: result.success,
+        hasData: !!result.data,
+        dataId: result.data?.id,
+        error: result.error
+      });
 
       if (!result.success) {
         throw new Error(result.error || 'Failed to update session');
@@ -165,9 +231,10 @@ export class PatternDefinitionService {
         throw new Error('No session data received');
       }
 
+      console.log('💾 [SERVICE] updateSession completed successfully');
       return result.data;
     } catch (error) {
-      console.error('Error updating pattern definition session:', error);
+      console.error('💾 [SERVICE] Error in updateSession:', error);
       throw error;
     }
   }

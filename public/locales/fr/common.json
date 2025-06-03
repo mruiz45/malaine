@@ -747,188 +747,120 @@
     },
     "pattern_resizer": {
       "title": "Redimensionnement de Patron Existant",
-      "description": "Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées",
-      "subtitle": "Redimensionnez les nombres de mailles et mesures d'un patron existant selon vos spécifications",
-      "template_selection": "Sélectionnez la Structure du Patron",
-      "original_pattern_section": "Informations du Patron Original",
-      "new_gauge_section": "Votre Nouvel Échantillon",
-      "new_dimensions_section": "Vos Nouvelles Dimensions Souhaitées",
-      "results_section": "Nouvelles Valeurs Calculées",
-      "calculate": "Calculer le Nouveau Patron",
-      "calculating": "Calcul en cours...",
-      "reset": "Réinitialiser le Formulaire",
-      "select_template": "Sélectionnez un modèle de structure de patron",
-      "no_template_selected": "Veuillez sélectionner un modèle de structure de patron pour commencer",
-      "supports_shaping": "Supporte le Façonnage",
-      "related": {
-        "gauge_calculator": "Utilisez le Calculateur d'Échantillon Inversé pour des conversions et calculs d'échantillon détaillés.",
-        "yarn_estimator": "Estimez les besoins en laine pour vos dimensions de patron redimensionnées."
-      },
-      "gauge_selection": {
-        "title": "Sélectionnez Votre Échantillon",
-        "use_saved_profile": "Utiliser un Profil d'Échantillon Sauvegardé",
-        "enter_manually": "Saisir l'Échantillon Manuellement",
-        "select_profile": "Sélectionnez un profil d'échantillon",
-        "no_profiles": "Aucun profil d'échantillon trouvé",
-        "create_profile_link": "Créez d'abord un profil d'échantillon",
-        "manual_entry": "Saisie Manuelle d'Échantillon"
-      },
-      "templates": {
-        "simple_body_panel_rectangular": {
-          "name": "Panel de Corps Rectangulaire Simple",
-          "description": "Pour les pièces de corps rectangulaires basiques comme les devants/dos de pulls sans façonnage complexe"
-        },
-        "simple_sleeve_tapered": {
-          "name": "Manche Effilée Simple",
-          "description": "Pour les manches avec effilage linéaire basique du poignet au haut du bras"
-        },
-        "simple_scarf_rectangular": {
-          "name": "Écharpe Rectangulaire Simple",
-          "description": "Pour les écharpes rectangulaires basiques avec largeur constante"
-        },
-        "simple_hat_cylindrical": {
-          "name": "Corps de Bonnet Cylindrique Simple",
-          "description": "Pour le corps cylindrique principal d'un bonnet (avant le façonnage de la calotte)"
-        }
-      },
-      "form": {
-        "original_gauge_section": "Échantillon du Patron Original",
-        "original_gauge_stitches": "Échantillon Original : Mailles par 10cm/4po",
-        "original_gauge_rows": "Échantillon Original : Rangs par 10cm/4po",
-        "original_gauge_unit": "Unité de l'Échantillon Original",
-        "original_cast_on": "Montage Original",
-        "original_rows_total": "Total de Rangs Original",
-        "original_finished_width": "Largeur Finie Originale",
-        "original_finished_length": "Longueur Finie Originale",
-        "original_cuff_stitches": "Mailles de Poignet Originales",
-        "original_upper_arm_stitches": "Mailles du Haut du Bras Originales",
-        "original_sleeve_length_rows": "Longueur de Manche Originale (en Rangs)",
-        "original_shaping_stitches_per_event": "Mailles Aug/Dim par Rang de Façonnage Original",
-        "original_head_circumference": "Tour de Tête Original",
-        "original_hat_height": "Hauteur de Bonnet Originale",
-        "new_finished_width": "NOUVELLE Largeur Finie Souhaitée",
-        "new_finished_length": "NOUVELLE Longueur Finie Souhaitée",
-        "new_cuff_width": "NOUVELLE Largeur de Poignet Souhaitée",
-        "new_upper_arm_width": "NOUVELLE Largeur du Haut du Bras Souhaitée",
-        "new_sleeve_length": "NOUVELLE Longueur de Manche Souhaitée",
-        "new_head_circumference": "NOUVEAU Tour de Tête Souhaité",
-        "new_hat_height": "NOUVELLE Hauteur de Bonnet Souhaitée",
-        "unit_cm": "Centimètres (cm)",
-        "unit_inch": "Pouces (po)"
-      },
-      "results": {
-        "title": "Vos Nouveaux Nombres de Patron",
-        "new_cast_on_stitches": "Nouveau Montage",
-        "new_total_rows": "Nouveau Total de Rangs",
-        "new_actual_width": "Nouvelle Largeur Réelle",
-        "new_actual_length": "Nouvelle Longueur Réelle",
-        "new_cuff_stitches": "Nouvelles Mailles de Poignet",
-        "new_upper_arm_stitches": "Nouvelles Mailles du Haut du Bras",
-        "new_sleeve_length_rows": "Nouvelle Longueur de Manche (en Rangs)",
-        "new_shaping_schedule_summary": "Nouveau Planning de Façonnage",
-        "new_actual_circumference": "Nouvelle Circonférence Réelle",
-        "new_actual_height": "Nouvelle Hauteur Réelle",
-        "original_values_title": "Valeurs du Patron Original",
-        "new_values_title": "Vos Nouvelles Valeurs",
-        "calculation_summary": "Résumé du Calcul",
-        "stitches": "mailles",
-        "rows": "rangs",
-        "gauge_used": "Échantillon utilisé",
-        "template_used": "Modèle utilisé"
-      },
-      "validation": {
-        "template_required": "Veuillez sélectionner un modèle de structure de patron",
-        "original_gauge_stitches_required": "L'échantillon original mailles par unité est requis",
-        "original_gauge_rows_required": "L'échantillon original rangs par unité est requis",
-        "original_gauge_positive": "Les valeurs d'échantillon original doivent être des nombres positifs",
-        "new_gauge_required": "Vos informations de nouvel échantillon sont requises",
-        "new_gauge_positive": "Les valeurs de nouvel échantillon doivent être des nombres positifs",
-        "original_pattern_values_required": "Les valeurs du patron original sont requises",
-        "original_values_positive": "Les valeurs du patron original doivent être des nombres positifs",
-        "new_dimensions_required": "Les nouvelles dimensions souhaitées sont requises",
-        "new_dimensions_positive": "Les nouvelles dimensions doivent être des nombres positifs",
-        "calculation_error": "Erreur lors du calcul"
-      },
-      "messages": {
-        "calculation_success": "Patron redimensionné avec succès !",
-        "calculation_error": "Échec du calcul des nouvelles valeurs de patron",
-        "loading_templates": "Chargement des modèles de patron...",
-        "loading_profiles": "Chargement des profils d'échantillon...",
-        "no_calculation": "Aucun calcul disponible"
+      "subtitle": "Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées.",
+      "description": "Redimensionnez les nombres de mailles et mesures selon vos spécifications.",
+      "help": {
+        "title": "Comment ça Marche ?",
+        "steps": [
+          "Sélectionnez un type de structure de patron (template) ci-dessous qui correspond le mieux à la pièce que vous souhaitez redimensionner.",
+          "Entrez les informations de l'échantillon (tension) de VOTRE fil et de celui du patron ORIGINAL.",
+          "Remplissez les mesures clés du patron ORIGINAL (ex: nombre de mailles au montage, largeur finie).",
+          "Indiquez les NOUVELLES dimensions souhaitées pour votre pièce.",
+          "Cliquez sur 'Calculer' pour obtenir les nouvelles instructions de mailles et de rangs."
+        ],
+        "tips": [
+          "Pour des résultats optimaux, utilisez un échantillon mesuré avec précision et lavé/bloqué comme votre projet final le sera.",
+          "Cet outil est plus adapté pour des formes simples. Pour des façonnages complexes (ex: raglans, emmanchures très ajustées), des ajustements manuels supplémentaires seront nécessaires."
+        ]
       },
       "disclaimers": {
         "title": "Avertissements Importants",
-        "content": "Cet outil fournit uniquement un redimensionnement numérique et ne peut pas tenir compte de :",
+        "content": "Cet outil fournit des estimations mathématiques. La structure du tricot, le type de fil, et la tension individuelle peuvent influencer le résultat final. Toujours faire un échantillon !",
         "limitations": [
-          "Caractéristiques complexes du patron au-delà des mesures de base",
-          "Ajustements ou interactions des motifs de points",
-          "Différences de caractéristiques et de tombé de la laine",
-          "Variations des méthodes de construction",
-          "Techniques de façonnage avancées"
+          "Ne prend pas en compte les détails de construction complexes (ex: torsades, dentelle très texturée) qui peuvent affecter la taille.",
+          "Le façonnage est simplifié ; des ajustements manuels peuvent être nécessaires pour des courbes précises."
         ],
-        "recommendation": "Utilisez votre jugement en tricot/crochet pour vérifier les résultats et faire les ajustements nécessaires.",
-        "note": "Ceci est un point de départ pour l'adaptation de patron, pas une solution complète."
+        "recommendation": "Considérez ces chiffres comme un excellent point de départ. Tricotez toujours un échantillon et mesurez votre travail au fur et à mesure.",
+        "note": "Le redimensionnement de patrons est un art autant qu'une science. N'hésitez pas à ajuster pour obtenir le tombé parfait !"
       },
-      "help": {
-        "title": "Comment Utiliser Cet Outil",
-        "steps": [
-          "Sélectionnez la structure de patron qui correspond à votre patron existant",
-          "Entrez l'échantillon et les mesures clés du patron original",
-          "Entrez votre propre échantillon (d'après votre échantillon test ou profils sauvegardés)",
-          "Entrez vos nouvelles dimensions souhaitées",
-          "Examinez les ajustements calculés"
-        ],
-        "tips": [
-          "Toujours faire un échantillon avec votre laine pour obtenir un échantillon précis",
-          "Vérifiez soigneusement les mesures du patron original",
-          "Considérez comment les différences de poids de laine pourraient affecter le tombé",
-          "Testez les calculs sur un petit échantillon d'abord si vous n'êtes pas sûr"
-        ]
-      },
-      "input_method": {
-        "manual": "Saisie Manuelle",
-        "text": "Importer depuis le Texte"
-      },
-      "text_parser": {
-        "title": "Importer depuis le Texte",
-        "description": "Collez votre texte de patron en utilisant le format structuré ci-dessous. L'analyseur extraira automatiquement les valeurs d'échantillon et de mesures.",
-        "unit": "Unité",
-        "text_label": "Texte du Patron",
-        "placeholder": "Collez votre texte de patron structuré ici...\n\nExemple :\nPATTERN_NAME: Mon Patron\nORIGINAL_GAUGE_STITCHES_PER_10CM: 20\nORIGINAL_GAUGE_ROWS_PER_10CM: 28\n...",
-        "show_example": "Afficher le Format d'Exemple",
-        "parse_button": "Analyser le Texte",
-        "parsing": "Analyse en cours...",
-        "clear_button": "Effacer",
-        "parse_errors": "Erreurs d'Analyse",
-        "parse_success": "Analyse Réussie",
-        "pattern_name": "Patron :",
-        "gauge": "Échantillon :",
-        "values_found": "Valeurs trouvées :",
-        "components_found": "Composants :",
-        "warnings": "Avertissements :",
-        "parsing_failed": "Échec de l'analyse",
-        "unknown_error": "Erreur inconnue",
-        "format_help": {
-          "title": "Guide du Format de Texte",
-          "description": "Utilisez ce format simple basé sur des mots-clés :",
-          "keywords": {
-            "pattern_name": "PATTERN_NAME: Nom de votre patron",
-            "gauge_stitches": "ORIGINAL_GAUGE_STITCHES_PER_10CM: nombre (ou _PER_4IN pour pouces)",
-            "gauge_rows": "ORIGINAL_GAUGE_ROWS_PER_10CM: nombre (ou _PER_4IN pour pouces)",
-            "component": "COMPONENT: NomComposant (optionnel, pour grouper les valeurs)",
-            "cast_on": "CAST_ON: nombre de mailles",
-            "rows": "ROWS_TOTAL: nombre de rangs",
-            "width": "FINISHED_WIDTH_CM: mesure (ou _IN pour pouces)",
-            "length": "FINISHED_LENGTH_CM: mesure (ou _IN pour pouces)"
-          },
-          "example_title": "Exemple pour Panel de Corps :",
-          "tips": [
-            "Utilisez les mots-clés exactement comme indiqué (insensible à la casse)",
-            "Une valeur par ligne au format MOT_CLE: valeur",
-            "Les commentaires commencent par // ou #",
-            "Les suffixes d'unité (_CM ou _IN) aident à la détection automatique"
-          ]
+      "template_selection": "Sélection du Type de Structure",
+      "select_template": "Choisissez une structure de base pour commencer.",
+      "supports_shaping": "Supporte le Façonnage de Base",
+      "original_pattern_section": "Informations du Patron Original",
+      "new_gauge_section": "Votre Nouvel Échantillon",
+      "new_dimensions_section": "Vos Nouvelles Dimensions Souhaitées",
+      "results_section": "Résultats Calculés",
+      "calculate": "Calculer le Nouveau Patron",
+      "calculating": "Calcul en cours...",
+      "reset": "Réinitialiser le Formulaire",
+      "select_template_first": "Veuillez d'abord sélectionner un type de structure de patron pour commencer",
+      "templates": {
+        "simple_body_panel_rectangular": {
+          "name": "Panneau de Corps Rectangulaire Simple",
+          "description": "Pour pièces de corps rectangulaires (pulls/gilets) sans façonnage complexe."
+        },
+        "simple_sleeve_tapered": {
+          "name": "Manche Simple Fuselée",
+          "description": "Pour manches avec diminutions/augmentations linéaires simples du poignet à l'emmanchure."
+        },
+        "simple_scarf_rectangular": {
+          "name": "Écharpe Rectangulaire Simple",
+          "description": "Pour écharpes rectangulaires basiques avec une largeur constante."
+        },
+        "simple_hat_cylindrical": {
+          "name": "Bonnet Cylindrique Simple",
+          "description": "Pour bonnets basiques tricotés en rond avec des diminutions simples pour la couronne."
         }
+      },
+      "validation": {
+        "template_required": "Veuillez sélectionner un type de structure.",
+        "original_gauge_stitches_required": "Les mailles de l'échantillon original sont requises.",
+        "original_gauge_rows_required": "Les rangs de l'échantillon original sont requis.",
+        "new_gauge_required": "Le nouvel échantillon (mailles et rangs) est requis.",
+        "original_pattern_values_required": "Cette valeur du patron original est requise.",
+        "new_dimensions_required": "Cette nouvelle dimension est requise."
+      },
+      "related": {
+        "gauge_calculator": "Calculez rapidement votre échantillon ou convertissez entre différentes tailles d'échantillon.",
+        "yarn_estimator": "Estimez la quantité de fil nécessaire pour votre projet en fonction du type de fil et des dimensions."
+      },
+      "form": {
+        "original_gauge_title": "Échantillon du Patron Original",
+        "new_gauge_title": "Votre Nouvel Échantillon",
+        "original_values_title": "Valeurs du Patron Original",
+        "new_dimensions_title": "Nouvelles Dimensions Souhaitées",
+        "calculate_button": "Calculer les Nouvelles Mesures",
+        "reset_button": "Réinitialiser le Formulaire",
+        "results_title": "Résultats du Redimensionnement",
+        "stitches": "m.",
+        "rows": "rgs.",
+        "cm": "cm",
+        "in": "po",
+        "per_10cm": "pour 10 cm",
+        "per_4in": "pour 4 pouces",
+        "original_swatch_width": "Largeur échantillon original",
+        "original_swatch_height": "Hauteur échantillon original",
+        "new_swatch_width": "Votre largeur d'échantillon",
+        "new_swatch_height": "Votre hauteur d'échantillon",
+        "step_instructions": {
+          "template_selection": "Étape 1 : Sélectionnez un type de structure de patron (template) ci-dessous qui correspond le mieux à la pièce que vous souhaitez redimensionner.",
+          "original_gauge": "Étape 2 : Entrez les informations de l'échantillon (tension) du patron ORIGINAL.",
+          "original_pattern": "Étape 3 : Remplissez les mesures clés du patron ORIGINAL (ex: nombre de mailles au montage, largeur finie).",
+          "new_gauge": "Étape 2 : Entrez les informations de l'échantillon (tension) de VOTRE fil.",
+          "new_dimensions": "Étape 4 : Indiquez les NOUVELLES dimensions souhaitées pour votre pièce.",
+          "calculate": "Étape 5 : Cliquez sur 'Calculer' pour obtenir les nouvelles instructions de mailles et de rangs."
+        },
+        "parser": {
+          "title": "Ou Collez le Texte de Votre Patron",
+          "description": "Essayez de coller les instructions de votre patron ici. Nous tenterons d'extraire automatiquement les informations d'échantillon et les mesures initiales. Vérifiez toujours les valeurs extraites.",
+          "placeholder": "Ex: Monter 100 m. Tricoter en jersey pendant 50 cm...",
+          "button_parse": "Analyser le Texte",
+          "error_parsing": "Erreur lors de l'analyse du texte. Veuillez vérifier le format ou entrer les valeurs manuellement.",
+          "parsed_values_title": "Valeurs Extraites du Texte",
+          "confirm_and_use": "Confirmer et Utiliser ces Valeurs"
+        },
+        "input_method_manual": "Saisie Manuelle",
+        "input_method_text": "Coller le Texte"
+      },
+      "output": {
+        "new_cast_on_stitches": "Nouveau nombre de mailles à monter",
+        "new_total_rows": "Nouveau nombre total de rangs",
+        "new_actual_width": "Nouvelle largeur réelle obtenue",
+        "new_actual_length": "Nouvelle longueur réelle obtenue",
+        "new_cuff_stitches": "Nouvelles mailles au poignet",
+        "new_upper_arm_stitches": "Nouvelles mailles en haut de manche",
+        "new_sleeve_length_rows": "Nouvelle longueur de manche en rangs",
+        "new_shaping_schedule_summary": "Résumé du nouveau façonnage"
       }
     },
     "development": {
@@ -976,10 +908,6 @@
         "gauge_profiles": "Profils d'Échantillon",
         "measurements": "Mensurations"
       }
-    },
-    "pattern_resizer": {
-      "title": "Redimensionnement de Patron Existant",
-      "description": "Adaptez les nombres d'un patron existant à votre échantillon et dimensions souhaitées. Redimensionnez les nombres de mailles et mesures selon vos spécifications."
     },
     "yarn_quantity_estimator": {
       "title": "Estimateur de Quantité de Laine",
@@ -1255,6 +1183,8 @@
     "completed": "Terminé",
     "of": "sur",
     "stepsCompleted": "étapes terminées",
+    "readyForCalculation": "Prêt pour Calcul",
+    "readyForCalculationDescription": "Votre définition de patron est complète et prête pour le moteur de calcul.",
     "steps": {
       "garment-type": {
         "label": "Type de Vêtement"
@@ -1283,15 +1213,75 @@
       "sleeves": {
         "label": "Manches"
       },
+      "accessory-definition": {
+        "label": "Définition d'Accessoires"
+      },
       "summary": {
         "label": "Résumé"
       }
     },
+    "summary": {
+      "title": "Résumé de Définition de Patron",
+      "description": "Examinez votre définition de patron avant de procéder au calcul.",
+      "details": "Détails"
+    },
     "status": {
+      "label": "Statut",
       "draft": "Brouillon",
       "ready_for_calculation": "Prêt pour Calcul",
       "completed": "Terminé",
       "archived": "Archivé"
     }
+  },
+  "common": {
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "ok": "OK",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "garmentType": {
+    "title": "Sélectionner le Type de Vêtement",
+    "description": "Choisissez le type de vêtement que vous souhaitez créer. Cela déterminera les options de configuration disponibles.",
+    "selectType": "Sélectionner le Type de Vêtement",
+    "selectTypeDescription": "Choisissez le type de vêtement que vous souhaitez créer. Cela déterminera les options et outils disponibles pour votre patron.",
+    "components": "Composants",
+    "difficulty": {
+      "beginner": "débutant",
+      "intermediate": "intermédiaire",
+      "advanced": "avancé"
+    }
+  },
+  "accessoryDefinition": {
+    "title": "Définition d'Accessoires",
+    "notRequired": "Aucune définition d'accessoires supplémentaire requise pour ce type de vêtement."
+  },
+  "sleeve": {
+    "title": "Style et Longueur de Manches",
+    "description": "Choisissez le style, la longueur et les options de poignets pour vos manches. Les options disponibles dépendent de votre méthode de construction sélectionnée.",
+    "style": {
+      "title": "Style de Manches"
+    },
+    "length": {
+      "title": "Longueur de Manches",
+      "typical": "Typique : {{length}}cm"
+    },
+    "cuff": {
+      "title": "Style de Poignets"
+    },
+    "summary": {
+      "title": "Résumé de Configuration des Manches",
+      "saving": "Sauvegarde...",
+      "saved": "Sauvegardé",
+      "style": "Style :",
+      "length": "Longueur :",
+      "cuff": "Manchette :"
+    }
+  },
+  "stitchIntegration": {
+    "openAdvisor": "Ouvrir Conseiller"
   }
 }

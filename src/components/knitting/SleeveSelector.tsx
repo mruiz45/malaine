@@ -237,6 +237,7 @@ export default function SleeveSelector({
    * Handle sleeve style selection
    */
   const handleSleeveStyleSelect = (style: SleeveStyle) => {
+    console.log('👕🎨 [SleeveSelector] onClick - Style:', style);
     if (disabled || isLoading) return;
     onSleeveStyleSelect(style);
   };
@@ -245,6 +246,7 @@ export default function SleeveSelector({
    * Handle sleeve length selection
    */
   const handleSleeveLengthSelect = (length: SleeveLength) => {
+    console.log('👕📏 [SleeveSelector] onClick - Length:', length);
     if (disabled || isLoading) return;
     
     if (length === 'custom') {
@@ -258,16 +260,24 @@ export default function SleeveSelector({
    * Handle custom length change
    */
   const handleCustomLengthChange = (value: number) => {
+    console.log('👕📏🔢 [SleeveSelector] Custom Length Input Change:', value);
     setCustomLength(value);
     if (selectedSleeveAttributes?.length_key === 'custom') {
       onSleeveLengthSelect('custom', value);
     }
   };
 
+  const handleConfirmCustomLength = () => {
+    console.log('👕📏✅ [SleeveSelector] onClick - Confirm Custom Length:', customLength);
+    if (disabled || isLoading) return;
+    onSleeveLengthSelect('custom', customLength);
+  };
+
   /**
    * Handle cuff style selection
    */
   const handleCuffStyleSelect = (cuffStyle: CuffStyle) => {
+    console.log('👕🪢 [SleeveSelector] onClick - Cuff Style:', cuffStyle);
     if (disabled || isLoading) return;
     
     const cuffOption = sleeveConfig.cuff_styles.find(c => c.key === cuffStyle);
@@ -291,12 +301,19 @@ export default function SleeveSelector({
    * Handle cuff parameter change
    */
   const handleCuffParameterChange = (param: keyof CuffParameters, value: number) => {
+    console.log('👕🪢🔢 [SleeveSelector] Cuff Parameter Input Change:', param, value);
     const newParams = { ...cuffParameters, [param]: value };
     setCuffParameters(newParams);
     
     if (selectedSleeveAttributes?.cuff_style) {
       onCuffStyleSelect(selectedSleeveAttributes.cuff_style, newParams);
     }
+  };
+
+  const handleConfirmCuffParameters = () => {
+    console.log('��🪢✅ [SleeveSelector] onClick - Confirm Cuff Parameters');
+    if (disabled || isLoading || !selectedSleeveAttributes?.cuff_style) return;
+    onCuffStyleSelect(selectedSleeveAttributes.cuff_style, cuffParameters);
   };
 
   /**

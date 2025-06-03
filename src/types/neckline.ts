@@ -82,7 +82,7 @@ export interface NecklineSelectorProps {
   /** Currently selected neckline parameters */
   selectedNecklineParameters?: NecklineParameters;
   /** Callback when neckline style is selected */
-  onNecklineStyleSelect: (style: NecklineStyle) => void;
+  onNecklineStyleSelect: (style: NecklineStyle, defaultParameters: NecklineParameters) => void;
   /** Callback when neckline parameters are updated */
   onNecklineParametersUpdate: (parameters: NecklineParameters) => void;
   /** Whether the selector is disabled */

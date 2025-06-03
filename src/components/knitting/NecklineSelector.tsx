@@ -254,9 +254,10 @@ export default function NecklineSelector({
    * Update parameter values when selected parameters change
    */
   useEffect(() => {
-    if (selectedNecklineParameters && Object.keys(selectedNecklineParameters).length > 0) {
-      setParameterValues(selectedNecklineParameters);
-    }
+    // Always update local state with parameters from props,
+    // even if it's an empty object (e.g., after deselection or for initial default values).
+    // This ensures the local state accurately reflects the context's version of parameters.
+    setParameterValues(selectedNecklineParameters || {});
   }, [selectedNecklineParameters]);
 
   /**
@@ -275,15 +276,18 @@ export default function NecklineSelector({
   const handleNecklineStyleSelect = (style: NecklineStyle) => {
     if (disabled || isLoading) return;
     
-    onNecklineStyleSelect(style);
-    
-    // Set default parameters for the selected style
+    // Get default parameters for the selected style
     const styleConfig = NECKLINE_STYLES.find(s => s.key === style);
-    if (styleConfig) {
-      const newParameters = { ...styleConfig.default_values };
-      setParameterValues(newParameters);
-      onNecklineParametersUpdate(newParameters);
+    let defaultParameters: NecklineParameters = {};
+    if (styleConfig && styleConfig.default_values) {
+      defaultParameters = { ...styleConfig.default_values };
     }
+    
+    // Call the updated prop with both style and its default parameters
+    onNecklineStyleSelect(style, defaultParameters);
+    
+    // Set local state for parameter inputs to reflect new defaults
+    setParameterValues(defaultParameters); 
   };
 
   /**
@@ -292,6 +296,7 @@ export default function NecklineSelector({
   const handleParameterChange = (param: keyof NecklineParameters, value: number) => {
     const newParameters = { ...parameterValues, [param]: value };
     setParameterValues(newParameters);
+    // This call remains, for user-driven parameter changes after style selection
     onNecklineParametersUpdate(newParameters);
   };
 
