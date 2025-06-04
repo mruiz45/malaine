@@ -1,103 +1,33 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useRouter, useSearchParams } from 'next/navigation';
 import ProtectedRoute from '@/components/auth/ProtectedRoute';
-import { PatternDefinitionProvider, usePatternDefinition } from '@/contexts/PatternDefinitionContext';
-import PatternDefinitionWorkspace from '@/components/knitting/PatternDefinitionWorkspace';
-import { patternDefinitionService } from '@/services/patternDefinitionService';
-import { PatternDefinitionSessionWithData } from '@/types/patternDefinition';
+import { InMemoryPatternDefinitionProvider, useInMemoryPatternDefinition } from '@/contexts/InMemoryPatternDefinitionContext';
+import NewPatternDefinitionWorkspace from '@/components/knitting/NewPatternDefinitionWorkspace';
 
 /**
- * Pattern Definition Page Content Component
+ * Pattern Definition Page Content Component (PD_PH1_US001)
+ * Rewritten to use in-memory pattern definition with garment-centric approach
  */
 function PatternDefinitionPageContent() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const sessionId = searchParams?.get('sessionId');
+  const { state, createPattern } = useInMemoryPatternDefinition();
   
-  const {
-    currentSession,
-    isLoading,
-    error,
-    createSession,
-    loadSession
-  } = usePatternDefinition();
-
-  const [availableSessions, setAvailableSessions] = useState<PatternDefinitionSessionWithData[]>([]);
-  const [loadingSessions, setLoadingSessions] = useState(true);
+  const { currentPattern, isLoading, error } = state;
 
   /**
-   * Load available sessions on component mount
+   * Handle creating a new pattern session
    */
-  useEffect(() => {
-    const loadAvailableSessions = async () => {
-      try {
-        setLoadingSessions(true);
-        const sessions = await patternDefinitionService.getAllSessions();
-        setAvailableSessions(sessions);
-      } catch (error) {
-        console.error('Error loading sessions:', error);
-      } finally {
-        setLoadingSessions(false);
-      }
-    };
-
-    loadAvailableSessions();
-  }, []);
-
-  /**
-   * Load session if sessionId is provided in URL
-   */
-  useEffect(() => {
-    if (sessionId && !currentSession) {
-      loadSession(sessionId).catch(error => {
-        console.error('Error loading session from URL:', error);
-        // Redirect to pattern definition without sessionId if loading fails
-        router.replace('/pattern-definition');
-      });
-    }
-  }, [sessionId, currentSession, loadSession, router]);
-
-  /**
-   * Handle creating a new session
-   */
-  const handleCreateNewSession = async () => {
-    try {
-      const newSession = await createSession({
-        session_name: `Pattern ${new Date().toLocaleDateString()}`,
-        craft_type: 'knitting'
-      });
-      
-      // Update URL with new session ID
-      router.push(`/pattern-definition?sessionId=${newSession.id}`);
-      
-      // Refresh available sessions
-      const sessions = await patternDefinitionService.getAllSessions();
-      setAvailableSessions(sessions);
-    } catch (error) {
-      console.error('Error creating new session:', error);
-    }
+  const handleCreateNewPattern = () => {
+    const sessionName = `Pattern ${new Date().toLocaleDateString()}`;
+    createPattern(sessionName, 'knitting');
   };
 
   /**
-   * Handle loading an existing session
+   * Render initial state - no active pattern
    */
-  const handleLoadSession = async (sessionId: string) => {
-    try {
-      await loadSession(sessionId);
-      router.push(`/pattern-definition?sessionId=${sessionId}`);
-    } catch (error) {
-      console.error('Error loading session:', error);
-    }
-  };
-
-  /**
-   * Render session selection if no current session
-   */
-  if (!currentSession && !isLoading) {
+  if (!currentPattern && !isLoading) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
@@ -108,93 +38,37 @@ function PatternDefinitionPageContent() {
               {t('patternDefinition.getStarted', 'Get Started')}
             </h2>
             <p className="text-gray-600 mb-6">
-              {t('patternDefinition.description', 'Create a new pattern definition session or continue working on an existing one.')}
+              {t('patternDefinition.newDescription', 'Create a new pattern definition. Start by selecting the type of garment you want to create, then complete the relevant sections in any order you prefer.')}
             </p>
             
             <button
-              onClick={handleCreateNewSession}
+              onClick={handleCreateNewPattern}
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
             >
               {t('patternDefinition.createNew', 'Create New Pattern')}
             </button>
           </div>
 
-          {/* Existing Sessions */}
-          {!loadingSessions && availableSessions.length > 0 && (
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-xl font-semibold mb-4">
-                {t('patternDefinition.existingSessions', 'Your Pattern Definitions')}
-              </h2>
-              
-              <div className="space-y-4">
-                {availableSessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors duration-200 cursor-pointer"
-                    onClick={() => handleLoadSession(session.id)}
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-medium text-gray-900">
-                          {session.session_name || t('patternDefinition.untitledSession', 'Untitled Session')}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {t('patternDefinition.lastUpdated', 'Last updated')}: {' '}
-                          {new Date(session.updated_at).toLocaleDateString()}
-                        </p>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {session.selected_gauge_profile_id && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {t('gauge.title', 'Gauge')}
-                            </span>
-                          )}
-                          {session.selected_measurement_set_id && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {t('measurements.title', 'Measurements')}
-                            </span>
-                          )}
-                          {session.ease_type && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              {t('ease.title', 'Ease')}
-                            </span>
-                          )}
-                          {session.selected_yarn_profile_id && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                              {t('yarn.title', 'Yarn')}
-                            </span>
-                          )}
-                          {session.selected_stitch_pattern_id && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
-                              {t('stitchPattern.title', 'Stitch Pattern')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        session.status === 'draft' ? 'bg-yellow-100 text-yellow-800' :
-                        session.status === 'ready_for_calculation' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {t(`patternDefinition.status.${session.status}`, session.status)}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* Information about the new approach */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-blue-900 mb-4">
+              {t('patternDefinition.newApproach.title', 'New Garment-Centric Approach')}
+            </h3>
+            <div className="space-y-2 text-blue-800">
+              <p>
+                {t('patternDefinition.newApproach.step1', '1. First, select your garment type (sweater, scarf, hat, etc.)')}
+              </p>
+              <p>
+                {t('patternDefinition.newApproach.step2', '2. Only relevant sections for your garment will be shown')}
+              </p>
+              <p>
+                {t('patternDefinition.newApproach.step3', '3. Navigate freely between sections - complete them in any order')}
+              </p>
+              <p>
+                {t('patternDefinition.newApproach.step4', '4. Required sections are clearly marked')}
+              </p>
             </div>
-          )}
-
-          {loadingSessions && (
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     );
@@ -235,7 +109,7 @@ function PatternDefinitionPageContent() {
             </h2>
             <p className="text-red-700 mb-4">{error}</p>
             <button
-              onClick={() => router.push('/pattern-definition')}
+              onClick={handleCreateNewPattern}
               className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
             >
               {t('common.tryAgain', 'Try Again')}
@@ -247,20 +121,21 @@ function PatternDefinitionPageContent() {
   }
 
   /**
-   * Render pattern definition workspace
+   * Render the new pattern definition workspace
    */
-  return <PatternDefinitionWorkspace />;
+  return <NewPatternDefinitionWorkspace />;
 }
 
 /**
- * Main Pattern Definition Page Component
+ * Main Pattern Definition Page Component (PD_PH1_US001)
+ * Wrapper with the new in-memory provider
  */
 export default function PatternDefinitionPage() {
   return (
     <ProtectedRoute>
-      <PatternDefinitionProvider>
+      <InMemoryPatternDefinitionProvider>
         <PatternDefinitionPageContent />
-      </PatternDefinitionProvider>
+      </InMemoryPatternDefinitionProvider>
     </ProtectedRoute>
   );
 } 
