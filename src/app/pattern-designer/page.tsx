@@ -3,6 +3,7 @@ import { PatternProvider } from '@/contexts/PatternContext';
 import { PatternNavigation } from '@/components/pattern/PatternNavigation';
 import { GaugeSection } from '@/components/pattern/GaugeSection';
 import { MeasurementsSection } from '@/components/pattern/MeasurementsSection';
+import { NecklineSection } from '@/components/pattern/NecklineSection';
 import { PatternDebugger } from '@/components/pattern/PatternDebugger';
 import { usePattern } from '@/hooks/usePattern';
 
@@ -20,9 +21,10 @@ const PatternContent: React.FC = () => {
         return <GaugeSection />;
       case 'measurements':
         return <MeasurementsSection />;
+      case 'neckline':
+        return <NecklineSection />;
       case 'ease':
       case 'bodyStructure':
-      case 'neckline':
       case 'sleeves':
       case 'finishing':
         return (

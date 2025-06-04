@@ -3,6 +3,8 @@
  * Defines the complete data structure for pattern design sessions
  */
 
+import { MeasurementMode } from './standardSizes';
+
 /**
  * Available garment types for pattern design
  */
@@ -33,9 +35,16 @@ export interface GaugeData extends PatternSectionBase {
 
 /**
  * Measurements section data structure
- * Structured to accommodate different garment types
+ * Structured to accommodate different garment types and measurement modes (PD_PH2_US004)
  */
 export interface MeasurementsData extends PatternSectionBase {
+  // Measurement mode: custom measurements or standard size selection
+  mode: MeasurementMode;
+  
+  // Standard size reference (when mode is 'standard')
+  standardSizeId: string | null;
+  standardSizeLabel: string | null; // For display purposes
+  
   // Common measurements
   length: number | null; // cm
   width: number | null; // cm
@@ -79,7 +88,7 @@ export interface BodyStructureData extends PatternSectionBase {
  * Neckline section data structure
  */
 export interface NecklineData extends PatternSectionBase {
-  necklineType: 'crewneck' | 'vneck' | 'scoop' | 'turtleneck' | 'cowl' | null;
+  necklineType: 'round' | 'v_neck' | 'boat_neck' | 'square_neck' | 'turtleneck' | 'scoop' | 'cowl' | null;
   necklineDepth: number | null; // cm
   necklineWidth: number | null; // cm
 }

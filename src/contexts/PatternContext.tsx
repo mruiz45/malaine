@@ -45,6 +45,9 @@ const createInitialState = (): PatternState => ({
   },
   measurements: {
     isSet: false,
+    mode: 'custom', // Default to custom measurements
+    standardSizeId: null,
+    standardSizeLabel: null,
     length: null,
     width: null,
     chestCircumference: null,
@@ -103,6 +106,11 @@ const patternReducer = (state: PatternState, action: PatternAction): PatternStat
     case 'SET_GARMENT_TYPE': {
       // When garment type changes, reset measurements to appropriate defaults
       const newMeasurements = { ...state.measurements };
+      
+      // Reset standard size selection when garment type changes
+      newMeasurements.mode = 'custom';
+      newMeasurements.standardSizeId = null;
+      newMeasurements.standardSizeLabel = null;
       
       // Reset garment-specific measurements
       if (action.payload !== 'sweater' && action.payload !== 'cardigan') {
