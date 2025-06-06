@@ -1283,5 +1283,40 @@
   },
   "stitchIntegration": {
     "openAdvisor": "Ouvrir Conseiller"
+  },
+  "sleeves": {
+    "title": "Manches",
+    "description": "Sélectionnez le type de construction de manches pour votre vêtement. Cela affecte la façon dont les manches sont façonnées et attachées au corps.",
+    "notApplicable": "La sélection de manches ne s'applique pas à ce type de vêtement",
+    "typeSelection": "Type de Manches",
+    "constructionInfo": "Informations de Construction",
+    "nextSteps": "Votre sélection de manches sera reflétée dans l'aperçu 2D. Continuez à la section suivante pour compléter votre définition de patron.",
+    "types": {
+      "setIn": {
+        "label": "Manches Rapportées",
+        "description": "Emmanchure traditionnelle ajustée avec couture courbe qui suit la ligne naturelle de l'épaule"
+      },
+      "raglan": {
+        "label": "Manches Raglan", 
+        "description": "Coutures diagonales qui vont de l'encolure à l'emmanchure, créant une coupe sportive"
+      },
+      "dropShoulder": {
+        "label": "Épaule Tombante",
+        "description": "Ligne d'épaule prolongée au-delà du point naturel de l'épaule pour une silhouette décontractée"
+      },
+      "dolman": {
+        "label": "Manches Dolman",
+        "description": "Manches larges et fluides qui sont coupées dans la même pièce que le corps"
+      },
+      "sleeveless": {
+        "label": "Sans Manches",
+        "description": "Pas de manches - crée un gilet ou débardeur avec des emmanchures finies"
+      }
+    },
+    "setInInfo": "Les manches rapportées présentent une emmanchure ajustée avec une couture courbe qui suit la ligne naturelle de l'épaule. C'est la construction de manches la plus traditionnelle.",
+    "raglanInfo": "Les manches raglan sont caractérisées par des coutures diagonales qui vont de l'encolure à l'emmanchure, créant une coupe sportive et confortable.",
+    "dropShoulderInfo": "Les manches à épaule tombante prolongent la ligne d'épaule au-delà du point naturel de l'épaule, créant une silhouette décontractée et désinvolte.",
+    "dolmanInfo": "Les manches dolman sont coupées dans la même pièce que le corps, créant des manches larges et fluides qui se resserrent vers le poignet.",
+    "sleevelessInfo": "Le design sans manches crée un gilet ou débardeur avec des emmanchures finies."
   }
 }

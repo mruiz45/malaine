@@ -27,7 +27,9 @@ export type PatternDesignEventType =
   | 'COMPONENT_INITIALIZED'
   | 'USER_INPUT_CHANGED'
   | 'STATE_MUTATION'
-  | 'ERROR_OCCURRED';
+  | 'ERROR_OCCURRED'
+  | 'SLEEVE_TYPE_DEPENDENCY_DETECTED'
+  | 'BODY_STRUCTURE_RECALCULATION_FLAGGED';
 
 /**
  * Base structure for log entry details
@@ -83,6 +85,24 @@ export interface ErrorEventDetails extends LogEventDetails {
     code?: string;
   };
   context?: string;
+}
+
+/**
+ * Sleeve type dependency detection event details (PD_PH4_US003)
+ */
+export interface SleeveTypeDependencyDetails extends LogEventDetails {
+  oldSleeveType: string;
+  newSleeveType: string;
+  affectedSections: string[];
+}
+
+/**
+ * Body structure recalculation flagged event details (PD_PH4_US003)
+ */
+export interface BodyStructureRecalculationDetails extends LogEventDetails {
+  triggerSection: string;
+  triggerEvent: string;
+  flaggedCalculations: string[];
 }
 
 /**

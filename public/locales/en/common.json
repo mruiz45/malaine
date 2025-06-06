@@ -2188,5 +2188,40 @@
     "markCompleted": "Mark Section Completed",
     "alreadyCompleted": "Section already completed",
     "currentData": "Current section data"
+  },
+  "sleeves": {
+    "title": "Sleeves",
+    "description": "Select the type of sleeve construction for your garment. This affects how the sleeves are shaped and attached to the body.",
+    "notApplicable": "Sleeve selection is not applicable for this garment type",
+    "typeSelection": "Sleeve Type",
+    "constructionInfo": "Construction Information",
+    "nextSteps": "Your sleeve selection will be reflected in the 2D preview. Continue to the next section to complete your pattern definition.",
+    "types": {
+      "setIn": {
+        "label": "Set-in Sleeves",
+        "description": "Traditional fitted armhole with curved seam that follows the natural shoulder line"
+      },
+      "raglan": {
+        "label": "Raglan Sleeves", 
+        "description": "Diagonal seams that run from the neckline to the underarm, creating a sporty fit"
+      },
+      "dropShoulder": {
+        "label": "Drop Shoulder",
+        "description": "Extended shoulder line beyond the natural shoulder point for a relaxed silhouette"
+      },
+      "dolman": {
+        "label": "Dolman Sleeves",
+        "description": "Wide, flowing sleeves that are cut as part of the body piece"
+      },
+      "sleeveless": {
+        "label": "Sleeveless",
+        "description": "No sleeves - creates a vest or tank top with finished armhole edges"
+      }
+    },
+    "setInInfo": "Set-in sleeves feature a fitted armhole with a curved seam that follows the natural shoulder line. This is the most traditional sleeve construction.",
+    "raglanInfo": "Raglan sleeves are characterized by diagonal seams that run from the neckline to the underarm, creating a sporty and comfortable fit.",
+    "dropShoulderInfo": "Drop shoulder sleeves extend the shoulder line beyond the natural shoulder point, creating a relaxed, casual silhouette.",
+    "dolmanInfo": "Dolman sleeves are cut as part of the body piece, creating wide, flowing sleeves that taper toward the wrist.",
+    "sleevelessInfo": "Sleeveless design creates a vest or tank top with finished armhole edges."
   }
 } 

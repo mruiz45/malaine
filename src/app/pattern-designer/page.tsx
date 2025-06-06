@@ -7,6 +7,9 @@ import { NecklineSection } from '@/components/pattern/NecklineSection';
 import { PatternDebugger } from '@/components/pattern/PatternDebugger';
 import { usePattern } from '@/hooks/usePattern';
 
+// Force dynamic rendering for this page since it uses React Context
+export const dynamic = 'force-dynamic';
+
 /**
  * Pattern Content Component
  * Renders the appropriate section based on current navigation
@@ -34,7 +37,7 @@ const PatternContent: React.FC = () => {
                 {uiSettings.currentSection} Section
               </h2>
               <p className="text-gray-600">
-                This section is not yet implemented. It's part of future user stories.
+                This section is not yet implemented. It&apos;s part of future user stories.
               </p>
               <div className="mt-4 p-4 bg-blue-50 rounded-lg">
                 <p className="text-sm text-blue-800">
@@ -116,25 +119,25 @@ export default function PatternDesignerPage() {
               <div>
                 <strong>Acceptance Criteria 1-3:</strong>
                 <ol className="list-decimal list-inside ml-4 mt-1 space-y-1">
-                  <li>Select a garment type (e.g., "Sweater")</li>
-                  <li>Navigate to "Gauge" section and input some data (stitches, rows, etc.)</li>
-                  <li>Navigate to "Measurements" section (data should reset for the new section)</li>
-                  <li>Navigate back to "Gauge" section</li>
+                  <li>Select a garment type (e.g., &quot;Sweater&quot;)</li>
+                  <li>Navigate to &quot;Gauge&quot; section and input some data (stitches, rows, etc.)</li>
+                  <li>Navigate to &quot;Measurements&quot; section (data should reset for the new section)</li>
+                  <li>Navigate back to &quot;Gauge&quot; section</li>
                   <li>✅ Verify that your previously entered gauge data is still present</li>
                 </ol>
               </div>
               <div>
                 <strong>Acceptance Criteria 4:</strong>
                 <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
-                  <li>Click the "🔍 Debug" button (bottom right)</li>
-                  <li>Click "🖥️ Log to Console" to view state in browser dev tools</li>
+                  <li>Click the &quot;🔍 Debug&quot; button (bottom right)</li>
+                  <li>Click &quot;🖥️ Log to Console&quot; to view state in browser dev tools</li>
                   <li>✅ Verify the `patternState` object reflects all entered data</li>
                 </ul>
               </div>
               <div>
                 <strong>Acceptance Criteria 5:</strong>
                 <ul className="list-disc list-inside ml-4 mt-1 space-y-1">
-                  <li>Change the garment type from "Sweater" to "Hat"</li>
+                  <li>Change the garment type from &quot;Sweater&quot; to &quot;Hat&quot;</li>
                   <li>✅ Verify that measurement fields change appropriately</li>
                   <li>✅ Verify that sweater-specific measurements are reset</li>
                 </ul>

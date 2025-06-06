@@ -14,10 +14,10 @@ import { GarmentTypeService } from '@/services/garmentTypeService';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { type_key: string } }
+  { params }: { params: Promise<{ type_key: string }> }
 ) {
   try {
-    const { type_key } = params;
+    const { type_key } = await params;
 
     if (!type_key) {
       return NextResponse.json(

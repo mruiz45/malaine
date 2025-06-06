@@ -12,9 +12,9 @@ import { getStitchPattern } from '@/services/stitchPatternService';
 import { generateLibraryPatternMetadata } from '@/utils/metadata';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -22,7 +22,8 @@ interface PageProps {
  */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
-    const pattern = await getStitchPattern(params.id);
+    const { id } = await params;
+    const pattern = await getStitchPattern(id);
     
     return {
       title: `${pattern.stitch_name} | Stitch Pattern Library | Malaine`,
@@ -45,10 +46,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * Stitch Pattern Detail Page Component
  */
 export default async function StitchPatternDetailPage({ params }: PageProps) {
+  const { id } = await params;
   let pattern;
   
   try {
-    pattern = await getStitchPattern(params.id);
+    pattern = await getStitchPattern(id);
   } catch (error) {
     console.error('Error fetching stitch pattern:', error);
     notFound();

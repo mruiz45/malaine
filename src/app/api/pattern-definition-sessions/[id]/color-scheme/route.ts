@@ -8,10 +8,11 @@ import { ColorScheme, SaveColorSchemeResponse } from '@/types/colorScheme';
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const sessionId = params.id;
+    const { id } = await params;
+    const sessionId = id;
 
     if (!sessionId) {
       return NextResponse.json(
@@ -78,10 +79,11 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const sessionId = params.id;
+    const { id } = await params;
+    const sessionId = id;
 
     if (!sessionId) {
       return NextResponse.json(

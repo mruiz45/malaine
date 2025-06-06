@@ -20,8 +20,8 @@ export async function getSupabaseSessionApi(
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<SupabaseSessionResult | null> {
-  const accessToken = req.cookies['access_token'];
-  const refreshToken = req.cookies['refresh_token'];
+  const accessToken = req.cookies['sb-access-token'];
+  const refreshToken = req.cookies['sb-refresh-token'];
 
   if (!accessToken) {
     // res.status(401).json({ error: 'Not authenticated: No access token' }); // Caller should handle response
@@ -65,8 +65,8 @@ export async function getSupabaseSessionApi(
 export async function getSupabaseSessionAppRouter(
   req: NextRequest
 ): Promise<SupabaseSessionResult | null> {
-  const accessToken = req.cookies.get('access_token')?.value;
-  const refreshToken = req.cookies.get('refresh_token')?.value;
+  const accessToken = req.cookies.get('sb-access-token')?.value;
+  const refreshToken = req.cookies.get('sb-refresh-token')?.value;
 
   if (!accessToken) {
     return null;

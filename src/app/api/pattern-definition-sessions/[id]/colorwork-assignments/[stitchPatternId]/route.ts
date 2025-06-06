@@ -23,11 +23,11 @@ import {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string; stitchPatternId: string } }
+  { params }: { params: Promise<{ id: string; stitchPatternId: string }> }
 ) {
   try {
-    const sessionId = params.id;
-    const stitchPatternId = params.stitchPatternId;
+    const { id, stitchPatternId } = await params;
+    const sessionId = id;
 
     if (!sessionId || !stitchPatternId) {
       return NextResponse.json(
@@ -98,11 +98,11 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string; stitchPatternId: string } }
+  { params }: { params: Promise<{ id: string; stitchPatternId: string }> }
 ) {
   try {
-    const sessionId = params.id;
-    const stitchPatternId = params.stitchPatternId;
+    const { id, stitchPatternId } = await params;
+    const sessionId = id;
 
     if (!sessionId || !stitchPatternId) {
       return NextResponse.json(

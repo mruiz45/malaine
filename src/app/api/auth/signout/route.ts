@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       message: 'Signed out successfully'
     });
 
-    response.cookies.set('access_token', '', {
+    response.cookies.set('sb-access-token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
-    response.cookies.set('refresh_token', '', {
+    response.cookies.set('sb-refresh-token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
       message: 'Signed out successfully'
     });
 
-    response.cookies.set('access_token', '', {
+    response.cookies.set('sb-access-token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       path: '/',
     });
 
-    response.cookies.set('refresh_token', '', {
+    response.cookies.set('sb-refresh-token', '', {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { SchematicPreview2D } from '@/components/pattern/SchematicPreview2D';
-import { GarmentType, MeasurementsData } from '@/types/pattern';
+import { GarmentType, MeasurementsData, EaseData } from '@/types/pattern';
 
 interface TestScenario {
   name: string;
@@ -32,6 +32,15 @@ export default function TestSchematicPreviewPage() {
     hatHeight: null,
     scarfLength: null,
     scarfWidth: null
+  });
+  
+  // Add ease state for testing PD_PH4_US001
+  const [ease] = useState<EaseData>({
+    isSet: false,
+    chestEase: null,
+    lengthEase: null,
+    sleeveEase: null,
+    easeType: null
   });
 
   const handleMeasurementChange = (field: keyof MeasurementsData, value: number | null) => {
@@ -316,6 +325,7 @@ export default function TestSchematicPreviewPage() {
             <SchematicPreview2D
               garmentType={garmentType}
               measurements={measurements}
+              ease={ease}
               neckline={undefined}
               width={400}
               height={500}

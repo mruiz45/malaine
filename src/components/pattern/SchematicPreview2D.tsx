@@ -1,15 +1,20 @@
 'use client';
 
 import React, { useMemo } from 'react';
-import { GarmentType, MeasurementsData, NecklineData } from '@/types/pattern';
+import { GarmentType, MeasurementsData, NecklineData, EaseData, SleevesData } from '@/types/pattern';
+import { useFinishedDimensions } from '@/hooks/useFinishedDimensions';
 
 interface SchematicPreview2DProps {
   /** Type de vêtement sélectionné */
   garmentType: GarmentType | null;
   /** Données de mesures */
   measurements: MeasurementsData;
+  /** Données d'aisance (PD_PH4_US001) */
+  ease: EaseData;
   /** Données d'encolure (PD_PH2_US003) */
   neckline?: NecklineData;
+  /** Données de manches (PD_PH4_US002) */
+  sleeves?: SleevesData;
   /** Largeur du canvas SVG */
   width?: number;
   /** Hauteur du canvas SVG */
@@ -41,7 +46,9 @@ interface SchematicDimensions {
 export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
   garmentType,
   measurements,
+  ease,
   neckline,
+  sleeves,
   width = 300,
   height = 400,
   className = ''
@@ -62,7 +69,14 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
   }, [width, height]);
 
   /**
-   * Calcule les dimensions du schéma basées sur les mesures réelles
+   * Calcule les dimensions finies en appliquant l'aisance aux mesures corporelles
+   * Implémente PD_PH4_US001: Ease Affecting Finished Dimensions
+   */
+  const finishedDimensions = useFinishedDimensions(measurements, ease, garmentType);
+
+  /**
+   * Calcule les dimensions du schéma basées sur les dimensions finies (mesures + aisance)
+   * Implémente PD_PH4_US001: Use finished dimensions instead of raw measurements
    */
   const schematicDimensions: SchematicDimensions | null = useMemo(() => {
     if (!garmentType || !measurements) return null;
@@ -73,10 +87,11 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       case 'sweater':
       case 'cardigan':
       case 'vest': {
-        const chestCirc = measurements.chestCircumference || 100;
-        const bodyLength = measurements.bodyLength || 60;
-        const sleeveLength = measurements.sleeveLength || 58;
-        const shoulderWidth = measurements.shoulderWidth || 42;
+        // Use finished dimensions when available, fallback to raw measurements
+        const chestCirc = finishedDimensions.finishedChestCircumference || measurements.chestCircumference || 100;
+        const bodyLength = finishedDimensions.finishedBodyLength || measurements.bodyLength || 60;
+        const sleeveLength = finishedDimensions.finishedSleeveLength || measurements.sleeveLength || 58;
+        const shoulderWidth = finishedDimensions.finishedShoulderWidth || measurements.shoulderWidth || 42;
 
         // Calculer les proportions pour s'adapter au canvas
         const bodyWidth = chestCirc / 2; // Largeur du corps (demi-circonférence)
@@ -93,8 +108,9 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       }
 
       case 'scarf': {
-        const scarfLength = measurements.scarfLength || 150;
-        const scarfWidth = measurements.scarfWidth || 20;
+        // Use finished dimensions when available, fallback to raw measurements
+        const scarfLength = finishedDimensions.finishedScarfLength || measurements.scarfLength || 150;
+        const scarfWidth = finishedDimensions.finishedScarfWidth || measurements.scarfWidth || 20;
 
         // Adapter au canvas en gardant les proportions
         const scale = Math.min(drawWidth * 0.8 / scarfLength, drawHeight * 0.8 / scarfWidth);
@@ -106,8 +122,9 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       }
 
       case 'hat': {
-        const headCirc = measurements.headCircumference || 56;
-        const hatHeight = measurements.hatHeight || 20;
+        // Use finished dimensions when available, fallback to raw measurements
+        const headCirc = finishedDimensions.finishedHeadCircumference || measurements.headCircumference || 56;
+        const hatHeight = finishedDimensions.finishedHatHeight || measurements.hatHeight || 20;
 
         const diameter = headCirc / Math.PI;
         const scale = Math.min(drawWidth * 0.7 / diameter, drawHeight * 0.7 / hatHeight);
@@ -121,7 +138,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       default:
         return null;
     }
-  }, [garmentType, measurements, canvasConfig]);
+  }, [garmentType, measurements, finishedDimensions, canvasConfig]);
 
   /**
    * Dessine une encolure ronde
@@ -327,6 +344,266 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
   };
 
   /**
+   * Interface pour les paramètres de dessin des manches
+   */
+  interface SleeveDrawingParams {
+    centerX: number;
+    bodyX: number;
+    bodyY: number;
+    bodyWidth: number;
+    bodyHeight: number;
+    sleeveWidth: number;
+    sleeveLength: number;
+    leftSleeveX: number;
+    rightSleeveX: number;
+    sleeveY: number;
+    neckWidth: number;
+  }
+
+  /**
+   * Dessine les manches set-in (emmanchure classique avec courbe)
+   * PD_PH4_US002: Set-in sleeve type
+   */
+  const drawSetInSleeves = (params: SleeveDrawingParams): React.JSX.Element[] => {
+    const { leftSleeveX, rightSleeveX, sleeveY, sleeveLength, sleeveWidth, bodyX, bodyY, bodyWidth } = params;
+    
+    return [
+      // Manche gauche
+      <rect
+        key="left-sleeve"
+        x={leftSleeveX}
+        y={sleeveY}
+        width={sleeveLength}
+        height={sleeveWidth}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Manche droite
+      <rect
+        key="right-sleeve"
+        x={rightSleeveX}
+        y={sleeveY}
+        width={sleeveLength}
+        height={sleeveWidth}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Emmanchures courbes (caractéristique set-in)
+      <path
+        key="left-armhole"
+        d={`M ${bodyX} ${sleeveY + sleeveWidth * 0.2} Q ${bodyX - 8} ${sleeveY + sleeveWidth * 0.6} ${bodyX} ${sleeveY + sleeveWidth * 0.8}`}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="1"
+        strokeDasharray="2,2"
+      />,
+      <path
+        key="right-armhole"
+        d={`M ${bodyX + bodyWidth} ${sleeveY + sleeveWidth * 0.2} Q ${bodyX + bodyWidth + 8} ${sleeveY + sleeveWidth * 0.6} ${bodyX + bodyWidth} ${sleeveY + sleeveWidth * 0.8}`}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="1"
+        strokeDasharray="2,2"
+      />
+    ];
+  };
+
+  /**
+   * Dessine les manches raglan (lignes diagonales du col vers l'emmanchure)
+   * PD_PH4_US002: Raglan sleeve type
+   */
+  const drawRaglanSleeves = (params: SleeveDrawingParams): React.JSX.Element[] => {
+    const { centerX, bodyX, bodyY, bodyWidth, sleeveWidth, sleeveLength, leftSleeveX, rightSleeveX, sleeveY, neckWidth } = params;
+    
+    const neckLeftX = centerX - neckWidth / 2;
+    const neckRightX = centerX + neckWidth / 2;
+    
+    return [
+      // Manche gauche
+      <rect
+        key="left-sleeve"
+        x={leftSleeveX}
+        y={sleeveY}
+        width={sleeveLength}
+        height={sleeveWidth}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Manche droite
+      <rect
+        key="right-sleeve"
+        x={rightSleeveX}
+        y={sleeveY}
+        width={sleeveLength}
+        height={sleeveWidth}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Lignes raglan caractéristiques (diagonales du col vers l'emmanchure)
+      <line
+        key="left-raglan-line"
+        x1={neckLeftX}
+        y1={bodyY}
+        x2={bodyX}
+        y2={sleeveY + sleeveWidth}
+        stroke="#374151"
+        strokeWidth="2"
+        strokeDasharray="3,3"
+      />,
+      <line
+        key="right-raglan-line"
+        x1={neckRightX}
+        y1={bodyY}
+        x2={bodyX + bodyWidth}
+        y2={sleeveY + sleeveWidth}
+        stroke="#374151"
+        strokeWidth="2"
+        strokeDasharray="3,3"
+      />
+    ];
+  };
+
+  /**
+   * Dessine les manches drop shoulder (épaule étendue, manches attachées plus bas)
+   * PD_PH4_US002: Drop shoulder sleeve type
+   */
+  const drawDropShoulderSleeves = (params: SleeveDrawingParams): React.JSX.Element[] => {
+    const { leftSleeveX, rightSleeveX, sleeveY, sleeveLength, sleeveWidth, bodyX, bodyY, bodyWidth } = params;
+    
+    // Pour drop shoulder, on étend la ligne d'épaule
+    const extendedShoulderLength = sleeveLength * 0.3;
+    
+    return [
+      // Épaules étendues
+      <line
+        key="left-extended-shoulder"
+        x1={bodyX}
+        y1={bodyY}
+        x2={bodyX - extendedShoulderLength}
+        y2={bodyY}
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      <line
+        key="right-extended-shoulder"
+        x1={bodyX + bodyWidth}
+        y1={bodyY}
+        x2={bodyX + bodyWidth + extendedShoulderLength}
+        y2={bodyY}
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Manches attachées plus bas
+      <rect
+        key="left-sleeve"
+        x={leftSleeveX}
+        y={sleeveY + sleeveWidth * 0.3}
+        width={sleeveLength}
+        height={sleeveWidth * 0.7}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      <rect
+        key="right-sleeve"
+        x={rightSleeveX}
+        y={sleeveY + sleeveWidth * 0.3}
+        width={sleeveLength}
+        height={sleeveWidth * 0.7}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />
+    ];
+  };
+
+  /**
+   * Dessine les manches dolman (larges, fluides, intégrées au corps)
+   * PD_PH4_US002: Dolman sleeve type
+   */
+  const drawDolmanSleeves = (params: SleeveDrawingParams): React.JSX.Element[] => {
+    const { centerX, bodyX, bodyY, bodyWidth, bodyHeight, sleeveLength } = params;
+    
+    // Pour dolman, les manches sont intégrées dans une forme continue
+    const dolmanWidth = bodyWidth + sleeveLength * 2;
+    const dolmanX = centerX - dolmanWidth / 2;
+    
+    return [
+      // Forme dolman continue (remplace le rectangle du corps)
+      <path
+        key="dolman-shape"
+        d={`M ${dolmanX} ${bodyY + bodyHeight * 0.7} 
+            Q ${dolmanX} ${bodyY} ${bodyX} ${bodyY}
+            L ${bodyX + bodyWidth} ${bodyY}
+            Q ${dolmanX + dolmanWidth} ${bodyY} ${dolmanX + dolmanWidth} ${bodyY + bodyHeight * 0.7}
+            L ${dolmanX + dolmanWidth} ${bodyY + bodyHeight}
+            L ${dolmanX} ${bodyY + bodyHeight}
+            Z`}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />
+    ];
+  };
+
+  /**
+   * Dessine les emmanchures pour vêtement sans manches
+   * PD_PH4_US002: Sleeveless type
+   */
+  const drawSleevelessArmholes = (params: SleeveDrawingParams): React.JSX.Element[] => {
+    const { bodyX, bodyY, bodyWidth, sleeveWidth } = params;
+    
+    return [
+      // Emmanchure gauche
+      <path
+        key="left-armhole"
+        d={`M ${bodyX} ${bodyY + sleeveWidth * 0.1} 
+            Q ${bodyX - 10} ${bodyY + sleeveWidth * 0.5} 
+            ${bodyX} ${bodyY + sleeveWidth * 0.9}`}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />,
+      // Emmanchure droite
+      <path
+        key="right-armhole"
+        d={`M ${bodyX + bodyWidth} ${bodyY + sleeveWidth * 0.1} 
+            Q ${bodyX + bodyWidth + 10} ${bodyY + sleeveWidth * 0.5} 
+            ${bodyX + bodyWidth} ${bodyY + sleeveWidth * 0.9}`}
+        fill="none"
+        stroke="#374151"
+        strokeWidth="2"
+      />
+    ];
+  };
+
+  /**
+   * Rend les manches selon le type sélectionné
+   * PD_PH4_US002: Sleeve type selection implementation
+   */
+  const renderSleevesByType = (sleeveType: NonNullable<SleevesData['sleeveType']>, params: SleeveDrawingParams): React.JSX.Element[] => {
+    switch (sleeveType) {
+      case 'setIn':
+        return drawSetInSleeves(params);
+      case 'raglan':
+        return drawRaglanSleeves(params);
+      case 'dropShoulder':
+        return drawDropShoulderSleeves(params);
+      case 'dolman':
+        return drawDolmanSleeves(params);
+      case 'sleeveless':
+        return drawSleevelessArmholes(params);
+      default:
+        // Fallback to set-in sleeves
+        return drawSetInSleeves(params);
+    }
+  };
+
+  /**
    * Génère le contenu SVG pour un sweater/cardigan/vest
    */
   const renderGarmentSchematic = (dimensions: SchematicDimensions) => {
@@ -363,35 +640,22 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       />
     );
 
-    // Manches (pour sweater et cardigan)
+    // Manches selon le type sélectionné (PD_PH4_US002)
     if (garmentType !== 'vest' && sleeveLength && sleeveWidth) {
-      // Manche gauche
-      elements.push(
-        <rect
-          key="left-sleeve"
-          x={leftSleeveX}
-          y={sleeveY}
-          width={sleeveLength}
-          height={sleeveWidth}
-          fill="none"
-          stroke="#374151"
-          strokeWidth="2"
-        />
-      );
-
-      // Manche droite
-      elements.push(
-        <rect
-          key="right-sleeve"
-          x={rightSleeveX}
-          y={sleeveY}
-          width={sleeveLength}
-          height={sleeveWidth}
-          fill="none"
-          stroke="#374151"
-          strokeWidth="2"
-        />
-      );
+      const sleeveType = sleeves?.sleeveType || 'setIn'; // Default to set-in as per spec
+      elements.push(...renderSleevesByType(sleeveType, {
+        centerX,
+        bodyX,
+        bodyY,
+        bodyWidth,
+        bodyHeight,
+        sleeveWidth,
+        sleeveLength,
+        leftSleeveX,
+        rightSleeveX,
+        sleeveY,
+        neckWidth: neckWidth || 0
+      }));
     }
 
     // Encolure avec type spécifique (PD_PH2_US003)
@@ -490,6 +754,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
 
   /**
    * Génère les labels de dimensions avec lignes de côte
+   * Affiche les dimensions finies (mesures + aisance) - PD_PH4_US001
    */
   const renderDimensionLabels = (dimensions: SchematicDimensions, garmentType: GarmentType): React.JSX.Element[] => {
     const labels: React.JSX.Element[] = [];
@@ -502,8 +767,9 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       const rectX = centerX - bodyWidth / 2;
       const rectY = centerY - bodyHeight / 2;
 
-      // Label longueur (horizontal)
-      if (measurements.scarfLength) {
+      // Label longueur (horizontal) - use finished dimensions
+      const displayLength = finishedDimensions.finishedScarfLength || measurements.scarfLength;
+      if (displayLength) {
         labels.push(
           <g key="length-label">
             <line
@@ -521,14 +787,15 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
               fontSize="12"
               fill="#374151"
             >
-              {measurements.scarfLength} cm
+              {Math.round(displayLength * 10) / 10} cm
             </text>
           </g>
         );
       }
 
-      // Label largeur (vertical)
-      if (measurements.scarfWidth) {
+      // Label largeur (vertical) - use finished dimensions
+      const displayWidth = finishedDimensions.finishedScarfWidth || measurements.scarfWidth;
+      if (displayWidth) {
         labels.push(
           <g key="width-label">
             <line
@@ -547,7 +814,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
               fill="#374151"
               transform={`rotate(-90, ${rectX - 30}, ${centerY})`}
             >
-              {measurements.scarfWidth} cm
+              {Math.round(displayWidth * 10) / 10} cm
             </text>
           </g>
         );
@@ -557,8 +824,9 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
       const bodyX = centerX - bodyWidth / 2;
       const bodyY = centerY - bodyHeight / 2;
 
-      // Label circonférence poitrine
-      if (measurements.chestCircumference) {
+      // Label circonférence poitrine - use finished dimensions
+      const displayChest = finishedDimensions.finishedChestCircumference || measurements.chestCircumference;
+      if (displayChest) {
         labels.push(
           <g key="chest-label">
             <line
@@ -576,14 +844,15 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
               fontSize="12"
               fill="#374151"
             >
-              {measurements.chestCircumference} cm
+              {Math.round(displayChest * 10) / 10} cm
             </text>
           </g>
         );
       }
 
-      // Label longueur corps
-      if (measurements.bodyLength) {
+      // Label longueur corps - use finished dimensions
+      const displayBodyLength = finishedDimensions.finishedBodyLength || measurements.bodyLength;
+      if (displayBodyLength) {
         labels.push(
           <g key="body-length-label">
             <line
@@ -602,7 +871,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
               fill="#374151"
               transform={`rotate(-90, ${bodyX - 30}, ${centerY})`}
             >
-              {measurements.bodyLength} cm
+              {Math.round(displayBodyLength * 10) / 10} cm
             </text>
           </g>
         );
@@ -610,8 +879,9 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
     } else if (garmentType === 'hat') {
       const { bodyWidth, bodyHeight } = dimensions;
 
-      // Label circonférence tête
-      if (measurements.headCircumference) {
+      // Label circonférence tête - use finished dimensions
+      const displayHeadCirc = finishedDimensions.finishedHeadCircumference || measurements.headCircumference;
+      if (displayHeadCirc) {
         labels.push(
           <text
             key="head-circ-label"
@@ -621,13 +891,14 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
             fontSize="12"
             fill="#374151"
           >
-            ⌀ {measurements.headCircumference} cm
+            ⌀ {Math.round(displayHeadCirc * 10) / 10} cm
           </text>
         );
       }
 
-      // Label hauteur
-      if (measurements.hatHeight) {
+      // Label hauteur - use finished dimensions
+      const displayHatHeight = finishedDimensions.finishedHatHeight || measurements.hatHeight;
+      if (displayHatHeight) {
         labels.push(
           <g key="hat-height-label">
             <text
@@ -637,7 +908,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
               fontSize="12"
               fill="#374151"
             >
-              {measurements.hatHeight} cm
+              {Math.round(displayHatHeight * 10) / 10} cm
             </text>
           </g>
         );

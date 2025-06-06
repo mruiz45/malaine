@@ -34,6 +34,12 @@ interface PatternLoggerHook {
   /** Log sleeve type change */
   logSleeveTypeChanged: (oldType: string, newType: string) => void;
   
+  /** Log sleeve type dependency detection (PD_PH4_US003) */
+  logSleeveTypeDependencyDetected: (oldType: string, newType: string, affectedSections: string[]) => void;
+  
+  /** Log body structure recalculation flagged (PD_PH4_US003) */
+  logBodyStructureRecalculationFlagged: (triggerSection: string, triggerEvent: string, flaggedCalculations: string[]) => void;
+  
   /** Log fit preference change */
   logFitPreferenceChanged: (oldValue: string, newValue: string) => void;
   
@@ -132,6 +138,14 @@ export function usePatternLogger(config?: UsePatternLoggerConfig): PatternLogger
     log('INFO', 'SLEEVE_TYPE_CHANGED', { oldType, newType });
   }, [log]);
 
+  const logSleeveTypeDependencyDetected = useCallback((oldType: string, newType: string, affectedSections: string[]) => {
+    log('INFO', 'SLEEVE_TYPE_DEPENDENCY_DETECTED', { oldType, newType, affectedSections });
+  }, [log]);
+
+  const logBodyStructureRecalculationFlagged = useCallback((triggerSection: string, triggerEvent: string, flaggedCalculations: string[]) => {
+    log('INFO', 'BODY_STRUCTURE_RECALCULATION_FLAGGED', { triggerSection, triggerEvent, flaggedCalculations });
+  }, [log]);
+
   const logFitPreferenceChanged = useCallback((oldValue: string, newValue: string) => {
     log('INFO', 'FIT_PREFERENCE_CHANGED', { oldValue, newValue });
   }, [log]);
@@ -201,6 +215,8 @@ export function usePatternLogger(config?: UsePatternLoggerConfig): PatternLogger
     logMeasurementUpdated,
     logNecklineTypeChanged,
     logSleeveTypeChanged,
+    logSleeveTypeDependencyDetected,
+    logBodyStructureRecalculationFlagged,
     logFitPreferenceChanged,
     logUndo,
     logRedo,
@@ -219,29 +235,5 @@ export function usePatternLogger(config?: UsePatternLoggerConfig): PatternLogger
   };
 }
 
-/**
- * Higher-order component to automatically inject pattern logging
- * @param WrappedComponent - Component to wrap
- * @param config - Logging configuration
- * @returns Enhanced component with logging capabilities
- */
-export function withPatternLogger<P extends Record<string, any>>(
-  WrappedComponent: React.ComponentType<P>,
-  config?: UsePatternLoggerConfig
-) {
-  const displayName = WrappedComponent.displayName || WrappedComponent.name || 'Component';
-  
-  const EnhancedComponent = (props: P) => {
-    const logger = usePatternLogger({
-      ...config,
-      componentName: config?.componentName || displayName,
-      logInitialization: config?.logInitialization ?? true,
-    });
-
-    const enhancedProps = { ...props, logger } as P & { logger: PatternLoggerHook };
-    return <WrappedComponent {...enhancedProps} />;
-  };
-
-  EnhancedComponent.displayName = `withPatternLogger(${displayName})`;
-  return EnhancedComponent;
-} 
+// HOC temporarily removed due to TypeScript syntax issues
+// TODO: Re-implement withPatternLogger HOC in future iteration 

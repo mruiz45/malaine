@@ -82,6 +82,8 @@ export interface BodyStructureData extends PatternSectionBase {
   construction: 'topDown' | 'bottomUp' | 'seamless' | 'seamed' | null;
   shaping: 'waistShaping' | 'straightSilhouette' | 'aLine' | null;
   frontStyle: 'plain' | 'buttonBand' | 'zipper' | null;
+  /** Flag indicating armhole calculations may need recalculation due to sleeve type changes (PD_PH4_US003) */
+  armholeRequiresRecalculation?: boolean;
 }
 
 /**
@@ -95,9 +97,10 @@ export interface NecklineData extends PatternSectionBase {
 
 /**
  * Sleeves section data structure
+ * Extended for PD_PH4_US002: Sleeve Type Selection
  */
 export interface SleevesData extends PatternSectionBase {
-  sleeveType: 'setIn' | 'raglan' | 'dolman' | 'sleeveless' | null;
+  sleeveType: 'setIn' | 'raglan' | 'dolman' | 'dropShoulder' | 'sleeveless' | null;
   sleeveLength: 'long' | 'threeQuarter' | 'short' | 'cap' | null;
   cuffStyle: 'ribbed' | 'plain' | 'folded' | null;
   cuffLength: number | null; // cm
@@ -169,7 +172,8 @@ export type PatternAction =
   | { type: 'UPDATE_METADATA'; payload: Partial<PatternMetadata> }
   | { type: 'UPDATE_UI_SETTINGS'; payload: Partial<PatternUISettings> }
   | { type: 'RESET_PATTERN' }
-  | { type: 'RESET_SECTION'; payload: PatternSection };
+  | { type: 'RESET_SECTION'; payload: PatternSection }
+  | { type: 'CLEAR_RECALCULATION_FLAGS'; payload: { section: string } };
 
 /**
  * Pattern context value interface
@@ -190,4 +194,5 @@ export interface PatternContextValue {
   updateFinishing: (data: Partial<FinishingData>) => void;
   resetPattern: () => void;
   resetSection: (section: PatternSection) => void;
+  clearRecalculationFlags: (section: string) => void;
 } 

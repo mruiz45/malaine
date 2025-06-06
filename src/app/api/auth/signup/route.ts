@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
         message: 'Account created and signed in successfully'
       });
 
-      response.cookies.set('access_token', data.session.access_token, {
+      response.cookies.set('sb-access-token', data.session.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         path: '/',
       });
 
-      response.cookies.set('refresh_token', data.session.refresh_token, {
+      response.cookies.set('sb-refresh-token', data.session.refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',

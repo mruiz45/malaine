@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useReducer, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { 
   PatternState, 
   PatternAction, 
@@ -81,7 +81,7 @@ const createInitialState = (): PatternState => ({
   },
   sleeves: {
     isSet: false,
-    sleeveType: null,
+    sleeveType: null, // Will default to 'setIn' in SchematicPreview2D when null
     sleeveLength: null,
     cuffStyle: null,
     cuffLength: null
@@ -221,19 +221,34 @@ const patternReducer = (state: PatternState, action: PatternAction): PatternStat
         }
       };
 
-    case 'UPDATE_SLEEVES':
+    case 'UPDATE_SLEEVES': {
+      const updatedSleeves = {
+        ...state.sleeves,
+        ...action.payload,
+        isSet: true
+      };
+
+      // Check for sleeve type dependency (PD_PH4_US003)
+      let updatedBodyStructure = state.bodyStructure;
+      
+      // If sleeve type changed, flag armhole recalculation
+      if (state.sleeves.sleeveType !== updatedSleeves.sleeveType && updatedSleeves.sleeveType !== null) {
+        updatedBodyStructure = {
+          ...state.bodyStructure,
+          armholeRequiresRecalculation: true
+        };
+      }
+
       return {
         ...state,
-        sleeves: {
-          ...state.sleeves,
-          ...action.payload,
-          isSet: true
-        },
+        sleeves: updatedSleeves,
+        bodyStructure: updatedBodyStructure,
         metadata: {
           ...state.metadata,
           updatedAt
         }
       };
+    }
 
     case 'UPDATE_FINISHING':
       return {
@@ -283,6 +298,27 @@ const patternReducer = (state: PatternState, action: PatternAction): PatternStat
           updatedAt
         }
       };
+    }
+
+    case 'CLEAR_RECALCULATION_FLAGS': {
+      const { section } = action.payload;
+      
+      switch (section) {
+        case 'bodyStructure':
+          return {
+            ...state,
+            bodyStructure: {
+              ...state.bodyStructure,
+              armholeRequiresRecalculation: false
+            },
+            metadata: {
+              ...state.metadata,
+              updatedAt
+            }
+          };
+        default:
+          return state;
+      }
     }
 
     default:
@@ -361,6 +397,10 @@ export const PatternProvider: React.FC<PatternProviderProps> = ({
     dispatch({ type: 'RESET_SECTION', payload: section });
   }, []);
 
+  const clearRecalculationFlags = useCallback((section: string) => {
+    dispatch({ type: 'CLEAR_RECALCULATION_FLAGS', payload: { section } });
+  }, []);
+
   const contextValue: PatternContextValue = {
     state,
     dispatch,
@@ -374,7 +414,8 @@ export const PatternProvider: React.FC<PatternProviderProps> = ({
     updateSleeves,
     updateFinishing,
     resetPattern,
-    resetSection
+    resetSection,
+    clearRecalculationFlags
   };
 
   return (
@@ -382,4 +423,16 @@ export const PatternProvider: React.FC<PatternProviderProps> = ({
       {children}
     </PatternContext.Provider>
   );
-}; 
+};
+
+/**
+ * Hook to use the Pattern Context
+ * Must be used within a PatternProvider
+ */
+export function usePattern(): PatternContextValue {
+  const context = useContext(PatternContext);
+  if (!context) {
+    throw new Error('usePattern must be used within a PatternProvider');
+  }
+  return context;
+} 

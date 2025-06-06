@@ -18,10 +18,10 @@ import type {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { morphology_key: string } }
+  { params }: { params: Promise<{ morphology_key: string }> }
 ) {
   try {
-    const { morphology_key } = params;
+    const { morphology_key } = await params;
 
     // Validate morphology key
     if (!morphology_key) {

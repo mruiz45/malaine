@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { PatternProvider } from '@/contexts/PatternContext';
+// import { PatternProvider } from '@/contexts/PatternContext'; // Not used in this test
 import { SchematicPreview2D } from '@/components/pattern/SchematicPreview2D';
-import { GarmentType, MeasurementsData, NecklineData } from '@/types/pattern';
+import { GarmentType, MeasurementsData, NecklineData, EaseData } from '@/types/pattern';
 
 /**
  * Page de test pour PD_PH2_US003: Neckline Type Selection
@@ -12,7 +12,7 @@ import { GarmentType, MeasurementsData, NecklineData } from '@/types/pattern';
 export default function TestNecklinePage() {
   // State for test garment and measurements
   const [garmentType, setGarmentType] = useState<GarmentType>('sweater');
-  const [measurements, setMeasurements] = useState<MeasurementsData>({
+  const [measurements] = useState<MeasurementsData>({
     isSet: true,
     mode: 'custom',
     standardSizeId: null,
@@ -36,6 +36,15 @@ export default function TestNecklinePage() {
     necklineType: null,
     necklineDepth: null,
     necklineWidth: null
+  });
+
+  // Add ease state for testing PD_PH4_US001
+  const [ease] = useState<EaseData>({
+    isSet: false,
+    chestEase: null,
+    lengthEase: null,
+    sleeveEase: null,
+    easeType: null
   });
 
   // Test scenarios for validation
@@ -179,6 +188,7 @@ export default function TestNecklinePage() {
               <SchematicPreview2D
                 garmentType={garmentType}
                 measurements={measurements}
+                ease={ease}
                 neckline={neckline}
                 width={400}
                 height={500}

@@ -12,7 +12,7 @@ import type {
  */
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string; componentId: string } }
+  { params }: { params: Promise<{ id: string; componentId: string }> }
 ): Promise<NextResponse> {
   try {
     // Vérification de l'authentification
@@ -25,7 +25,7 @@ export async function PUT(
     }
 
     const { supabase, user } = sessionResult;
-    const { id: sessionId, componentId } = params;
+    const { id: sessionId, componentId } = await params;
 
     // Validation des paramètres de route
     if (!sessionId || !componentId) {
@@ -162,7 +162,7 @@ export async function PUT(
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string; componentId: string } }
+  { params }: { params: Promise<{ id: string; componentId: string }> }
 ): Promise<NextResponse> {
   try {
     // Vérification de l'authentification
@@ -175,7 +175,7 @@ export async function GET(
     }
 
     const { supabase, user } = sessionResult;
-    const { id: sessionId, componentId } = params;
+    const { id: sessionId, componentId } = await params;
 
     // Validation des paramètres de route
     if (!sessionId || !componentId) {

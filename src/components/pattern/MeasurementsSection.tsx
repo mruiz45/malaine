@@ -18,7 +18,7 @@ import { MeasurementMode } from '@/types/standardSizes';
 export const MeasurementsSection: React.FC = () => {
   const { t } = useTranslation();
   const { state, updateMeasurements } = usePattern();
-  const { measurements, garmentType, neckline } = state;
+  const { measurements, garmentType, neckline, ease, sleeves } = state;
   
   // Local form state for controlled inputs
   const [formData, setFormData] = useState({
@@ -351,7 +351,9 @@ export const MeasurementsSection: React.FC = () => {
           <SchematicPreview2D
             garmentType={garmentType}
             measurements={measurements}
+            ease={ease}
             neckline={neckline}
+            sleeves={sleeves}
             width={320}
             height={420}
             className="w-full"
