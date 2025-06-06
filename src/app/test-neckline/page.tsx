@@ -14,10 +14,13 @@ export default function TestNecklinePage() {
   const [garmentType, setGarmentType] = useState<GarmentType>('sweater');
   const [measurements, setMeasurements] = useState<MeasurementsData>({
     isSet: true,
-    chestCircumference: 96,
+    mode: 'custom',
+    standardSizeId: null,
+    standardSizeLabel: null,
+    chestCircumference: 90,
     bodyLength: 60,
-    shoulderWidth: 42,
-    sleeveLength: 58,
+    shoulderWidth: 40,
+    sleeveLength: 60,
     length: null,
     width: null,
     armholeDepth: null,

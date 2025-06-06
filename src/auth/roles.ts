@@ -7,6 +7,9 @@ import {
   getCurrentUserProfile as fetchUserProfile 
 } from '../services/roleService';
 
+// Export UserRole so it can be used by other files
+export type { UserRole };
+
 /**
  * Get the current user's role
  * @returns Promise resolving to the user role ('guest', 'user', or 'admin')

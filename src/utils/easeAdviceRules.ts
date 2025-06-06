@@ -17,7 +17,7 @@ import type {
 /**
  * Garment categories configuration
  */
-export const GARMENT_CATEGORIES: GarmentCategory[] = [
+export const GARMENT_CATEGORIES: Array<{ value: GarmentCategory; label: string }> = [
   { value: 'sweater', label: 'Sweater' },
   { value: 'cardigan', label: 'Cardigan' },
   { value: 'hat', label: 'Hat' },
@@ -28,7 +28,7 @@ export const GARMENT_CATEGORIES: GarmentCategory[] = [
 /**
  * Fit preferences configuration
  */
-export const FIT_PREFERENCES: FitPreference[] = [
+export const FIT_PREFERENCES: Array<{ value: FitPreference; label: string }> = [
   { value: 'very_close_fitting', label: 'Very Close-fitting/Negative Ease' },
   { value: 'close_fitting', label: 'Close-fitting/Zero Ease' },
   { value: 'classic', label: 'Classic/Slightly Positive Ease' },
@@ -39,7 +39,7 @@ export const FIT_PREFERENCES: FitPreference[] = [
 /**
  * Yarn weight categories configuration
  */
-export const YARN_WEIGHTS: YarnWeightCategory[] = [
+export const YARN_WEIGHTS: Array<{ value: YarnWeightCategory; label: string }> = [
   { value: 'fingering', label: 'Fingering Weight' },
   { value: 'sport', label: 'Sport Weight' },
   { value: 'dk', label: 'DK Weight' },

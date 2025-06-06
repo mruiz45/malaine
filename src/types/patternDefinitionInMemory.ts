@@ -4,6 +4,7 @@
  */
 
 import { PatternDefinitionSection } from '@/types/garmentTypeConfig';
+import { RestorePoint, StateWithoutRestorePoints } from '@/types/restorePoints';
 
 /**
  * In-memory pattern definition state
@@ -33,6 +34,9 @@ export interface InMemoryPatternDefinition {
   neckline?: NecklineSectionData;
   sleeves?: SleevesSectionData;
   accessoryDefinition?: AccessoryDefinitionSectionData;
+  
+  /** Restore points for this pattern session (PD_PH3_US002) */
+  restorePoints?: RestorePoint<StateWithoutRestorePoints<InMemoryPatternDefinition>>[];
 }
 
 /**

@@ -18,8 +18,9 @@ const sampleRibbingChart: StitchChartData = {
   stitch_pattern_id: "ribbing-2x2",
   metadata: {
     stitch_pattern_name: "Côtes 2x2",
-    craft_type: "knitting",
+    craft_type: "knitting" as const,
     has_no_stitch_cells: false,
+    has_colorwork: false,
     generated_at: new Date().toISOString()
   },
   dimensions: {
@@ -98,8 +99,9 @@ const sampleDecreaseChart: StitchChartData = {
   stitch_pattern_id: "decrease-pattern",
   metadata: {
     stitch_pattern_name: "Diminutions Simples",
-    craft_type: "knitting",
+    craft_type: "knitting" as const,
     has_no_stitch_cells: false,
+    has_colorwork: false,
     generated_at: new Date().toISOString()
   },
   dimensions: {

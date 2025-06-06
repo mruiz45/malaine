@@ -18,11 +18,14 @@ export default function TestSchematicPreviewPage() {
   const [garmentType, setGarmentType] = useState<GarmentType>('sweater');
   const [measurements, setMeasurements] = useState<MeasurementsData>({
     isSet: false,
+    mode: 'custom',
+    standardSizeId: null,
+    standardSizeLabel: null,
     length: null,
     width: null,
-    chestCircumference: 96,
+    chestCircumference: 90,
     bodyLength: 60,
-    sleeveLength: 58,
+    sleeveLength: 60,
     shoulderWidth: 42,
     armholeDepth: 20,
     headCircumference: null,
@@ -84,6 +87,9 @@ export default function TestSchematicPreviewPage() {
     // Reset all measurements
     const newMeasurements: MeasurementsData = {
       isSet: true,
+      mode: 'custom',
+      standardSizeId: null,
+      standardSizeLabel: null,
       length: null,
       width: null,
       chestCircumference: null,

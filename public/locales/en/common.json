@@ -12,7 +12,10 @@
     "logout": "Logout",
     "toggleMenu": "Toggle menu",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "sections": "Sections",
+    "selectSection": "Select a Section",
+    "selectSectionDescription": "Choose a section from the navigation to start configuring your pattern."
   },
   "home": {
     "welcome_message": "Welcome to Malaine",
@@ -1300,7 +1303,23 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "close": "Close",
-    "ok": "OK"
+    "ok": "OK",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "update": "Update",
+    "yes": "Yes",
+    "no": "No",
+    "required": "Required",
+    "completed": "Completed",
+    "markCompleted": "Mark as Completed",
+    "currentData": "Current Data",
+    "placeholderInfo": "This is a placeholder. The actual component would be integrated here."
   },
   "error": {
     "categoriesLoadFailed": "Failed to load categories",
@@ -1591,6 +1610,7 @@
     "title": "Pattern Definition",
     "getStarted": "Get Started",
     "description": "Create a new pattern definition session or continue working on an existing one.",
+    "newDescription": "Create a new pattern definition. Start by selecting the type of garment you want to create, then complete the relevant sections in any order you prefer.",
     "createNew": "Create New Pattern",
     "existingSessions": "Your Pattern Definitions",
     "untitledSession": "Untitled Session",
@@ -1603,6 +1623,28 @@
     "stepsCompleted": "steps completed",
     "readyForCalculation": "Ready for Calculation",
     "readyForCalculationDescription": "Your pattern definition is complete and ready for the calculation engine.",
+    "newWorkspace": {
+      "title": "Pattern Definition",
+      "subtitle": "Create your knitting pattern step by step"
+    },
+    "newApproach": {
+      "title": "New Garment-Centric Approach",
+      "step1": "1. First, select your garment type (sweater, scarf, hat, etc.)",
+      "step2": "2. Only relevant sections for your garment will be shown",
+      "step3": "3. Navigate freely between sections - complete them in any order",
+      "step4": "4. Required sections are clearly marked"
+    },
+    "undoButton": "Undo",
+    "redoButton": "Redo",
+    "createRestorePointButton": "Create Restore Point",
+    "restorePointNamePrompt": "Enter name for Restore Point:",
+    "garmentTypeLabel": "Garment Type",
+    "selectGarmentTypePrompt": "Select the type of garment you want to create:",
+    "section": {
+      "gauge": "Gauge",
+      "measurements": "Measurements", 
+      "neckline": "Neckline"
+    },
     "steps": {
       "garment-type": {
         "label": "Garment Type"
@@ -2014,8 +2056,137 @@
       "advanced": "advanced"
     }
   },
+  "garmentStructure": {
+    "title": "Garment Structure",
+    "description": "Define the construction method and body shape for your garment."
+  },
+  "sweaterStructure": {
+    "title": "Sweater Structure",
+    "description": "Choose the construction method and body shape for your sweater. These choices will influence the pattern calculations and available options.",
+    "constructionMethod": "Construction Method",
+    "bodyShape": "Body Shape",
+    "helpText": "Your construction method choice affects which body shapes are available. Some combinations work better together for optimal fit and construction ease.",
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "fitType": {
+      "loose": "Loose",
+      "fitted": "Fitted",
+      "oversized": "Oversized"
+    }
+  },
   "accessoryDefinition": {
     "title": "Accessory Definition",
     "notRequired": "No additional accessory definition required for this garment type."
+  },
+  "undoRedo": {
+    "undo": "Undo last change",
+    "redo": "Redo last undone change",
+    "noUndo": "Nothing to undo",
+    "noRedo": "Nothing to redo",
+    "configure": "Configure undo/redo settings",
+    "status": {
+      "position": "Position",
+      "canUndo": "Can undo",
+      "canRedo": "Can redo",
+      "history": "History"
+    }
+  },
+  "undoRedoDemo": {
+    "title": "Pattern Definition with Undo/Redo",
+    "pageTitle": "Undo/Redo Demo - Pattern Definition",
+    "pageDescription": "Test the undo/redo functionality for pattern definition changes",
+    "getStarted": "Get Started with Undo/Redo Demo",
+    "description": "This demo showcases the undo/redo functionality for pattern definition changes. Every field modification creates an undo point.",
+    "createPattern": "Create Demo Pattern",
+    "selectGarment": "Select Garment Type",
+    "configuration": "Undo/Redo Configuration",
+    "historySize": "History Size",
+    "enabled": "Enabled",
+    "clearHistory": "Clear History",
+    "instructions": {
+      "title": "How to Test Undo/Redo",
+      "step1": "Create a new pattern and select a garment type",
+      "step2": "Navigate to any section and fill in the demo fields",
+      "step3": "Every field change creates an undo point",
+      "step4": "Use the undo/redo buttons in the top-right corner",
+      "step5": "Watch the history counter and button states change",
+      "step6": "Configure history size and enable/disable functionality"
+    },
+    "features": {
+      "title": "Features Being Tested",
+      "undoRedo": "Undo/Redo buttons with proper enabled/disabled states",
+      "fieldChanges": "Field changes creating snapshots",
+      "garmentSelection": "Garment type selection as significant change",
+      "sectionCompletion": "Section completion marking",
+      "historyLimit": "Configurable history size limit",
+      "enableDisable": "Enable/disable undo/redo functionality",
+      "historyDisplay": "History position and status display",
+      "clearHistory": "Clear history functionality"
+    }
+  },
+  "restorePoints": {
+    "manager": {
+      "title": "Restore Points",
+      "noPattern": "No active pattern",
+      "createPatternHint": "Create a pattern to use restore points",
+      "create": "Create",
+      "clearAllTooltip": "Clear all restore points",
+      "clearAllConfirm": "Are you sure you want to delete all restore points? This action cannot be undone.",
+      "maxCapacity": "Maximum restore points reached. Creating new ones will remove the oldest."
+    },
+    "createDialog": {
+      "title": "Create Restore Point",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g., \"After basic shaping\", \"V-Neck idea\"",
+      "descriptionLabel": "Description (optional)",
+      "descriptionPlaceholder": "Optional description of what this restore point represents...",
+      "maxCapacityWarning": "Maximum restore points reached. Creating a new one will remove the oldest point.",
+      "creating": "Creating...",
+      "create": "Create Restore Point"
+    },
+    "list": {
+      "noRestorePoints": "No restore points created yet",
+      "noRestorePointsDescription": "Create restore points to save your progress at key moments.",
+      "createdOn": "Created on",
+      "revert": "Revert",
+      "delete": "Delete",
+      "revertConfirm": "Are you sure you want to revert to this restore point? This will undo all changes made after this point.",
+      "deleteConfirm": "Are you sure you want to delete this restore point?",
+      "reverting": "Reverting...",
+      "deleting": "Deleting...",
+      "empty": "No restore points saved yet",
+      "emptyHint": "Create a restore point to save your current design state",
+      "revertTooltip": "Revert to this point",
+      "deleteTooltip": "Delete this restore point"
+    }
+  },
+  "yarn": {
+    "selectProfile": "Select Yarn Profile",
+    "selectDescription": "Choose the yarn profile for this pattern",
+    "createNew": "Create New",
+    "currentSelection": "Current Selection",
+    "noProfiles": "No yarn profiles",
+    "noProfilesDescription": "Create your first yarn profile to continue",
+    "createFirst": "Create First Yarn Profile",
+    "error_loading": "Error loading yarn profiles"
+  },
+  "demo": {
+    "undoRedoTesting": "Undo/Redo Testing",
+    "testField": "Test Field (changes create snapshots)",
+    "typeHere": "Type here to test undo/redo...",
+    "fieldInstruction": "Each keystroke creates an undo point",
+    "numberField": "Number Field",
+    "selectField": "Select Field",
+    "selectOption": "Select an option...",
+    "option1": "Option 1",
+    "option2": "Option 2",
+    "option3": "Option 3",
+    "checkboxLabel": "Demo checkbox option",
+    "markCompleted": "Mark Section Completed",
+    "alreadyCompleted": "Section already completed",
+    "currentData": "Current section data"
   }
 } 
