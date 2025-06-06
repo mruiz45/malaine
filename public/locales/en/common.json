@@ -70,6 +70,56 @@
     "en": "English",
     "fr": "French"
   },
+  "3dPreview": {
+    "title": "3D Preview",
+    "disclaimer": "Approximate preview for visualization",
+    "disabled": "3D Preview Disabled",
+    "notAvailable": "Complete pattern data to view preview",
+    "loading": "Loading preview...",
+    "enable": "Enable preview",
+    "disable": "Disable preview",
+    "autoUpdate": "Auto-update",
+    "auto": "Auto",
+    "refresh": "Refresh preview",
+    "reset": "Reset to defaults",
+    "toggleVisibilityPanel": "Toggle visibility controls",
+    "views": {
+      "perspective": "Perspective",
+      "front": "Front",
+      "back": "Back",
+      "side": "Side"
+    },
+    "dimensions": "Dimensions",
+    "bust": "Bust",
+    "length": "Length", 
+    "sleeves": "Sleeves",
+    "components": "Components",
+    "visibilityControls": "Visibility Controls",
+    "showAll": "Show all",
+    "hideAll": "Hide all",
+    "resetVisibility": "Reset to default",
+    "noComponentsAvailable": "No components available for this garment type",
+    "clickable": "clickable",
+    "hoverToInteract": "Hover over parts to interact",
+    "clickToNavigate": "Click to navigate to {{component}}",
+    "hideComponent": "Hide {{component}}",
+    "showComponent": "Show {{component}}",
+    "visibilityHelp": "Toggle parts on/off to focus on specific areas. Click on visible parts to navigate to their configuration sections.",
+    "componentGroups": {
+      "body": "Body",
+      "sleeves": "Sleeves",
+      "details": "Details"
+    },
+    "components": {
+      "frontBody": "Front Body",
+      "backBody": "Back Body",
+      "leftSleeve": "Left Sleeve",
+      "rightSleeve": "Right Sleeve",
+      "necklineDetail": "Neckline",
+      "cuffDetail": "Cuffs",
+      "hemDetail": "Hem"
+    }
+  },
   "auth": {
     "email": "Email address",
     "password": "Password",

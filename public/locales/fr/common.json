@@ -126,6 +126,56 @@
     "en": "Anglais",
     "fr": "Français"
   },
+  "3dPreview": {
+    "title": "Aperçu 3D",
+    "disclaimer": "Aperçu approximatif pour visualisation",
+    "disabled": "Aperçu 3D désactivé",
+    "notAvailable": "Complétez les données du modèle pour voir l'aperçu",
+    "loading": "Chargement de l'aperçu...",
+    "enable": "Activer l'aperçu",
+    "disable": "Désactiver l'aperçu",
+    "autoUpdate": "Mise à jour automatique",
+    "auto": "Auto",
+    "refresh": "Actualiser l'aperçu",
+    "reset": "Réinitialiser aux valeurs par défaut",
+    "toggleVisibilityPanel": "Basculer les contrôles de visibilité",
+    "views": {
+      "perspective": "Perspective",
+      "front": "Devant",
+      "back": "Dos",
+      "side": "Côté"
+    },
+    "dimensions": "Dimensions",
+    "bust": "Poitrine",
+    "length": "Longueur",
+    "sleeves": "Manches",
+    "components": "Composants",
+    "visibilityControls": "Contrôles de Visibilité",
+    "showAll": "Tout afficher",
+    "hideAll": "Tout masquer",
+    "resetVisibility": "Réinitialiser par défaut",
+    "noComponentsAvailable": "Aucun composant disponible pour ce type de vêtement",
+    "clickable": "cliquable",
+    "hoverToInteract": "Survolez les parties pour interagir",
+    "clickToNavigate": "Cliquez pour naviguer vers {{component}}",
+    "hideComponent": "Masquer {{component}}",
+    "showComponent": "Afficher {{component}}",
+    "visibilityHelp": "Activez/désactivez les parties pour vous concentrer sur des zones spécifiques. Cliquez sur les parties visibles pour naviguer vers leurs sections de configuration.",
+    "componentGroups": {
+      "body": "Corps",
+      "sleeves": "Manches",
+      "details": "Détails"
+    },
+    "components": {
+      "frontBody": "Devant",
+      "backBody": "Dos",
+      "leftSleeve": "Manche Gauche",
+      "rightSleeve": "Manche Droite",
+      "necklineDetail": "Encolure",
+      "cuffDetail": "Poignets",
+      "hemDetail": "Ourlet"
+    }
+  },
   "auth": {
     "email": "Adresse e-mail",
     "password": "Mot de passe",

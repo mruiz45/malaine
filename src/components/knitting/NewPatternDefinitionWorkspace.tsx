@@ -12,6 +12,7 @@ import { PatternDefinitionSection } from '@/types/garmentTypeConfig';
 import { SECTION_METADATA } from '@/utils/garmentTypeConfig';
 import PatternDefinitionNavigation from './PatternDefinitionNavigation';
 import GarmentTypeSelector from './GarmentTypeSelector';
+import Preview3D from './Preview3D';
 import { GarmentType } from '@/types/garment';
 
 /**
@@ -344,17 +345,17 @@ export default function NewPatternDefinitionWorkspace() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
             {/* Sidebar Navigation */}
-            <div className="lg:col-span-1 order-2 lg:order-1">
+            <div className="xl:col-span-2 order-2 xl:order-1">
               <div className="sticky top-8">
                 <PatternDefinitionNavigation variant="sidebar" />
               </div>
             </div>
 
             {/* Main Content Area */}
-            <div className="lg:col-span-3 order-1 lg:order-2">
+            <div className="xl:col-span-6 order-1 xl:order-2">
               <div className="bg-white rounded-lg shadow-md p-8">
                 {currentSection ? (
                   <SectionContent 
@@ -371,6 +372,13 @@ export default function NewPatternDefinitionWorkspace() {
                     </p>
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* 3D Preview Area */}
+            <div className="xl:col-span-4 order-3">
+              <div className="sticky top-8">
+                <Preview3D />
               </div>
             </div>
           </div>
