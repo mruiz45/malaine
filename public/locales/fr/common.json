@@ -1334,7 +1334,14 @@
     "close": "Fermer",
     "ok": "OK",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "clear": "Effacer",
+    "select": "Sélectionner...",
+    "required": "Requis",
+    "completed": "Terminé",
+    "markCompleted": "Marquer comme Terminé",
+    "currentData": "Données Actuelles",
+    "placeholderInfo": "Ce composant sera implémenté dans une phase future."
   },
   "garmentType": {
     "title": "Sélectionner le Type de Vêtement",

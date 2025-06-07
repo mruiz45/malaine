@@ -15,6 +15,18 @@ import GarmentTypeSelector from './GarmentTypeSelector';
 import Preview3D from './Preview3D';
 import { GarmentType } from '@/types/garment';
 
+// Import all the selector components
+import { GaugeSelector } from '@/components/gauge';
+import { MeasurementSelector } from '@/components/measurements';
+import { EaseSelector } from '@/components/ease';
+import { YarnSelector } from '@/components/yarn';
+
+// Import necessary types
+import type { GaugeProfile } from '@/types/gauge';
+import type { MeasurementSet } from '@/types/measurements';
+import type { EasePreference, EaseType } from '@/types/ease';
+import type { YarnProfile } from '@/types/yarn';
+
 /**
  * Section Header Component
  */
@@ -77,9 +89,269 @@ function SectionContent({ section, garmentTypeKey }: SectionContentProps) {
     }
   };
 
-  // Mock complete button for demonstration
-  const handleMarkCompleted = () => {
-    handleSectionUpdate({}, true);
+  // Section handlers with debounce to handle multiple rapid calls
+  const [gaugeUpdateTimeout, setGaugeUpdateTimeout] = React.useState<NodeJS.Timeout | null>(null);
+  const [easeUpdateTimeout, setEaseUpdateTimeout] = React.useState<NodeJS.Timeout | null>(null);
+  
+  const handleGaugeProfileSelect = (gaugeProfile: GaugeProfile | null) => {
+    // Clear any existing timeout
+    if (gaugeUpdateTimeout) {
+      clearTimeout(gaugeUpdateTimeout);
+    }
+    
+    // Set a new timeout to process the update after a short delay
+    const timeout = setTimeout(() => {
+      if (gaugeProfile) {
+        handleSectionUpdate({
+          type: 'profile',
+          selectedGaugeProfile: gaugeProfile,
+          stitch_count: gaugeProfile.stitch_count,
+          row_count: gaugeProfile.row_count,
+          unit: gaugeProfile.measurement_unit === 'cm' ? '10cm' : '4inch'
+        }, true);
+      } else {
+        // Only clear if we don't have a recent valid selection
+        const currentGaugeData = getSectionData('gauge') as any;
+        if (!currentGaugeData?.selectedGaugeProfile) {
+          handleSectionUpdate({ type: 'profile', selectedGaugeProfile: null }, false);
+        }
+      }
+    }, 100); // 100ms debounce
+    
+    setGaugeUpdateTimeout(timeout);
+  };
+
+  const handleManualGaugeChange = (gauge: { stitch_count: number; row_count: number; unit: string } | null) => {
+    if (gauge) {
+      handleSectionUpdate({
+        type: 'manual',
+        stitch_count: gauge.stitch_count,
+        row_count: gauge.row_count,
+        unit: gauge.unit
+      }, true);
+    } else {
+      handleSectionUpdate({ type: 'manual' }, false);
+    }
+  };
+
+  // Measurement section handlers
+  const handleMeasurementSetSelect = (measurementSet: MeasurementSet | null) => {
+    if (measurementSet) {
+      // Format data for use3DPreview compatibility
+      const measurementData = {
+        bust: measurementSet.chest_circumference,
+        waist: measurementSet.waist_circumference,
+        hip: measurementSet.hip_circumference,
+        length: measurementSet.torso_length,
+        sleeveLength: measurementSet.arm_length,
+        shoulderWidth: measurementSet.shoulder_width,
+        armholeDepth: undefined, // Calculate or set default
+        necklineDepth: undefined, // Calculate or set default
+        necklineWidth: undefined // Calculate or set default
+      };
+
+      handleSectionUpdate({
+        selectedMeasurementSet: measurementSet,
+        measurements: measurementData, // Format attendu par use3DPreview
+        unit: measurementSet.measurement_unit
+      }, true);
+    } else {
+      handleSectionUpdate({ 
+        selectedMeasurementSet: null,
+        measurements: null,
+        unit: null
+      }, false);
+    }
+  };
+
+  // Ease section handlers
+  const handleEasePreferenceSelect = (easePreference: EasePreference | null) => {
+    // Clear any existing timeout
+    if (easeUpdateTimeout) {
+      clearTimeout(easeUpdateTimeout);
+    }
+
+    // If we have a valid ease preference, process it after a short delay
+    if (easePreference) {
+      const newTimeout = setTimeout(() => {
+        handleSectionUpdate({
+          type: 'preference',
+          selectedEasePreference: easePreference,
+          ease_type: easePreference.ease_type,
+          value_bust: easePreference.bust_ease,
+          unit: easePreference.measurement_unit
+        }, true);
+      }, 100);
+      
+      setEaseUpdateTimeout(newTimeout);
+    }
+    // Ignore null values when we have a pending valid update
+  };
+
+  const handleQuickEaseChange = (ease: { type: EaseType; value_bust: number; unit?: string } | null) => {
+    if (ease) {
+      handleSectionUpdate({
+        type: 'quick',
+        ease_type: ease.type,
+        value_bust: ease.value_bust,
+        unit: ease.unit
+      }, true);
+    } else {
+      handleSectionUpdate({ type: 'quick' }, false);
+    }
+  };
+
+  // Yarn section handlers
+  const handleYarnProfileSelect = (yarnProfile: YarnProfile | null) => {
+    if (yarnProfile) {
+      handleSectionUpdate({
+        selectedYarnProfile: yarnProfile,
+        yarn_name: yarnProfile.yarn_name,
+        brand_name: yarnProfile.brand_name,
+        yarn_weight_category: yarnProfile.yarn_weight_category
+      }, true);
+    } else {
+      handleSectionUpdate({ selectedYarnProfile: null }, false);
+    }
+  };
+
+  // Cleanup timeouts on unmount
+  React.useEffect(() => {
+    return () => {
+      if (gaugeUpdateTimeout) {
+        clearTimeout(gaugeUpdateTimeout);
+      }
+      if (easeUpdateTimeout) {
+        clearTimeout(easeUpdateTimeout);
+      }
+    };
+  }, [gaugeUpdateTimeout, easeUpdateTimeout]);
+
+  // Get current section data
+  const getSectionData = (sectionKey: PatternDefinitionSection) => {
+    return currentPattern?.[sectionKey as keyof typeof currentPattern] || null;
+  };
+
+  const renderSectionContent = () => {
+    switch (section) {
+      case 'gauge': {
+        const gaugeData = getSectionData('gauge') as any;
+        return (
+          <GaugeSelector
+            selectedGaugeProfile={gaugeData?.selectedGaugeProfile || null}
+            onGaugeProfileSelect={handleGaugeProfileSelect}
+            allowManualInput={true}
+            manualGauge={gaugeData?.type === 'manual' ? {
+              stitch_count: gaugeData.stitch_count || 20,
+              row_count: gaugeData.row_count || 28,
+              unit: gaugeData.unit || '10cm'
+            } : null}
+            onManualGaugeChange={handleManualGaugeChange}
+            disabled={false}
+            className="w-full"
+          />
+        );
+      }
+
+      case 'measurements': {
+        const measurementData = getSectionData('measurements') as any;
+        return (
+          <MeasurementSelector
+            selectedMeasurementSet={measurementData?.selectedMeasurementSet || null}
+            onMeasurementSetSelect={handleMeasurementSetSelect}
+            disabled={false}
+            className="w-full"
+          />
+        );
+      }
+
+      case 'ease': {
+        const easeData = getSectionData('ease') as any;
+        return (
+          <EaseSelector
+            selectedEasePreference={easeData?.selectedEasePreference || null}
+            onEasePreferenceSelect={handleEasePreferenceSelect}
+            allowQuickSelection={true}
+            quickEase={easeData?.type === 'quick' ? {
+              type: easeData.ease_type,
+              value_bust: easeData.value_bust,
+              unit: easeData.unit
+            } : null}
+            onQuickEaseChange={handleQuickEaseChange}
+            disabled={false}
+            className="w-full"
+          />
+        );
+      }
+
+      case 'yarn': {
+        const yarnData = getSectionData('yarn') as any;
+        return (
+          <YarnSelector
+            selectedYarnProfile={yarnData?.selectedYarnProfile || null}
+            onYarnProfileSelect={handleYarnProfileSelect}
+            disabled={false}
+            className="w-full"
+          />
+        );
+      }
+
+      default: {
+        // For sections that don't have selectors yet (stitch-pattern, body-structure, etc.)
+        return (
+          <div className="bg-gray-50 rounded-lg p-6">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {t(`sections.${section}.placeholder.title`, `${metadata.displayName} Configuration`)}
+              </h3>
+              
+              <p className="text-gray-600 mb-6">
+                {t(`sections.${section}.placeholder.description`, 
+                  `This is where you would configure the ${metadata.displayName.toLowerCase()} for your ${garmentTypeKey} pattern.`
+                )}
+              </p>
+              
+              {/* Show current data if any */}
+              {currentPattern && currentPattern[section as keyof typeof currentPattern] && (
+                <div className="bg-white rounded p-4 mb-4">
+                  <h4 className="font-medium mb-2">{t('common.currentData', 'Current Data')}:</h4>
+                  <pre className="text-xs text-gray-600 text-left overflow-auto">
+                    {JSON.stringify(currentPattern[section as keyof typeof currentPattern], null, 2)}
+                  </pre>
+                </div>
+              )}
+              
+              {/* Mock interaction */}
+              <div className="space-y-4">
+                <div className="bg-white border border-gray-200 rounded p-4">
+                  <p className="text-sm text-gray-500 mb-3">
+                    {t('common.placeholderInfo', 'This component will be implemented in a future phase.')}
+                  </p>
+                  
+                  {!isCompleted && (
+                    <button
+                      onClick={() => handleSectionUpdate({}, true)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                    >
+                      {t('common.markCompleted', 'Mark as Completed')}
+                    </button>
+                  )}
+                  
+                  {isCompleted && (
+                    <div className="flex items-center justify-center text-green-600">
+                      <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {t('common.completed', 'Completed')}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    }
   };
 
   return (
@@ -91,56 +363,9 @@ function SectionContent({ section, garmentTypeKey }: SectionContentProps) {
         isCompleted={isCompleted}
       />
       
-      {/* Placeholder content for each section */}
-      <div className="bg-gray-50 rounded-lg p-6">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            {t(`sections.${section}.placeholder.title`, `${metadata.displayName} Configuration`)}
-          </h3>
-          
-          <p className="text-gray-600 mb-6">
-            {t(`sections.${section}.placeholder.description`, 
-              `This is where you would configure the ${metadata.displayName.toLowerCase()} for your ${garmentTypeKey} pattern.`
-            )}
-          </p>
-          
-          {/* Show current data if any */}
-          {currentPattern && currentPattern[section as keyof typeof currentPattern] && (
-            <div className="bg-white rounded p-4 mb-4">
-              <h4 className="font-medium mb-2">{t('common.currentData', 'Current Data')}:</h4>
-              <pre className="text-xs text-gray-600 text-left overflow-auto">
-                {JSON.stringify(currentPattern[section as keyof typeof currentPattern], null, 2)}
-              </pre>
-            </div>
-          )}
-          
-          {/* Mock interaction */}
-          <div className="space-y-4">
-            <div className="bg-white border border-gray-200 rounded p-4">
-              <p className="text-sm text-gray-500 mb-3">
-                {t('common.placeholderInfo', 'This is a placeholder. The actual component would be integrated here.')}
-              </p>
-              
-              {!isCompleted && (
-                <button
-                  onClick={handleMarkCompleted}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-                >
-                  {t('common.markCompleted', 'Mark as Completed')}
-                </button>
-              )}
-              
-              {isCompleted && (
-                <div className="flex items-center justify-center text-green-600">
-                  <svg className="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  {t('common.completed', 'Completed')}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+      {/* Render the appropriate selector or placeholder */}
+      <div className="space-y-6">
+        {renderSectionContent()}
       </div>
       
       {/* Special handling for summary section */}

@@ -1369,7 +1369,11 @@
     "completed": "Completed",
     "markCompleted": "Mark as Completed",
     "currentData": "Current Data",
-    "placeholderInfo": "This is a placeholder. The actual component would be integrated here."
+    "placeholderInfo": "This is a placeholder. The actual component would be integrated here.",
+    "clear": "Clear",
+    "select": "Select...",
+    "required": "Required",
+    "completed": "Completed"
   },
   "error": {
     "categoriesLoadFailed": "Failed to load categories",
