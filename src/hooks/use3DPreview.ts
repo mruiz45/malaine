@@ -22,7 +22,8 @@ import {
   MeasurementsSectionData, 
   EaseSectionData, 
   NecklineSectionData, 
-  SleevesSectionData 
+  SleevesSectionData,
+  BodyStructureSectionData
 } from '@/types/patternDefinitionInMemory';
 
 /**
@@ -120,6 +121,28 @@ export function use3DPreview() {
   }, []);
 
   /**
+   * Extract body structure parameters for 3D
+   */
+  const extractBodyStructureParams = useCallback((
+    bodyStructureData: BodyStructureSectionData | undefined
+  ) => {
+    console.log('🏗️ use3DPreview processing bodyStructure:', bodyStructureData);
+    
+    if (!bodyStructureData) {
+      return {
+        constructionMethod: 'set_in_sleeve',
+        bodyShape: 'straight'
+      };
+    }
+
+    return {
+      constructionMethod: bodyStructureData.constructionMethod || 'set_in_sleeve',
+      bodyShape: bodyStructureData.bodyShape || 'straight',
+      parameters: bodyStructureData.parameters || {}
+    };
+  }, []);
+
+  /**
    * Update 3D preview based on pattern changes
    */
   const updatePreview = useCallback(() => {
@@ -189,6 +212,13 @@ export function use3DPreview() {
   const sleeveParams = useMemo(() => {
     return extractSleeveParams(currentPattern?.sleeves, previewState.dimensions);
   }, [currentPattern?.sleeves, previewState.dimensions, extractSleeveParams]);
+
+  /**
+   * Get current body structure parameters
+   */
+  const bodyStructureParams = useMemo(() => {
+    return extractBodyStructureParams(currentPattern?.bodyStructure);
+  }, [currentPattern?.bodyStructure, extractBodyStructureParams]);
 
   /**
    * Toggle 3D preview enabled state
@@ -307,6 +337,7 @@ export function use3DPreview() {
     statusMessage,
     necklineParams,
     sleeveParams,
+    bodyStructureParams,
     garmentType: currentPattern?.garmentType || null,
 
     // Actions

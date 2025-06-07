@@ -12,7 +12,7 @@ import { PatternDefinitionSection } from '@/types/garmentTypeConfig';
 import { SECTION_METADATA } from '@/utils/garmentTypeConfig';
 import PatternDefinitionNavigation from './PatternDefinitionNavigation';
 import GarmentTypeSelector from './GarmentTypeSelector';
-import Preview3D from './Preview3D';
+import PreviewPanel from './PreviewPanel';
 import { GarmentType } from '@/types/garment';
 
 // Import all the selector components
@@ -20,12 +20,14 @@ import { GaugeSelector } from '@/components/gauge';
 import { MeasurementSelector } from '@/components/measurements';
 import { EaseSelector } from '@/components/ease';
 import { YarnSelector } from '@/components/yarn';
+import { BodyStructureSelector } from '@/components/body-structure';
 
 // Import necessary types
 import type { GaugeProfile } from '@/types/gauge';
 import type { MeasurementSet } from '@/types/measurements';
 import type { EasePreference, EaseType } from '@/types/ease';
 import type { YarnProfile } from '@/types/yarn';
+import type { SweaterStructureAttributes, ConstructionMethod, BodyShape } from '@/types/sweaterStructure';
 
 /**
  * Section Header Component
@@ -215,6 +217,49 @@ function SectionContent({ section, garmentTypeKey }: SectionContentProps) {
     }
   };
 
+  // Body structure section handlers
+  const handleBodyStructureUpdate = (structure: SweaterStructureAttributes) => {
+    console.log('Body structure updated:', structure);
+    
+    const bodyStructureData = {
+      ...structure,
+      selectedAt: new Date().toISOString(),
+      // Flag for recalculation as per PD_PH4_US003
+      armholeRequiresRecalculation: structure.construction_method ? true : false
+    };
+    
+    const isCompleted = !!(structure.construction_method);
+    handleSectionUpdate(bodyStructureData, isCompleted);
+  };
+
+  const handleConstructionMethodSelect = (method: ConstructionMethod | null) => {
+    console.log('Construction method selected:', method);
+    
+    // Get current body structure data
+    const currentBodyStructure = getSectionData('bodyStructure') as SweaterStructureAttributes || {};
+    
+    const updatedStructure: SweaterStructureAttributes = {
+      ...currentBodyStructure,
+      construction_method: method || undefined
+    };
+    
+    handleBodyStructureUpdate(updatedStructure);
+  };
+
+  const handleBodyShapeSelect = (shape: BodyShape | null) => {
+    console.log('Body shape selected:', shape);
+    
+    // Get current body structure data
+    const currentBodyStructure = getSectionData('bodyStructure') as SweaterStructureAttributes || {};
+    
+    const updatedStructure: SweaterStructureAttributes = {
+      ...currentBodyStructure,
+      body_shape: shape || undefined
+    };
+    
+    handleBodyStructureUpdate(updatedStructure);
+  };
+
   // Cleanup timeouts on unmount
   React.useEffect(() => {
     return () => {
@@ -290,6 +335,21 @@ function SectionContent({ section, garmentTypeKey }: SectionContentProps) {
           <YarnSelector
             selectedYarnProfile={yarnData?.selectedYarnProfile || null}
             onYarnProfileSelect={handleYarnProfileSelect}
+            disabled={false}
+            className="w-full"
+          />
+        );
+      }
+
+      case 'bodyStructure': {
+        const bodyStructureData = getSectionData('bodyStructure') as SweaterStructureAttributes || {};
+        return (
+          <BodyStructureSelector
+            garmentTypeKey={garmentTypeKey}
+            selectedStructure={bodyStructureData}
+            onConstructionMethodSelect={handleConstructionMethodSelect}
+            onBodyShapeSelect={handleBodyShapeSelect}
+            onStructureUpdate={handleBodyStructureUpdate}
             disabled={false}
             className="w-full"
           />
@@ -600,10 +660,10 @@ export default function NewPatternDefinitionWorkspace() {
               </div>
             </div>
 
-            {/* 3D Preview Area */}
+            {/* Preview Area */}
             <div className="xl:col-span-4 order-3">
               <div className="sticky top-8">
-                <Preview3D />
+                <PreviewPanel />
               </div>
             </div>
           </div>

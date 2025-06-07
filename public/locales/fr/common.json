@@ -1266,6 +1266,41 @@
     "title": "Définition de Patron",
     "getStarted": "Commencer",
     "description": "Créez une nouvelle session de définition de patron ou continuez à travailler sur une session existante.",
+    "navigation": {
+      "title": "Sections du Patron",
+      "description": "Cliquez sur n'importe quelle section pour naviguer. Vous pouvez les compléter dans n'importe quel ordre.",
+      "progress": "Progression",
+      "required": "Requis"
+    },
+    "sections": {
+      "gauge": {
+        "title": "Échantillon"
+      },
+      "measurements": {
+        "title": "Mesures"
+      },
+      "ease": {
+        "title": "Aisance"
+      },
+      "yarn": {
+        "title": "Laine"
+      },
+      "stitchPattern": {
+        "title": "Motif de Points"
+      },
+      "bodyStructure": {
+        "title": "Structure du Corps"
+      },
+      "neckline": {
+        "title": "Encolure"
+      },
+      "sleeves": {
+        "title": "Manches"
+      },
+      "summary": {
+        "title": "Résumé"
+      }
+    },
     "createNew": "Créer un Nouveau Patron",
     "existingSessions": "Vos Définitions de Patron",
     "untitledSession": "Session Sans Titre",
@@ -1341,7 +1376,10 @@
     "completed": "Terminé",
     "markCompleted": "Marquer comme Terminé",
     "currentData": "Données Actuelles",
-    "placeholderInfo": "Ce composant sera implémenté dans une phase future."
+    "placeholderInfo": "Ce composant sera implémenté dans une phase future.",
+    "clearSelection": "Effacer la Sélection",
+    "optional": "(Optionnel)",
+    "lastUpdated": "Dernière mise à jour"
   },
   "garmentType": {
     "title": "Sélectionner le Type de Vêtement",
@@ -1418,5 +1456,111 @@
     "dropShoulderInfo": "Les manches à épaule tombante prolongent la ligne d'épaule au-delà du point naturel de l'épaule, créant une silhouette décontractée et désinvolte.",
     "dolmanInfo": "Les manches dolman sont coupées dans la même pièce que le corps, créant des manches larges et fluides qui se resserrent vers le poignet.",
     "sleevelessInfo": "Le design sans manches crée un gilet ou débardeur avec des emmanchures finies."
+  },
+  "bodyStructure": {
+    "title": "Structure du Corps",
+    "description": "Définissez comment le corps de votre vêtement est construit et façonné",
+    "constructionMethod": "Méthode de Construction",
+    "constructionMethodDescription": "Choisissez comment les manches seront attachées au corps",
+    "bodyShape": "Forme du Corps", 
+    "bodyShapeDescription": "Définissez la silhouette générale et l'ajustement de votre vêtement",
+    "selectionSummary": "Sélection Actuelle",
+    "compatibilityWarning": "La méthode de construction et la forme du corps sélectionnées peuvent ne pas être entièrement compatibles. Considérez ajuster votre sélection.",
+    "compatibilityWarningTitle": "Avis de Compatibilité",
+    "compatibilityFiltering": "Affichage des formes de corps compatibles avec votre méthode de construction sélectionnée",
+    "incompatibleWithBodyShape": "Non compatible avec la forme du corps sélectionnée",
+    "incompatibleWithConstructionMethod": "Non compatible avec la méthode de construction sélectionnée",
+    "constructionMethods": {
+      "drop_shoulder": {
+        "name": "Épaule Tombante",
+        "description": "Construction simple avec ligne de manche droite depuis l'épaule"
+      },
+      "set_in_sleeve": {
+        "name": "Manche Rapportée", 
+        "description": "Construction traditionnelle ajustée avec emmanchures façonnées et têtes de manches"
+      },
+      "raglan": {
+        "name": "Raglan",
+        "description": "Couture diagonale de l'emmanchure à l'encolure, tricotée du bas vers le haut"
+      },
+      "raglan_top_down": {
+        "name": "Raglan Top-Down",
+        "description": "Construction raglan tricotée de l'encolure vers le bas"
+      },
+      "dolman": {
+        "name": "Dolman",
+        "description": "Manches larges et lâches intégrées au corps"
+      }
+    },
+    "bodyShapes": {
+      "straight": {
+        "name": "Droite",
+        "description": "Silhouette droite avec façonnage minimal"
+      },
+      "a_line": {
+        "name": "Forme A",
+        "description": "Plus large en bas, ajusté en haut"
+      },
+      "fitted_shaped_waist": {
+        "name": "Ajusté avec Taille Façonnée",
+        "description": "Coupe ajustée avec façonnage de la taille"
+      },
+      "oversized_boxy": {
+        "name": "Oversize Ample",
+        "description": "Coupe décontractée et ample avec façonnage minimal"
+      }
+    },
+    "difficulty": {
+      "beginner": "Débutant",
+      "intermediate": "Intermédiaire", 
+      "advanced": "Avancé"
+    },
+    "fitType": {
+      "loose": "Ample",
+      "fitted": "Ajusté",
+      "oversized": "Oversize"
+    }
+  },
+  "preview": {
+    "title": "Aperçu du Patron",
+    "tab2d": "Schéma 2D",
+    "tab3d": "Fil de Fer 3D", 
+    "ready": "Aperçu prêt",
+    "needsData": "Complétez les données du patron pour voir l'aperçu",
+    "garmentType": "Type",
+    "measurements": "Mesures",
+    "updated": "Mis à jour",
+    "2d": {
+      "noData": "Sélectionnez un type de vêtement et ajoutez des mesures",
+      "description": "pour voir l'aperçu schématique 2D"
+    }
+  },
+  "3dPreview": {
+    "title": "Aperçu 3D",
+    "notAvailable": "Complétez les données du patron pour voir l'aperçu",
+    "enable": "Activer l'aperçu",
+    "disable": "Désactiver l'aperçu",
+    "autoUpdate": "Mise à jour automatique",
+    "auto": "Auto",
+    "refresh": "Actualiser l'aperçu",
+    "reset": "Réinitialiser",
+    "toggleVisibilityPanel": "Basculer les contrôles de visibilité",
+    "dimensions": "Dimensions",
+    "bust": "Poitrine",
+    "length": "Longueur",
+    "sleeves": "Manches",
+    "components": "Composants",
+    "hoverToInteract": "Survolez les parties pour interagir",
+    "disclaimer": "Aperçu approximatif pour visualisation",
+    "views": {
+      "perspective": "Perspective",
+      "front": "Devant",
+      "back": "Derrière",
+      "side": "Côté"
+    },
+    "components": {
+      "frontBody": "Corps Devant",
+      "backBody": "Corps Derrière"
+    }
   }
 }

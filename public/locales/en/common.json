@@ -1370,10 +1370,13 @@
     "markCompleted": "Mark as Completed",
     "currentData": "Current Data",
     "placeholderInfo": "This is a placeholder. The actual component would be integrated here.",
+    "clearSelection": "Clear Selection",
+    "optional": "(Optional)",
     "clear": "Clear",
     "select": "Select...",
     "required": "Required",
-    "completed": "Completed"
+    "completed": "Completed",
+    "lastUpdated": "Last updated"
   },
   "error": {
     "categoriesLoadFailed": "Failed to load categories",
@@ -1664,6 +1667,41 @@
     "title": "Pattern Definition",
     "getStarted": "Get Started",
     "description": "Create a new pattern definition session or continue working on an existing one.",
+    "navigation": {
+      "title": "Pattern Sections",
+      "description": "Click any section to navigate. You can complete them in any order.",
+      "progress": "Progress",
+      "required": "Required"
+    },
+    "sections": {
+      "gauge": {
+        "title": "Gauge"
+      },
+      "measurements": {
+        "title": "Measurements"
+      },
+      "ease": {
+        "title": "Ease"
+      },
+      "yarn": {
+        "title": "Yarn"
+      },
+      "stitchPattern": {
+        "title": "Stitch Pattern"
+      },
+      "bodyStructure": {
+        "title": "Body Structure"
+      },
+      "neckline": {
+        "title": "Neckline"
+      },
+      "sleeves": {
+        "title": "Sleeves"
+      },
+      "summary": {
+        "title": "Summary"
+      }
+    },
     "newDescription": "Create a new pattern definition. Start by selecting the type of garment you want to create, then complete the relevant sections in any order you prefer.",
     "createNew": "Create New Pattern",
     "existingSessions": "Your Pattern Definitions",
@@ -2320,5 +2358,111 @@
     "dropShoulderInfo": "Drop shoulder sleeves extend the shoulder line beyond the natural shoulder point, creating a relaxed, casual silhouette.",
     "dolmanInfo": "Dolman sleeves are cut as part of the body piece, creating wide, flowing sleeves that taper toward the wrist.",
     "sleevelessInfo": "Sleeveless design creates a vest or tank top with finished armhole edges."
+  },
+  "bodyStructure": {
+    "title": "Body Structure",
+    "description": "Define how your garment body is constructed and shaped",
+    "constructionMethod": "Construction Method",
+    "constructionMethodDescription": "Choose how the sleeves will be attached to the body",
+    "bodyShape": "Body Shape", 
+    "bodyShapeDescription": "Define the overall silhouette and fit of your garment",
+    "selectionSummary": "Current Selection",
+    "compatibilityWarning": "The selected construction method and body shape may not be fully compatible. Consider adjusting your selection.",
+    "compatibilityWarningTitle": "Compatibility Notice",
+    "compatibilityFiltering": "Showing body shapes compatible with your selected construction method",
+    "incompatibleWithBodyShape": "Not compatible with selected body shape",
+    "incompatibleWithConstructionMethod": "Not compatible with selected construction method",
+    "constructionMethods": {
+      "drop_shoulder": {
+        "name": "Drop Shoulder",
+        "description": "Simple construction with straight sleeve line from shoulder"
+      },
+      "set_in_sleeve": {
+        "name": "Set-in Sleeve", 
+        "description": "Traditional fitted construction with shaped armholes and sleeve caps"
+      },
+      "raglan": {
+        "name": "Raglan",
+        "description": "Diagonal seam from armpit to neckline, knitted bottom-up"
+      },
+      "raglan_top_down": {
+        "name": "Raglan Top-Down",
+        "description": "Raglan construction knitted from neckline down"
+      },
+      "dolman": {
+        "name": "Dolman",
+        "description": "Wide, loose sleeves integrated with the body"
+      }
+    },
+    "bodyShapes": {
+      "straight": {
+        "name": "Straight",
+        "description": "Straight silhouette with minimal shaping"
+      },
+      "a_line": {
+        "name": "A-Line",
+        "description": "Wider at the bottom, fitted at the top"
+      },
+      "fitted_shaped_waist": {
+        "name": "Fitted with Shaped Waist",
+        "description": "Tailored fit with waist shaping"
+      },
+      "oversized_boxy": {
+        "name": "Oversized Boxy",
+        "description": "Relaxed, oversized fit with minimal shaping"
+      }
+    },
+    "difficulty": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate", 
+      "advanced": "Advanced"
+    },
+    "fitType": {
+      "loose": "Loose",
+      "fitted": "Fitted",
+      "oversized": "Oversized"
+    }
+  },
+  "preview": {
+    "title": "Pattern Preview",
+    "tab2d": "2D Schematic", 
+    "tab3d": "3D Wireframe",
+    "ready": "Preview ready",
+    "needsData": "Complete pattern data to view preview",
+    "garmentType": "Type",
+    "measurements": "Measurements",
+    "updated": "Updated",
+    "2d": {
+      "noData": "Select garment type and add measurements",
+      "description": "to see 2D schematic preview"
+    }
+  },
+  "3dPreview": {
+    "title": "3D Preview",
+    "notAvailable": "Complete pattern data to view preview",
+    "enable": "Enable preview",
+    "disable": "Disable preview",
+    "autoUpdate": "Auto-update",
+    "auto": "Auto",
+    "refresh": "Refresh preview",
+    "reset": "Reset to defaults",
+    "toggleVisibilityPanel": "Toggle visibility controls",
+    "dimensions": "Dimensions",
+    "bust": "Bust",
+    "length": "Length",
+    "sleeves": "Sleeves",
+    "components": "Components",
+    "hoverToInteract": "Hover over parts to interact",
+    "disclaimer": "Approximate preview for visualization",
+    "views": {
+      "perspective": "Perspective",
+      "front": "Front",
+      "back": "Back",
+      "side": "Side"
+    },
+    "components": {
+      "frontBody": "Front Body",
+      "backBody": "Back Body"
+    }
   }
 } 

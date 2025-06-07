@@ -2,6 +2,7 @@
 
 import React, { useMemo } from 'react';
 import { GarmentType, MeasurementsData, NecklineData, EaseData, SleevesData } from '@/types/pattern';
+import { BodyStructureSectionData } from '@/types/patternDefinitionInMemory';
 import { useFinishedDimensions } from '@/hooks/useFinishedDimensions';
 
 interface SchematicPreview2DProps {
@@ -11,6 +12,8 @@ interface SchematicPreview2DProps {
   measurements: MeasurementsData;
   /** Données d'aisance (PD_PH4_US001) */
   ease: EaseData;
+  /** Données de structure corporelle */
+  bodyStructure?: BodyStructureSectionData;
   /** Données d'encolure (PD_PH2_US003) */
   neckline?: NecklineData;
   /** Données de manches (PD_PH4_US002) */
@@ -47,6 +50,7 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
   garmentType,
   measurements,
   ease,
+  bodyStructure,
   neckline,
   sleeves,
   width = 300,
@@ -73,6 +77,13 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
    * Implémente PD_PH4_US001: Ease Affecting Finished Dimensions
    */
   const finishedDimensions = useFinishedDimensions(measurements, ease, garmentType);
+
+  /**
+   * Debug: Log bodyStructure data to console
+   */
+  React.useEffect(() => {
+    console.log('🏗️ SchematicPreview2D received bodyStructure:', bodyStructure);
+  }, [bodyStructure]);
 
   /**
    * Calcule les dimensions du schéma basées sur les dimensions finies (mesures + aisance)
@@ -642,7 +653,32 @@ export const SchematicPreview2D: React.FC<SchematicPreview2DProps> = ({
 
     // Manches selon le type sélectionné (PD_PH4_US002)
     if (garmentType !== 'vest' && sleeveLength && sleeveWidth) {
-      const sleeveType = sleeves?.sleeveType || 'setIn'; // Default to set-in as per spec
+      // Determine sleeve type from bodyStructure construction method or fallback to sleeves data
+      let sleeveType: NonNullable<SleevesData['sleeveType']> = 'setIn'; // Default
+      
+      if (bodyStructure?.constructionMethod) {
+        // Map construction method to sleeve type
+        switch (bodyStructure.constructionMethod) {
+          case 'drop_shoulder':
+            sleeveType = 'dropShoulder';
+            break;
+          case 'set_in_sleeve':
+            sleeveType = 'setIn';
+            break;
+          case 'raglan':
+          case 'raglan_top_down':
+            sleeveType = 'raglan';
+            break;
+          case 'dolman':
+            sleeveType = 'dolman';
+            break;
+          default:
+            sleeveType = 'setIn';
+        }
+      } else if (sleeves?.sleeveType) {
+        sleeveType = sleeves.sleeveType;
+      }
+      
       elements.push(...renderSleevesByType(sleeveType, {
         centerX,
         bodyX,
