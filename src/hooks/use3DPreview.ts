@@ -123,11 +123,17 @@ export function use3DPreview() {
    * Update 3D preview based on pattern changes
    */
   const updatePreview = useCallback(() => {
-    if (!currentPattern || !previewState.autoUpdate) {
+    setPreviewState(prev => {
+      if (!currentPattern || !prev.autoUpdate) {
+        return prev;
+      }
+
+      return { ...prev, isLoading: true, error: null };
+    });
+
+    if (!currentPattern) {
       return;
     }
-
-    setPreviewState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
       const dimensions = calculateFinishedDimensions(
@@ -157,7 +163,7 @@ export function use3DPreview() {
         isLoading: false
       }));
     }
-  }, [currentPattern, previewState.autoUpdate, calculateFinishedDimensions]);
+  }, [currentPattern, calculateFinishedDimensions]);
 
   /**
    * Debounced update effect

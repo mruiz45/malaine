@@ -1834,6 +1834,49 @@
       "failedToLoad": "Failed to load pattern"
     }
   },
+  "patternDisplay": {
+    "title": "Pattern Instructions",
+    "generatedAt": "Generated on",
+    "instructions": "instructions",
+    "download": "Download PDF",
+    "print": "Print",
+    "warnings": "Warnings",
+    "introduction": "Pattern Introduction",
+    "abbreviations": "Abbreviations",
+    "noInstructions": "No Instructions Available",
+    "noInstructionsDesc": "Pattern instructions could not be generated or are empty.",
+    "castOnStitches": "Cast-on Stitches",
+    "totalRows": "Total Rows",
+    "finalStitches": "Final Stitches",
+    "dimensions": "Dimensions",
+    "schematic": "Schematic",
+    "loadingSchematic": "Loading schematic...",
+    "schematicError": "Schematic not available for this piece",
+    "rowByRowInstructions": "Row-by-Row Instructions",
+    "steps": "steps",
+    "row": "Row",
+    "section": "Section",
+    "instruction": "Instruction",
+    "stitchCount": "Stitches",
+    "constructionNotes": "Construction Notes",
+    "pieces": {
+      "front_panel": "Front Panel",
+      "back_panel": "Back Panel",
+      "sleeves": "Sleeves"
+    },
+    "loading": {
+      "title": "Loading Pattern Instructions",
+      "message": "Generating your pattern instructions..."
+    },
+    "error": {
+      "title": "Unable to Load Pattern",
+      "retry": "Try Again"
+    },
+    "noData": {
+      "title": "No Pattern Data",
+      "message": "No pattern instructions were found for this session."
+    }
+  },
   "patternViewer": {
     "loading": "Loading your pattern...",
     "retry": "Try Again",

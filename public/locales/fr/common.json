@@ -1131,6 +1131,49 @@
       }
     }
   },
+  "patternDisplay": {
+    "title": "Instructions de Patron",
+    "generatedAt": "Généré le",
+    "instructions": "instructions",
+    "download": "Télécharger PDF",
+    "print": "Imprimer",
+    "warnings": "Avertissements",
+    "introduction": "Introduction du Patron",
+    "abbreviations": "Abréviations",
+    "noInstructions": "Aucune Instruction Disponible",
+    "noInstructionsDesc": "Les instructions de patron n'ont pas pu être générées ou sont vides.",
+    "castOnStitches": "Mailles de Montage",
+    "totalRows": "Total de Rangs",
+    "finalStitches": "Mailles Finales",
+    "dimensions": "Dimensions",
+    "schematic": "Schéma",
+    "loadingSchematic": "Chargement du schéma...",
+    "schematicError": "Schéma non disponible pour cette pièce",
+    "rowByRowInstructions": "Instructions Rang par Rang",
+    "steps": "étapes",
+    "row": "Rang",
+    "section": "Section",
+    "instruction": "Instruction",
+    "stitchCount": "Mailles",
+    "constructionNotes": "Notes de Construction",
+    "pieces": {
+      "front_panel": "Panneau Avant",
+      "back_panel": "Panneau Arrière",
+      "sleeves": "Manches"
+    },
+    "loading": {
+      "title": "Chargement des Instructions de Patron",
+      "message": "Génération de vos instructions de patron..."
+    },
+    "error": {
+      "title": "Impossible de Charger le Patron",
+      "retry": "Réessayer"
+    },
+    "noData": {
+      "title": "Aucune Donnée de Patron",
+      "message": "Aucune instruction de patron n'a été trouvée pour cette session."
+    }
+  },
   "patternViewer": {
     "loading": "Chargement de votre patron...",
     "retry": "Réessayer",
