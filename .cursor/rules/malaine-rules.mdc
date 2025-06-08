@@ -1,0 +1,87 @@
+---
+description: architectural rule
+globs: 
+alwaysApply: false
+---
+## Custom Architectural & Coding Guidelines for Project Malaine
+
+**1. API Endpoint Session Management (Supabase):**
+    *   All Next.js API routes (`pages/api/...`) requiring user authentication to interact with Supabase MUST use the `getSupabaseSessionApi(req, res)` helper function (located in `src/lib/getSupabaseSession.ts`).
+    *   This helper is responsible for:
+        *   Extracting `access_token` and `refresh_token` from HttpOnly cookies.
+        *   Initializing the server-side Supabase client (`supabaseServer` from `src/lib/supabaseServer.ts`) with the user's session using `supabaseServer.auth.setSession()` and `supabaseServer.auth.getUser()`.
+    *   The API route MUST check the return value of `getSupabaseSessionApi`. If it's `null` (or doesn't contain a valid `user` or `supabase` client), the route must return an appropriate error response (e.g., 401 Unauthorized) and not proceed with Supabase operations.
+    *   The authenticated `supabase` client instance returned by `getSupabaseSessionApi` MUST be used for all subsequent Supabase calls within that API route.
+    *   Avoid direct initialization of Supabase clients within API routes for session-based queries; always go through `getSupabaseSessionApi`.
+
+**2. Application Layering & Supabase Interaction:**
+    *   Strictly adhere to the `Page -> Service -> API -> Supabase` architectural pattern for data fetching and mutations requiring authentication or server-side logic.
+    *   **Page/Component (Client-side):**
+        *   Interacts with Services (e.g., methods from `AuthContext` at `src/contexts/AuthContext.tsx`, or other future service modules).
+        *   Should NOT directly call `fetch` to API endpoints for auth or core data operations if a service method is available.
+        *   Should NOT directly interact with Supabase (neither client nor server instances).
+    *   **Service (Client-side, e.g., `AuthContext` or future `src/services/*`):**
+        *   Encapsulates client-side business logic related to a specific domain (e.g., authentication).
+        *   Makes `fetch` calls to the relevant Next.js API routes.
+        *   Manages related client-side state (e.g., `AuthContext` manages `user`, `loading` state).
+        *   Should NOT directly interact with Supabase.
+    *   **API (Server-side - `pages/api/*`):**
+        *   Handles requests from Services.
+        *   Uses `getSupabaseSessionApi` to obtain an authenticated `supabaseServer` client if the operation requires authentication.
+        *   Performs operations against Supabase (queries, mutations) using the `supabaseServer` client.
+        *   Contains server-side business logic, data validation, and transformation.
+        *   This is the ONLY layer that directly interacts with Supabase for authenticated data operations or mutations.
+    *   **Supabase (Database & Backend):**
+        *   The data store and BaaS provider. Accessed by the API layer using the appropriate Supabase SDK (typically `supabaseServer`).
+
+**3. API Route Naming Convention:**
+    *   API endpoint files should be named descriptively based on the resource and action they handle (e.g., `pages/api/auth/signin.ts`, `pages/api/users/getUserProfile.ts`).
+    *   Avoid using generic `route.ts` file names for API endpoints. Prefer specific, descriptive names for clarity and maintainability (e.g. use `pages/api/users.ts` for user list and `pages/api/users/[id].ts` for specific user, not `pages/api/users/route.ts`). This primarily applies to Next.js Pages Router. For App Router, `route.ts` is the convention for route handlers, but we are using Pages Router here.
+
+**4. Client-Side Supabase Client (`supabaseClient` from `src/lib/supabaseClient.ts`):**
+    *   The client-side Supabase client (using `NEXT_PUBLIC_SUPABASE_ANON_KEY`) should only be used for:
+        *   Subscribing to Supabase real-time events (e.g., `onAuthStateChange` within `AuthContext`).
+        *   Performing queries for public data that does not require authentication (if any such use case arises).
+        *   It should NOT be used for operations that require a user session for data access or mutations; these must go through an API call.
+
+**5. Profile Creation:**
+    *   User profile creation in the `user_profiles` table MUST be handled server-side within the `/api/auth/signup` and `/api/auth/signin` API routes, typically using a shared helper like `ensureProfileExistsApi` (from `src/lib/authUtils.ts`). Avoid client-side attempts to directly create profiles after authentication.
+
+**Example of an API route adhering to these rules:**
+```typescript
+// pages/api/example/getData.ts
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
+
+  const sessionInfo = await getSupabaseSessionApi(req, res);
+
+  if (!sessionInfo) {
+    return res.status(401).json({ error: 'Not authorized' });
+  }
+
+  const { supabase, user } = sessionInfo;
+
+  try {
+    const { data, error } = await supabase
+      .from('some_table')
+      .select('*')
+      .eq('user_id', user.id);
+
+    if (error) {
+      throw error;
+    }
+    return res.status(200).json(data);
+  } catch (dbError: any) {
+    console.error('Database error in /api/example/getData:', dbError.message);
+    return res.status(500).json({ error: 'Failed to fetch data', details: dbError.message });
+  }
+}
+```
+
+---
