@@ -84,4 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 ```
 
+**6. Translations (i18next):**
+    * You only consider English for the moment.  You never try to automate the process of translating into French.
+    * You NEVER refactor the translations JSON file.  You only ADD new entries.
 ---

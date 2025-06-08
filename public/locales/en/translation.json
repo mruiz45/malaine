@@ -1,0 +1,17 @@
+{
+  "welcome_message": "Welcome to Malaine – your knitting/crochet assistant",
+  "nav_home": "Home",
+  "nav_projects": "Projects",
+  "login_title": "Log in to your account",
+  "login_email_label": "Email Address",
+  "login_password_label": "Password",
+  "login_button": "Log in",
+  "login_error_credentials": "Invalid login credentials. Please try again.",
+  "signup_title": "Create a new account",
+  "signup_email_label": "Email Address",
+  "signup_password_label": "Password",
+  "signup_confirm_password_label": "Confirm Password",
+  "signup_button": "Create account",
+  "signup_passwords_no_match": "Passwords do not match.",
+  "logout_button": "Logout"
+} 
