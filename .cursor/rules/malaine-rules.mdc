@@ -1,90 +1,285 @@
 ---
-description: architectural rule
+description: Architectural & Development Rules for Project Malaine
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
-## Custom Architectural & Coding Guidelines for Project Malaine
 
-**1. API Endpoint Session Management (Supabase):**
-    *   All Next.js API routes (`pages/api/...`) requiring user authentication to interact with Supabase MUST use the `getSupabaseSessionApi(req, res)` helper function (located in `src/lib/getSupabaseSession.ts`).
-    *   This helper is responsible for:
-        *   Extracting `access_token` and `refresh_token` from HttpOnly cookies.
-        *   Initializing the server-side Supabase client (`supabaseServer` from `src/lib/supabaseServer.ts`) with the user's session using `supabaseServer.auth.setSession()` and `supabaseServer.auth.getUser()`.
-    *   The API route MUST check the return value of `getSupabaseSessionApi`. If it's `null` (or doesn't contain a valid `user` or `supabase` client), the route must return an appropriate error response (e.g., 401 Unauthorized) and not proceed with Supabase operations.
-    *   The authenticated `supabase` client instance returned by `getSupabaseSessionApi` MUST be used for all subsequent Supabase calls within that API route.
-    *   Avoid direct initialization of Supabase clients within API routes for session-based queries; always go through `getSupabaseSessionApi`.
+# Project Malaine - Comprehensive Development Rules
 
-**2. Application Layering & Supabase Interaction:**
-    *   Strictly adhere to the `Page -> Service -> API -> Supabase` architectural pattern for data fetching and mutations requiring authentication or server-side logic.
-    *   **Page/Component (Client-side):**
-        *   Interacts with Services (e.g., methods from `AuthContext` at `src/contexts/AuthContext.tsx`, or other future service modules).
-        *   Should NOT directly call `fetch` to API endpoints for auth or core data operations if a service method is available.
-        *   Should NOT directly interact with Supabase (neither client nor server instances).
-    *   **Service (Client-side, e.g., `AuthContext` or future `src/services/*`):**
-        *   Encapsulates client-side business logic related to a specific domain (e.g., authentication).
-        *   Makes `fetch` calls to the relevant Next.js API routes.
-        *   Manages related client-side state (e.g., `AuthContext` manages `user`, `loading` state).
-        *   Should NOT directly interact with Supabase.
-    *   **API (Server-side - `pages/api/*`):**
-        *   Handles requests from Services.
-        *   Uses `getSupabaseSessionApi` to obtain an authenticated `supabaseServer` client if the operation requires authentication.
-        *   Performs operations against Supabase (queries, mutations) using the `supabaseServer` client.
-        *   Contains server-side business logic, data validation, and transformation.
-        *   This is the ONLY layer that directly interacts with Supabase for authenticated data operations or mutations.
-    *   **Supabase (Database & Backend):**
-        *   The data store and BaaS provider. Accessed by the API layer using the appropriate Supabase SDK (typically `supabaseServer`).
+## 🚨 CRITICAL RULES - NEVER VIOLATE
 
-**3. API Route Naming Convention:**
-    *   API endpoint files should be named descriptively based on the resource and action they handle (e.g., `pages/api/auth/signin.ts`, `pages/api/users/getUserProfile.ts`).
-    *   Avoid using generic `route.ts` file names for API endpoints. Prefer specific, descriptive names for clarity and maintainability (e.g. use `pages/api/users.ts` for user list and `pages/api/users/[id].ts` for specific user, not `pages/api/users/route.ts`). This primarily applies to Next.js Pages Router. For App Router, `route.ts` is the convention for route handlers, but we are using Pages Router here.
+### CR0: Architecture Documentation
+- **ALWAYS** read `./docs/architecture.md` before ANY implementation
+- **ALWAYS** check existing components/services in the architecture doc
+- **ALWAYS** update `./docs/architecture.md` after adding new components/services/routes
+- **NEVER** duplicate functionality already documented in architecture
 
-**4. Client-Side Supabase Client (`supabaseClient` from `src/lib/supabaseClient.ts`):**
-    *   The client-side Supabase client (using `NEXT_PUBLIC_SUPABASE_ANON_KEY`) should only be used for:
-        *   Subscribing to Supabase real-time events (e.g., `onAuthStateChange` within `AuthContext`).
-        *   Performing queries for public data that does not require authentication (if any such use case arises).
-        *   It should NOT be used for operations that require a user session for data access or mutations; these must go through an API call.
+### CR1: Code Preservation
+- **NEVER** modify existing working code unless explicitly requested in the User Story
+- **NEVER** refactor code that is not directly related to the current User Story
+- **ALWAYS** check if a component/function/service already exists before creating a new one
+- **ALWAYS** use `git status` mentally before making changes - only touch files mentioned in the US
 
-**5. Profile Creation:**
-    *   User profile creation in the `user_profiles` table MUST be handled server-side within the `/api/auth/signup` and `/api/auth/signin` API routes, typically using a shared helper like `ensureProfileExistsApi` (from `src/lib/authUtils.ts`). Avoid client-side attempts to directly create profiles after authentication.
+### CR2: Development Environment
+- **NEVER** run `npm run build` unless explicitly requested
+- **ALWAYS** use `npm run dev` for development
+- **NEVER** modify `.next` folder contents
+- **NEVER** modify configuration files (next.config.js, tsconfig.json, etc.) unless specified in US
 
-**Example of an API route adhering to these rules:**
+### CR3: Testing Protocol
+- **ALWAYS** test every modification in the browser before considering the task complete
+- **ALWAYS** verify that existing functionality still works after changes
+- **ALWAYS** check console for errors after implementation
+- **ALWAYS** test error cases and edge cases
+
+## 📋 ARCHITECTURAL GUIDELINES
+
+### 1. API Endpoint Session Management (Supabase)
+
+#### 1.1 Authentication Pattern
 ```typescript
-// pages/api/example/getData.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+// MANDATORY pattern for ALL authenticated API routes
 import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'GET') {
+  // 1. Check HTTP method
+  if (req.method !== 'GET') { // or POST, PUT, DELETE as needed
     res.setHeader('Allow', ['GET']);
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
+  // 2. Get session (MANDATORY for auth routes)
   const sessionInfo = await getSupabaseSessionApi(req, res);
-
   if (!sessionInfo) {
     return res.status(401).json({ error: 'Not authorized' });
   }
 
   const { supabase, user } = sessionInfo;
 
+  // 3. Perform operations
   try {
-    const { data, error } = await supabase
-      .from('some_table')
-      .select('*')
-      .eq('user_id', user.id);
-
-    if (error) {
-      throw error;
-    }
-    return res.status(200).json(data);
-  } catch (dbError: any) {
-    console.error('Database error in /api/example/getData:', dbError.message);
-    return res.status(500).json({ error: 'Failed to fetch data', details: dbError.message });
+    // Your logic here
+  } catch (error) {
+    console.error(`Error in ${req.url}:`, error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
 ```
 
-**6. Translations (i18next):**
-    * You only consider English for the moment.  You never try to automate the process of translating into French.
-    * You NEVER refactor the translations JSON file.  You only ADD new entries.
+#### 1.2 Session Rules
+- **ALWAYS** use `getSupabaseSessionApi(req, res)` for authenticated routes
+- **NEVER** initialize Supabase clients directly in API routes
+- **ALWAYS** check if sessionInfo is null before proceeding
+- **ALWAYS** use the returned `supabase` client for all database operations
+
+### 2. Application Layering (STRICT HIERARCHY)
+
+```
+┌─────────────────┐
+│ Pages/Components│ ← UI Layer (React components)
+└────────┬────────┘
+         │ calls
+┌────────▼────────┐
+│    Services     │ ← Business Logic Layer (AuthContext, services/*)
+└────────┬────────┘
+         │ fetch()
+┌────────▼────────┐
+│   API Routes    │ ← Server Layer (pages/api/*)
+└────────┬────────┘
+         │ queries
+┌────────▼────────┐
+│    Supabase     │ ← Data Layer
+└─────────────────┘
+```
+
+#### 2.1 Layer-Specific Rules
+
+**Pages/Components:**
+- ✅ Use service methods (e.g., `authContext.signIn()`)
+- ✅ Handle UI state and user interactions
+- ❌ NO direct `fetch()` to API endpoints
+- ❌ NO direct Supabase client usage
+
+**Services (AuthContext, services/*):**
+- ✅ Encapsulate business logic
+- ✅ Make `fetch()` calls to API routes
+- ✅ Manage client-side state
+- ❌ NO direct Supabase interactions
+
+**API Routes (pages/api/*):**
+- ✅ Handle HTTP requests from services
+- ✅ Use `getSupabaseSessionApi` for auth
+- ✅ Perform Supabase operations
+- ✅ Validate and transform data
+- ❌ NO client-side code
+
+**Supabase:**
+- ✅ Accessed ONLY by API routes (for authenticated operations)
+- ✅ Real-time subscriptions allowed in AuthContext
+
+### 3. Naming Conventions
+
+#### 3.1 API Routes
+```
+✅ pages/api/auth/signin.ts
+✅ pages/api/users/getUserProfile.ts
+✅ pages/api/patterns/[id].ts
+❌ pages/api/users/route.ts (avoid generic names)
+```
+
+#### 3.2 Components
+```
+✅ PatternDefinitionWorkspace.tsx
+✅ GaugeInputForm.tsx
+❌ Component1.tsx (too generic)
+```
+
+#### 3.3 Services
+```
+✅ src/services/patternService.ts
+✅ src/services/measurementService.ts
+```
+
+### 4. Client-Side Supabase Usage
+
+The client-side Supabase client (`supabaseClient`) is ONLY for:
+- ✅ Real-time subscriptions (e.g., `onAuthStateChange`)
+- ✅ Public data queries (no auth required)
+- ❌ NOT for authenticated operations
+- ❌ NOT for data mutations
+
+### 5. Profile Management
+- Profile creation MUST happen server-side in `/api/auth/signup` and `/api/auth/signin`
+- Use `ensureProfileExistsApi` helper function
+- NEVER create profiles client-side
+
+### 6. Translation Rules (i18next)
+- ✅ Only work with English translations
+- ✅ Only ADD new translation keys
+- ❌ NEVER refactor existing translation files
+- ❌ NEVER automate French translations
+
+## 🔧 DEVELOPMENT WORKFLOW
+
+### Before Starting Implementation:
+1. **READ** the entire User Story carefully
+2. **IDENTIFY** all files that need modification
+3. **CHECK** if similar components/functions already exist
+4. **PLAN** the implementation without modifying unrelated code
+
+### During Implementation:
+1. **MODIFY** only files mentioned in your plan
+2. **TEST** each change incrementally
+3. **PRESERVE** all existing functionality
+4. **FOLLOW** the architectural pattern strictly
+
+### After Implementation:
+1. **TEST** the new functionality thoroughly
+2. **VERIFY** existing features still work
+3. **CHECK** browser console for errors
+4. **DOCUMENT** any deviations from the US
+
+## 🚫 FORBIDDEN ACTIONS
+
+1. **NEVER** run `npm install <package>` without explicit permission
+2. **NEVER** modify database schema without it being in the US
+3. **NEVER** create duplicate components/functions
+4. **NEVER** use `any` type without justification
+5. **NEVER** commit commented-out code
+6. **NEVER** use console.log in production code (use proper logging)
+
+## 📝 CODE QUALITY STANDARDS
+
+### TypeScript:
+```typescript
+// ✅ GOOD
+interface UserProfile {
+  id: string;
+  email: string;
+  createdAt: Date;
+}
+
+async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  // implementation
+}
+
+// ❌ BAD
+async function getUser(id: any): Promise<any> {
+  // implementation
+}
+```
+
+### Error Handling:
+```typescript
+// ✅ GOOD
+try {
+  const result = await someOperation();
+  return res.status(200).json({ data: result });
+} catch (error) {
+  console.error('Specific error in someOperation:', error);
+  return res.status(500).json({ 
+    error: 'Failed to perform operation',
+    details: process.env.NODE_ENV === 'development' ? error.message : undefined
+  });
+}
+
+// ❌ BAD
+try {
+  const result = await someOperation();
+  return res.status(200).json(result);
+} catch (e) {
+  return res.status(500).json({ error: e });
+}
+```
+
+## 📚 ARCHITECTURE DOCUMENTATION
+
+### Reading Architecture Doc
+**MANDATORY**: Before ANY implementation, you MUST:
+1. **READ** `./docs/architecture.md` completely
+2. **IDENTIFY** existing components/services/patterns to reuse
+3. **FOLLOW** the conventions and patterns documented
+4. **AVOID** creating duplicates of existing functionality
+
+### Updating Architecture Doc
+**MANDATORY**: After implementation, you MUST update `./docs/architecture.md`:
+1. **ADD** new components to the components table
+2. **ADD** new API routes to the routes section
+3. **ADD** new services/contexts to their respective sections
+4. **UPDATE** the "État du Projet" section
+5. **DOCUMENT** any new patterns or conventions introduced
+
+### Architecture Doc Structure
+When updating, maintain these sections:
+- **Components**: Add with location, description, props, usage example
+- **API Routes**: Add with method, auth requirement, request/response format
+- **Services/Contexts**: Add with responsibility and main methods
+- **Helpers**: Add new utility functions with usage examples
+- **Implementation Guides**: Add guides for new patterns
+
+Example update after creating a new component:
+```markdown
+### Composants UI
+| Composant | Localisation | Description | Props | Exemple d'usage |
+|-----------|--------------|-------------|-------|-----------------|
+| PatternCard | /components/patterns/PatternCard.tsx | Affiche un patron | pattern: Pattern, onClick?: () => void | `<PatternCard pattern={pattern} />` |
+```
+
+## 🎯 IMPLEMENTATION CHECKLIST
+
+Before marking a task as complete, verify:
+- [ ] Architecture doc was read before implementation
+- [ ] All US requirements are implemented
+- [ ] No unrelated code was modified
+- [ ] All tests pass
+- [ ] No console errors
+- [ ] Existing functionality still works
+- [ ] Code follows all architectural rules
+- [ ] Proper error handling is in place
+- [ ] TypeScript types are properly defined
+- [ ] Implementation matches the US exactly
+- [ ] Architecture doc has been updated with new components/routes/services
+
 ---
+
+**Remember:** These rules are designed to maintain code quality and prevent regression. When in doubt, ask for clarification rather than making assumptions.
