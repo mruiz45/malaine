@@ -1,7 +1,7 @@
 # Prompt pour Implémentation de User Story
 
 ## 🎯 OBJECTIF
-Implémenter la User Story **[US_001_selection_type_vetement]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
+Implémenter la User Story **[US_002_configuration_dynamique_parties]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
 
 ## 📋 INSTRUCTIONS IMPÉRATIVES
 

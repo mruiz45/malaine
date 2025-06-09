@@ -133,6 +133,8 @@ Base de données (FR) → garmentTranslations.ts → Clés i18n → Traductions 
 | GarmentTypeSelector | /components/patterns/GarmentTypeSelector.tsx | Interface principale de sélection de types avec traductions complètes | types: GarmentType[], onContinue: () => void | `<GarmentTypeSelector types={types} onContinue={handleNext} />` |
 | GarmentTypeCard | /components/patterns/GarmentTypeCard.tsx | Card individuelle pour un type avec traductions noms/descriptions | type: GarmentType, selected: boolean, onClick: (type) => void | `<GarmentTypeCard type={type} selected={false} onClick={handleSelect} />` |
 | CategoryFilter | /components/patterns/CategoryFilter.tsx | Filtres par catégorie | selectedCategory: string, onCategoryChange: (cat) => void, itemCounts: object | `<CategoryFilter selectedCategory="all" onCategoryChange={setFilter} itemCounts={{all: 8, clothing: 4, accessories: 4}} />` |
+| GarmentPartConfigurator | /components/patterns/GarmentPartConfigurator.tsx | Interface principale de configuration des parties avec gestion dépendances | selectedType: GarmentType, onContinue: () => void | `<GarmentPartConfigurator selectedType={type} onContinue={handleNext} />` |
+| GarmentPartCard | /components/patterns/GarmentPartCard.tsx | Card individuelle pour une partie avec toggle et statut | partKey: string, isObligatory: boolean, isSelected: boolean, onToggle?: (key) => void | `<GarmentPartCard partKey="manches" isObligatory={false} isSelected={true} onToggle={handleToggle} />` |
 
 ## 🔌 Configuration et Providers
 
@@ -182,6 +184,24 @@ garment_chale_poncho_desc → "Loose garment for shoulders" (EN) / "Pièce ample
 - ✅ Plus stable : `type_key` est une clé unique, pas de dépendance aux textes
 - ✅ Évite la redondance : `display_name` et `description` ne sont plus nécessaires
 
+### Système de Traduction des Parties (US_002)
+Le système utilise le même pattern que `garment_types` pour les parties de vêtements :
+
+```typescript
+// Base de données (clé stable)
+part_key: "manches"
+
+// Génération automatique des clés i18n
+part_manches_name → "Sleeves" (EN) / "Manches" (FR)
+part_manches_desc → "Arm coverage" (EN) / "Couverture des bras" (FR)
+```
+
+**Fonctions utilitaires étendues** (dans `lib/garmentTranslations.ts`) :
+- `getPartNameKey(partKey)` - Génère la clé i18n pour un nom de partie
+- `getPartDescKey(partKey)` - Génère la clé i18n pour une description de partie
+- `getTranslatedPartName(partKey, t)` - Traduit directement le nom d'une partie
+- `getTranslatedPartDesc(partKey, t)` - Traduit directement la description d'une partie
+
 ## 🛣️ Routes et Navigation
 
 ### Pages Publiques
@@ -197,6 +217,7 @@ garment_chale_poncho_desc → "Loose garment for shoulders" (EN) / "Pièce ample
 |-------|---------|-------------|---------------|------|
 | `/dashboard` | app/dashboard/page.tsx | Tableau de bord utilisateur | Oui | user/admin |
 | `/dashboard/patterns/new` | app/dashboard/patterns/new/page.tsx | Wizard création de patron - étape 1 | Oui | user/admin |
+| `/dashboard/patterns/new/parts` | app/dashboard/patterns/new/parts/page.tsx | Wizard création de patron - étape 2 (configuration parties) | Oui | user/admin |
 | `/admin` | app/admin/page.tsx | Interface administration | Oui | admin |
 
 ### API Routes
@@ -204,6 +225,7 @@ garment_chale_poncho_desc → "Loose garment for shoulders" (EN) / "Pièce ample
 |----------|---------|-------------|---------------|---------|
 | `/api/user/profile` | PATCH | Mise à jour profil utilisateur | Oui | app/api/user/profile/route.ts |
 | `/api/garment-types` | GET | Récupération types de vêtements actifs | Oui | app/api/garment-types/route.ts |
+| `/api/garment-parts/configuration` | GET | Configuration des parties par type de vêtement | Oui | app/api/garment-parts/configuration/route.ts |
 
 ### Server Actions
 | Action | Fichier | Description | Usage |
@@ -221,6 +243,8 @@ garment_chale_poncho_desc → "Loose garment for shoulders" (EN) / "Pièce ample
 | `yarn_profiles` | Profils de fils à tricoter | user_id, yarn_name, properties | → profiles |
 | `pattern_definition_sessions` | Sessions de définition de patrons | user_id, parameters, status | → profiles |
 | `garment_types` | Types de vêtements disponibles | type_key, display_name, description_short, category | Base référentielle |
+| `garment_part_configurations` | Configuration des parties par type | garment_type_key, part_key, is_obligatory, display_order | → garment_types |
+| `garment_part_dependencies` | Dépendances entre parties de vêtements | garment_type_key, parent_part_key, dependent_part_key | → garment_types |
 | `stitch_patterns` | Bibliothèque de motifs de points | stitch_name, craft_type, difficulty | Base référentielle |
 
 ### Conventions de Schéma
@@ -273,6 +297,7 @@ export type TablesUpdate<T> = Database['public']['Tables'][T]['Update']
 - **Authentification** : Login/Signup avec Supabase Auth
 - **Dashboard** : Interface utilisateur avec profils et préférences
 - **Wizard Création** : Sélection de type de vêtement avec traductions complètes
+- **Configuration Parties** : Étape 2 du wizard avec gestion dépendances et parties obligatoires/optionnelles
 - **Internationalisation** : Support complet EN/FR avec traductions dynamiques
 - **Navigation** : Routing complet avec protection auth
 - **Base de données** : Schéma complet avec types TypeScript

@@ -84,6 +84,85 @@ export type Database = {
         }
         Relationships: []
       }
+      garment_part_configurations: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          garment_type_key: string
+          id: string
+          is_obligatory: boolean | null
+          measurement_requirements: Json | null
+          part_key: string
+          technical_impact: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          garment_type_key: string
+          id?: string
+          is_obligatory?: boolean | null
+          measurement_requirements?: Json | null
+          part_key: string
+          technical_impact?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          garment_type_key?: string
+          id?: string
+          is_obligatory?: boolean | null
+          measurement_requirements?: Json | null
+          part_key?: string
+          technical_impact?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "garment_part_configurations_garment_type_key_fkey"
+            columns: ["garment_type_key"]
+            isOneToOne: false
+            referencedRelation: "garment_types"
+            referencedColumns: ["type_key"]
+          },
+        ]
+      }
+      garment_part_dependencies: {
+        Row: {
+          activation_condition: string | null
+          created_at: string | null
+          dependent_part_key: string
+          garment_type_key: string
+          id: string
+          parent_part_key: string
+        }
+        Insert: {
+          activation_condition?: string | null
+          created_at?: string | null
+          dependent_part_key: string
+          garment_type_key: string
+          id?: string
+          parent_part_key: string
+        }
+        Update: {
+          activation_condition?: string | null
+          created_at?: string | null
+          dependent_part_key?: string
+          garment_type_key?: string
+          id?: string
+          parent_part_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "garment_part_dependencies_garment_type_key_fkey"
+            columns: ["garment_type_key"]
+            isOneToOne: false
+            referencedRelation: "garment_types"
+            referencedColumns: ["type_key"]
+          },
+        ]
+      }
       garment_type_components: {
         Row: {
           component_template_id: string

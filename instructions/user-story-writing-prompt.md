@@ -256,20 +256,21 @@ Fournis la User Story complète en suivant exactement le template, avec:
 **Requirements à transformer en User Story:**
 Voici une partie des réquirements qui doivent être complémentés et enrichis, sur base de la compréhension du document `./docs/requirements_all.md`.
 
-### **US1.1 : Sélection du type de vêtement**
-**En tant qu'** utilisateur  
-**Je veux** sélectionner un type de vêtement parmi une liste définie  
-**Pour** démarrer la création d'un patron adapté
+### **US1.2 : Configuration dynamique des parties obligatoires/optionnelles**
+**En tant que** système  
+**Je veux** configurer automatiquement les éléments du vêtement selon le type sélectionné  
+**Pour** ne proposer que les options pertinentes à l'utilisateur
 
 **Détail fonctionnel :**
-- Interface de sélection avec vignettes illustrées
-- Types supportés : pull, gilet, écharpe, châle/poncho, bonnet, chaussettes, sac, accessoires/décoration
-- Chaque type affiche une description courte et une image représentative
-- Possibilité de filtrer par catégorie (vêtements, accessoires, etc.)
+- **Pull** → Parties obligatoires : dos, devant, encolure, bordure / Optionnelles : manches, torsades, motifs
+- **Écharpe** → Parties obligatoires : corps principal, bordures / Optionnelles : franges, motifs
+- **Bonnet** → Parties obligatoires : calotte, bordure / Optionnelles : pompon, rabats d'oreilles
+- **Chaussettes** → Parties obligatoires : jambe, talon, pied / Optionnelles : motifs sur jambe
+- Configuration en JSON pour faciliter l'ajout de nouveaux types
 
 **Critères d'acceptation :**
-- ✅ Liste complète des types disponibles affichée
-- ✅ Sélection unique obligatoire pour continuer
-- ✅ Interface responsive (desktop/mobile)
-- ✅ Transition fluide vers l'étape suivante
-- ✅ Possibilité de revenir et changer le type à tout moment
+- ✅ Affichage dynamique des sections selon le type
+- ✅ Masquage automatique des éléments non applicables
+- ✅ Marquage visuel obligatoire/optionnel
+- ✅ Logique de dépendances entre éléments
+- ✅ Cohérence des choix proposés

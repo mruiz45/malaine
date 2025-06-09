@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Database } from '@/lib/database.types';
-import { PatternCreationProvider } from '@/lib/contexts/PatternCreationContext';
+import { PatternCreationProvider, usePatternCreation } from '@/lib/contexts/PatternCreationContext';
 import GarmentTypeSelector from '@/components/patterns/GarmentTypeSelector';
 
 type GarmentType = Database['public']['Tables']['garment_types']['Row'];
@@ -14,10 +14,13 @@ interface PatternCreationWizardProps {
 
 function PatternCreationWizardContent({ initialGarmentTypes }: PatternCreationWizardProps) {
   const router = useRouter();
+  const { state } = usePatternCreation();
 
   const handleContinue = () => {
-    // Navigation vers l'étape suivante (saisie des mensurations)
-    router.push('/dashboard/patterns/new/measurements');
+    // Navigation vers l'étape suivante (configuration des parties) avec le type dans l'URL
+    if (state.selectedGarmentType) {
+      router.push(`/dashboard/patterns/new/parts?type=${state.selectedGarmentType.type_key}`);
+    }
   };
 
   return (
