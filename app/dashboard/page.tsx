@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient, createAdminClient } from '@/lib/supabase/server';
 import ProfileSection from '@/components/dashboard/ProfileSection';
 import PreferencesSection from '@/components/dashboard/PreferencesSection';
+import PatternCreationCTA from '@/components/dashboard/PatternCreationCTA';
 
 export default async function DashboardPage() {
   const supabase = createClient();
@@ -41,8 +42,29 @@ export default async function DashboardPage() {
         <div className="md:col-span-2">
           <PreferencesSection user={userProfile} />
           <div className="mt-6 p-6 bg-white rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">Knitting Projects</h2>
-            <p className="text-gray-600">This section is coming soon!</p>
+            <h2 className="text-xl font-semibold mb-4">Mes Patrons de Tricot</h2>
+            
+            {/* Section Création */}
+            <div className="mb-6">
+              <PatternCreationCTA />
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-200 my-6"></div>
+
+            {/* Section Mes Patrons */}
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">Mes patrons sauvegardés</h3>
+              <div className="bg-gray-50 rounded-lg p-4 text-center">
+                <svg className="h-12 w-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p className="text-gray-500 mb-2">Aucun patron créé pour le moment</p>
+                <p className="text-sm text-gray-400">
+                  Commencez par créer votre premier patron personnalisé !
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

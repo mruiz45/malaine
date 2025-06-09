@@ -1,7 +1,7 @@
 # Prompt pour Implémentation de User Story
 
 ## 🎯 OBJECTIF
-Implémenter la User Story **[US_NUMBER]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
+Implémenter la User Story **[US_001_selection_type_vetement]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
 
 ## 📋 INSTRUCTIONS IMPÉRATIVES
 
@@ -32,7 +32,7 @@ Avant toute action, tu dois:
 Fournis d'abord un plan détaillé incluant:
 
 ```markdown
-## Plan d'Implémentation US_[NUMBER]
+## Plan d'Implémentation
 
 ### 1. Analyse des Besoins
 - Résumé de ce qui doit être implémenté
@@ -181,6 +181,7 @@ Ta réponse doit suivre cette structure:
 - [ ] Tests manuels passés
 - [ ] Pas d'erreurs console
 - [ ] Documentation implementation créée
+- [ ] Toutes les clés des traductions sont présentes dans le fichier './public/locales/en/translation.json'
 - [ ] Architecture.md mis à jour avec les nouveaux éléments
 ```
 
@@ -193,9 +194,6 @@ Ta réponse doit suivre cette structure:
 
 ## 🚀 PRÊT À COMMENCER
 
-La User Story à implémenter est fournie ci-dessous. Commence par analyser et proposer ton plan d'implémentation.
+La User Story à implémenter est fournie en référence. Commence par analyser et proposer ton plan d'implémentation.
 
 ---
-
-**User Story à implémenter:**
-La User Story à implémenter est fournie en référence.

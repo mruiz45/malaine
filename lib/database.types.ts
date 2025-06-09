@@ -131,28 +131,31 @@ export type Database = {
       }
       garment_types: {
         Row: {
+          category: string | null
           created_at: string | null
-          description: string | null
-          display_name: string
           id: string
+          image_url: string | null
+          is_active: boolean | null
           metadata: Json | null
           type_key: string
           updated_at: string | null
         }
         Insert: {
+          category?: string | null
           created_at?: string | null
-          description?: string | null
-          display_name: string
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           metadata?: Json | null
           type_key: string
           updated_at?: string | null
         }
         Update: {
+          category?: string | null
           created_at?: string | null
-          description?: string | null
-          display_name?: string
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           metadata?: Json | null
           type_key?: string
           updated_at?: string | null
