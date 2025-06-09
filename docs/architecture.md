@@ -136,6 +136,10 @@ Base de données (FR) → garmentTranslations.ts → Clés i18n → Traductions 
 | SectionToggle | /components/patterns/SectionToggle.tsx | Toggle pour basculer entre sections "Layette & Bébé" et "Enfant / Adulte" | selectedSection: 'baby' \| 'general', onSectionChange: (section) => void | `<SectionToggle selectedSection="general" onSectionChange={handleSectionChange} />` |
 | GarmentPartConfigurator | /components/patterns/GarmentPartConfigurator.tsx | Interface principale de configuration des parties avec gestion dépendances | selectedType: GarmentType, onContinue: () => void | `<GarmentPartConfigurator selectedType={type} onContinue={handleNext} />` |
 | GarmentPartCard | /components/patterns/GarmentPartCard.tsx | Card individuelle pour une partie avec toggle et statut | partKey: string, isObligatory: boolean, isSelected: boolean, onToggle?: (key) => void | `<GarmentPartCard partKey="manches" isObligatory={false} isSelected={true} onToggle={handleToggle} />` |
+| MeasurementForm | /components/patterns/MeasurementForm.tsx | Formulaire principal de saisie des 15 mesures avec validation démographique | initialData?: Partial<MeasurementFormData>, onSubmit: (data) => Promise<void>, onSave?: (data) => Promise<void> | `<MeasurementForm onSubmit={handleSubmit} onSave={handleAutoSave} />` |
+| MeasurementField | /components/patterns/MeasurementField.tsx | Champ individuel avec validation, conversion d'unités et aide contextuelle | id: string, label: string, value: number \| string, unit: 'cm' \| 'inches', onChange: (value) => void | `<MeasurementField id="chest_bust_cm" label="Tour de Poitrine" unit="cm" onChange={handleChange} />` |
+| UnitToggle | /components/patterns/UnitToggle.tsx | Sélecteur cm/pouces avec conversion automatique | selectedUnit: 'cm' \| 'inches', onUnitChange: (unit) => void | `<UnitToggle selectedUnit="cm" onUnitChange={handleUnitChange} />` |
+| DemographicSelector | /components/patterns/DemographicSelector.tsx | Sélecteur de catégorie démographique et genre | selectedCategory: 'baby' \| 'child' \| 'adult', onCategoryChange: (cat) => void | `<DemographicSelector selectedCategory="adult" onCategoryChange={handleCategoryChange} />` |
 
 ## 🔌 Configuration et Providers
 
@@ -219,6 +223,7 @@ part_manches_desc → "Arm coverage" (EN) / "Couverture des bras" (FR)
 | `/dashboard` | app/dashboard/page.tsx | Tableau de bord utilisateur | Oui | user/admin |
 | `/dashboard/patterns/new` | app/dashboard/patterns/new/page.tsx | Wizard création de patron - étape 1 | Oui | user/admin |
 | `/dashboard/patterns/new/parts` | app/dashboard/patterns/new/parts/page.tsx | Wizard création de patron - étape 2 (configuration parties) | Oui | user/admin |
+| `/dashboard/patterns/new/measurements` | app/dashboard/patterns/new/measurements/page.tsx | Wizard création de patron - étape 3 (saisie mensurations) | Oui | user/admin |
 | `/admin` | app/admin/page.tsx | Interface administration | Oui | admin |
 
 ### API Routes
@@ -227,6 +232,8 @@ part_manches_desc → "Arm coverage" (EN) / "Couverture des bras" (FR)
 | `/api/user/profile` | PATCH | Mise à jour profil utilisateur | Oui | app/api/user/profile/route.ts |
 | `/api/garment-types` | GET | Récupération types de vêtements actifs avec filtrage optionnel par section (?section=baby\|general) | Oui | app/api/garment-types/route.ts |
 | `/api/garment-parts/configuration` | GET | Configuration des parties par type de vêtement | Oui | app/api/garment-parts/configuration/route.ts |
+| `/api/measurements/save` | POST | Sauvegarde des mensurations utilisateur avec validation démographique | Oui | app/api/measurements/save/route.ts |
+| `/api/measurements/[user_id]` | GET | Récupération des mensurations d'un utilisateur | Oui | app/api/measurements/[user_id]/route.ts |
 
 ### Server Actions
 | Action | Fichier | Description | Usage |
@@ -299,13 +306,14 @@ export type TablesUpdate<T> = Database['public']['Tables'][T]['Update']
 - **Dashboard** : Interface utilisateur avec profils et préférences
 - **Wizard Création** : Sélection de type de vêtement avec traductions complètes et filtrage par section (Layette & Bébé / Enfant & Adulte)
 - **Configuration Parties** : Étape 2 du wizard avec gestion dépendances et parties obligatoires/optionnelles
+- **Saisie Mensurations** : Étape 3 du wizard avec 15 mesures corporelles, validation démographique, conversion d'unités et sauvegarde progressive
 - **Support Vêtements Bébé** : Extension US_004 avec contraintes de sécurité et traductions spécialisées pour la layette
-- **Internationalisation** : Support complet EN/FR avec traductions dynamiques et 40+ nouvelles clés pour vêtements bébé
+- **Internationalisation** : Support complet EN/FR avec traductions dynamiques et 60+ nouvelles clés pour mensurations
 - **Navigation** : Routing complet avec protection auth
-- **Base de données** : Schéma complet avec types TypeScript, support des sections et colonnes sécurité bébé
+- **Base de données** : Schéma complet avec types TypeScript, support des sections et table user_measurements
 
 ### 🚧 En Développement  
-- Étape 3 du wizard (mensurations, finalisation)
+- Étape 4 du wizard (finalisation et génération)
 - Génération de patrons de tricot
 - Gestion avancée des profils utilisateur
 - Interface d'administration

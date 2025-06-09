@@ -256,90 +256,37 @@ Fournis la User Story complète en suivant exactement le template, avec:
 **Requirements à transformer en User Story:**
 Voici une partie des réquirements qui doivent être complémentés et enrichis, sur base de la compréhension du document `./docs/requirements_all.md`.
 
-### **US1.3 : Section spécifique pour les bébés**
+### **US2.3 : Saisie manuelle des mensurations corporelles complètes**
 **En tant qu'** utilisateur  
-**Je veux** sélectionner un type de vêtement parmi une liste définie, spécifiquement réservée aux bébés  
-**Pour** démarrer la création d'un patron adapté
+**Je veux** saisir manuellement toutes les mensurations nécessaires  
+**Pour** obtenir un patron parfaitement ajusté à la morphologie et la démographie
 
 **Détail fonctionnel :**
-Je veux complémenter l'écran de sélection du type de vêtement à réaliser selon que l'on choisisse la partie "bébé" ou pas.
+**13 mesures standards selon le PDF + 2 nouvelles :**
+1. **Tour de Poitrine** (Chest/Bust)
+2. **Longueur Dos du Col au Poignet** (Center Back Neck-to-Wrist)
+3. **Longueur Taille Dos** (Back Waist Length)
+4. **Carrure Dos** (Cross Back)
+5. **Longueur de Manche** (Arm Length to Underarm)
+6. **Tour de Bras** (Upper Arm)
+7. **Profondeur d'Emmanchure** (Armhole Depth)
+8. **Tour de Taille** (Waist)
+9. **Tour de Hanches** (Hip)
+10. **Tour de Tête** (Head Circumference)
+11. **Hauteur Totale du Pull** (Overall Garment Length)
+12. **Largeur d'Épaule** (Shoulder Width)
+13. **Tour de Poignet** (Wrist Circumference)
+14. **Longueur de Jambe** (Leg Length) -- A n'utiliser que dans la partie "babé / layette"
+15. **Pointure** (Shoe Size)
 
-La partie "bébé" ou "layette", désigne l’ensemble des vêtements et accessoires pour bébés, souvent tricotés à la main. Voici les principaux types de vêtements et accessoires en tricot que l’on peut associer à une layette :
-
----
-
-### 🧥 **Vêtements tricotés**
-
-1. **Brassière**
-
-   * Petit gilet ou haut à manches longues, souvent le tout premier vêtement tricoté pour un bébé.
-
-2. **Pull / Gilet / Cardigan**
-
-   * À enfiler ou à boutonner, selon la préférence (privilégier l’ouverture devant pour les nouveau-nés).
-
-3. **Combinaison / Salopette**
-
-   * Avec ou sans pieds, pour couvrir le corps entier du bébé.
-
-4. **Pantalon / Legging**
-
-   * Souple, confortable, souvent avec taille élastiquée.
-
-5. **Robe / Tunique**
-
-   * Pour les petites filles, avec ou sans manches.
-
----
-
-### 🧢 **Accessoires tricotés**
-
-1. **Bonnet / Béguin**
-
-   * Pour garder la tête du bébé bien au chaud.
-
-2. **Chaussons / Bottines**
-
-   * Indispensables dans toute layette, souvent assortis au bonnet ou à la brassière.
-
-3. **Moufles**
-
-   * Sans pouce pour les nouveau-nés, utiles en hiver.
-
-4. **Chaussettes**
-
-   * Plus ajustées que des chaussons, pour les bébés un peu plus grands.
-
-5. **Écharpe / Tour de cou / Col**
-
-   * Doux et ajustés pour éviter les courants d’air.
-
----
-
-### 🛏️ **Articles de literie et de confort**
-
-1. **Couverture / Plaid / Nid d’ange**
-
-   * Pour envelopper bébé à la maison ou dans la poussette.
-
-2. **Gigoteuse / Turbulette**
-
-   * Alternative aux couvertures pour dormir en sécurité.
-
-3. **Cape de bain**
-
-   * Parfois tricotée ou crochetée en partie, doublée de tissu éponge.
-
-4. **Doudou / Peluche tricotée**
-
-   * Petit compagnon souvent fait main.
-
-
-
+- Saisie en cm et pouces avec conversion automatique (sauf pour la pointure des pieds)
+- Validation des valeurs (cohérence anatomique et démographique (enfants, adultes, bébé, homme/femme, garçon/fille))
+- Champs conditionnels selon le type de vêtement
+- Sauvegarde progressive (pas de perte de données)
 
 **Critères d'acceptation :**
-- ✅ Liste complète des types disponibles affichée
-- ✅ Sélection unique obligatoire pour continuer
-- ✅ Interface responsive (desktop/mobile)
-- ✅ Transition fluide vers l'étape suivante
-- ✅ Possibilité de revenir et changer le type à tout moment
+- ✅ Interface de saisie claire avec unités sélectionnables
+- ✅ Validation en temps réel des valeurs saisies
+- ✅ Masquage des mesures non nécessaires selon le type
+- ✅ Calculs automatiques de mesures dérivées quand possible
+- ✅ Indicateurs visuels des champs obligatoires/optionnels

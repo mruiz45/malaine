@@ -86,6 +86,7 @@ export type Database = {
       }
       garment_part_configurations: {
         Row: {
+          age_restrictions: Json | null
           created_at: string | null
           display_order: number | null
           garment_type_key: string
@@ -93,10 +94,12 @@ export type Database = {
           is_obligatory: boolean | null
           measurement_requirements: Json | null
           part_key: string
+          safety_constraints: Json | null
           technical_impact: Json | null
           updated_at: string | null
         }
         Insert: {
+          age_restrictions?: Json | null
           created_at?: string | null
           display_order?: number | null
           garment_type_key: string
@@ -104,10 +107,12 @@ export type Database = {
           is_obligatory?: boolean | null
           measurement_requirements?: Json | null
           part_key: string
+          safety_constraints?: Json | null
           technical_impact?: Json | null
           updated_at?: string | null
         }
         Update: {
+          age_restrictions?: Json | null
           created_at?: string | null
           display_order?: number | null
           garment_type_key?: string
@@ -115,6 +120,7 @@ export type Database = {
           is_obligatory?: boolean | null
           measurement_requirements?: Json | null
           part_key?: string
+          safety_constraints?: Json | null
           technical_impact?: Json | null
           updated_at?: string | null
         }
@@ -724,6 +730,87 @@ export type Database = {
           stitch_repeat_width?: number | null
           swatch_image_url?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_measurements: {
+        Row: {
+          arm_length_to_underarm_cm: number | null
+          armhole_depth_cm: number | null
+          back_neck_to_wrist_cm: number | null
+          back_waist_length_cm: number | null
+          chest_bust_cm: number | null
+          created_at: string | null
+          cross_back_cm: number | null
+          demographic_category: string | null
+          garment_type: string | null
+          gender_category: string | null
+          head_circumference_cm: number | null
+          hip_cm: number | null
+          id: string
+          leg_length_cm: number | null
+          overall_garment_length_cm: number | null
+          preferred_unit: string | null
+          project_id: string | null
+          shoe_size: string | null
+          shoulder_width_cm: number | null
+          updated_at: string | null
+          upper_arm_cm: number | null
+          user_id: string
+          waist_cm: number | null
+          wrist_circumference_cm: number | null
+        }
+        Insert: {
+          arm_length_to_underarm_cm?: number | null
+          armhole_depth_cm?: number | null
+          back_neck_to_wrist_cm?: number | null
+          back_waist_length_cm?: number | null
+          chest_bust_cm?: number | null
+          created_at?: string | null
+          cross_back_cm?: number | null
+          demographic_category?: string | null
+          garment_type?: string | null
+          gender_category?: string | null
+          head_circumference_cm?: number | null
+          hip_cm?: number | null
+          id?: string
+          leg_length_cm?: number | null
+          overall_garment_length_cm?: number | null
+          preferred_unit?: string | null
+          project_id?: string | null
+          shoe_size?: string | null
+          shoulder_width_cm?: number | null
+          updated_at?: string | null
+          upper_arm_cm?: number | null
+          user_id: string
+          waist_cm?: number | null
+          wrist_circumference_cm?: number | null
+        }
+        Update: {
+          arm_length_to_underarm_cm?: number | null
+          armhole_depth_cm?: number | null
+          back_neck_to_wrist_cm?: number | null
+          back_waist_length_cm?: number | null
+          chest_bust_cm?: number | null
+          created_at?: string | null
+          cross_back_cm?: number | null
+          demographic_category?: string | null
+          garment_type?: string | null
+          gender_category?: string | null
+          head_circumference_cm?: number | null
+          hip_cm?: number | null
+          id?: string
+          leg_length_cm?: number | null
+          overall_garment_length_cm?: number | null
+          preferred_unit?: string | null
+          project_id?: string | null
+          shoe_size?: string | null
+          shoulder_width_cm?: number | null
+          updated_at?: string | null
+          upper_arm_cm?: number | null
+          user_id?: string
+          waist_cm?: number | null
+          wrist_circumference_cm?: number | null
         }
         Relationships: []
       }

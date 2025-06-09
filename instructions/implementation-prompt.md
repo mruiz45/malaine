@@ -1,7 +1,7 @@
 # Prompt pour Implémentation de User Story
 
 ## 🎯 OBJECTIF
-Implémenter la User Story **[US_004_configuration_dynamique_parties_bebe]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
+Implémenter la User Story **[US_005_Saisie_Mensurations_Corporelles]** pour le projet "malaine" en respectant STRICTEMENT toutes les règles et standards définis.
 
 ## 📋 INSTRUCTIONS IMPÉRATIVES
 

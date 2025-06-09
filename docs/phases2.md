@@ -11,7 +11,7 @@ Voici une révision du plan avec des US **complètes** à chaque phase :
 
 **User Stories COMPLÈTES :**
 [X] 1. **US1.1** : Sélection type vêtement ✅
-[ ] 2. **US1.2** : Configuration dynamique des parties ✅
+[X] 2. **US1.2** : Configuration dynamique des parties ✅
 [ ] 3. **US2.3** : Saisie manuelle des mensurations ✅
 [ ] 4. **US3.3** : Calculateur mailles/cm ✅
 [ ] 5. **US5.1a** : Algorithme raglan top-down ✅

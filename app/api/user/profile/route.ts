@@ -1,39 +1,20 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
 
 export async function PATCH(request: Request) {
-  const { language_preference } = await request.json();
-  const cookieStore = cookies();
+  try {
+    const { language_preference } = await request.json();
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        async get(name: string) {
-          return (await cookieStore).get(name)?.value;
-        },
-        async set(name: string, value: string, options: CookieOptions) {
-          (await cookieStore).set({ name, value, ...options });
-        },
-        async remove(name: string, options: CookieOptions) {
-          (await cookieStore).delete({ name, ...options });
-        },
-      },
-    },
-  );
+    // Get authenticated session (MANDATORY pattern per malaine-rules.mdc)
+    const sessionInfo = await getSupabaseSessionApi(request);
+    if (!sessionInfo) {
+      return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
-      status: 401,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  }
+    const { supabase, user } = sessionInfo;
 
   if (!language_preference) {
     return new NextResponse(
@@ -61,4 +42,11 @@ export async function PATCH(request: Request) {
   }
 
   return NextResponse.json(data);
+  } catch (error) {
+    console.error('Error in user profile API:', error);
+    return new NextResponse(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 } 

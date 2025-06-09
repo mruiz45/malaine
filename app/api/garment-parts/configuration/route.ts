@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
 
 interface GarmentPartConfig {
   part_key: string;
@@ -46,20 +46,16 @@ export async function GET(request: NextRequest): Promise<NextResponse<GarmentPar
       }, { status: 400 });
     }
 
-    const supabase = createClient();
-
-    // Vérification de l'authentification
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    // Get authenticated session (MANDATORY pattern per malaine-rules.mdc)
+    const sessionInfo = await getSupabaseSessionApi(request);
+    if (!sessionInfo) {
       return NextResponse.json({
         success: false,
         error: 'Not authorized'
       }, { status: 401 });
     }
+
+    const { supabase, user } = sessionInfo;
 
     // Récupération des configurations de parties
     const { data: partConfigs, error: configError } = await supabase

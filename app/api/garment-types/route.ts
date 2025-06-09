@@ -1,19 +1,18 @@
-import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSupabaseSessionApi } from '@/lib/getSupabaseSession';
 
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient();
-    
-    // Vérification de l'authentification
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
-    if (authError || !user) {
+    // Get authenticated session (MANDATORY pattern per malaine-rules.mdc)
+    const sessionInfo = await getSupabaseSessionApi(request);
+    if (!sessionInfo) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
       );
     }
+
+    const { supabase, user } = sessionInfo;
 
     // Récupération du paramètre de section depuis l'URL
     const { searchParams } = new URL(request.url);
