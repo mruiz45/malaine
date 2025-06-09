@@ -299,12 +299,13 @@ export type TablesUpdate<T> = Database['public']['Tables'][T]['Update']
 - **Dashboard** : Interface utilisateur avec profils et préférences
 - **Wizard Création** : Sélection de type de vêtement avec traductions complètes et filtrage par section (Layette & Bébé / Enfant & Adulte)
 - **Configuration Parties** : Étape 2 du wizard avec gestion dépendances et parties obligatoires/optionnelles
-- **Internationalisation** : Support complet EN/FR avec traductions dynamiques
+- **Support Vêtements Bébé** : Extension US_004 avec contraintes de sécurité et traductions spécialisées pour la layette
+- **Internationalisation** : Support complet EN/FR avec traductions dynamiques et 40+ nouvelles clés pour vêtements bébé
 - **Navigation** : Routing complet avec protection auth
-- **Base de données** : Schéma complet avec types TypeScript et support des sections
+- **Base de données** : Schéma complet avec types TypeScript, support des sections et colonnes sécurité bébé
 
-### 🚧 En Développement
-- Étapes 2-3 du wizard (mensurations, finalisation)
+### 🚧 En Développement  
+- Étape 3 du wizard (mensurations, finalisation)
 - Génération de patrons de tricot
 - Gestion avancée des profils utilisateur
 - Interface d'administration

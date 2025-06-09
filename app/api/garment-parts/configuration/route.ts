@@ -7,6 +7,14 @@ interface GarmentPartConfig {
   display_order: number;
   technical_impact: string[];
   measurement_requirements: string[];
+  safety_constraints?: string[]; // Nouveau pour vêtements bébé
+  age_restrictions?: AgeRestrictions; // Nouveau pour vêtements bébé
+}
+
+interface AgeRestrictions {
+  min_age_months: number;
+  max_age_months: number;
+  safety_notes?: string[];
 }
 
 interface PartDependency {
@@ -90,7 +98,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<GarmentPar
         is_obligatory: part.is_obligatory ?? true,
         display_order: part.display_order ?? 0,
         technical_impact: part.technical_impact as string[],
-        measurement_requirements: part.measurement_requirements as string[]
+        measurement_requirements: part.measurement_requirements as string[],
+        // Support futur pour vêtements bébé (colonnes à ajouter en base)
+        safety_constraints: undefined as string[] | undefined,
+        age_restrictions: undefined as AgeRestrictions | undefined
       })) || [];
     
     const optional_parts = partConfigs
@@ -100,7 +111,10 @@ export async function GET(request: NextRequest): Promise<NextResponse<GarmentPar
         is_obligatory: part.is_obligatory ?? false,
         display_order: part.display_order ?? 0,
         technical_impact: part.technical_impact as string[],
-        measurement_requirements: part.measurement_requirements as string[]
+        measurement_requirements: part.measurement_requirements as string[],
+        // Support futur pour vêtements bébé (colonnes à ajouter en base)
+        safety_constraints: undefined as string[] | undefined,
+        age_restrictions: undefined as AgeRestrictions | undefined
       })) || [];
 
     return NextResponse.json({

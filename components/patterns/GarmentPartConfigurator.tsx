@@ -36,7 +36,7 @@ interface GarmentPartConfiguratorProps {
 
 export default function GarmentPartConfigurator({ selectedType, onContinue }: GarmentPartConfiguratorProps) {
   const { t } = useTranslation();
-  const { state, setSelectedParts } = usePatternCreation();
+  const { setSelectedParts } = usePatternCreation();
   
   const [configuration, setConfiguration] = useState<GarmentPartConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
@@ -172,11 +172,7 @@ export default function GarmentPartConfigurator({ selectedType, onContinue }: Ga
     return null;
   }
 
-  const hasSelectedOptionalParts = configuration.optional_parts.some(part => 
-    selectedPartKeys.includes(part.part_key)
-  );
-
-  return (
+      return (
     <div className="space-y-8">
       {/* En-tête */}
       <div>

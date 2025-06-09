@@ -10,6 +10,8 @@ interface GarmentPartCardProps {
   isSelected: boolean;
   isDisabled?: boolean;
   onToggle?: (partKey: string) => void;
+  safetyConstraints?: string[]; // Nouveau pour vêtements bébé
+  isBabyGarment?: boolean; // Indicateur vêtement bébé
 }
 
 export default function GarmentPartCard({
@@ -17,7 +19,9 @@ export default function GarmentPartCard({
   isObligatory,
   isSelected,
   isDisabled = false,
-  onToggle
+  onToggle,
+  safetyConstraints = [],
+  isBabyGarment = false
 }: GarmentPartCardProps) {
   const { t } = useTranslation();
 
@@ -116,6 +120,39 @@ export default function GarmentPartCard({
               />
             </svg>
             {t('part_required_indicator')}
+          </div>
+        )}
+
+        {/* Indicateur sécurité bébé */}
+        {isBabyGarment && safetyConstraints && safetyConstraints.length > 0 && (
+          <div className="mt-2 flex items-start text-xs text-blue-600">
+            <svg 
+              className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" 
+              fill="currentColor" 
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path 
+                fillRule="evenodd" 
+                d="M10 1L5 6v3.09c0 2.99 2.16 5.7 5 6.82 2.84-1.12 5-3.83 5-6.82V6l-5-5zM8.5 11L7 9.5l1.5-1.5L10 9.5 8.5 11z" 
+                clipRule="evenodd" 
+              />
+            </svg>
+            <div>
+              <span className="font-medium">{t('part_safety_baby_indicator')}:</span>
+              <div className="mt-1 space-y-1">
+                {safetyConstraints.slice(0, 2).map((constraint, index) => (
+                  <div key={index} className="text-blue-500">
+                    • {t(`safety_constraint_${constraint}`, { defaultValue: constraint })}
+                  </div>
+                ))}
+                {safetyConstraints.length > 2 && (
+                  <div className="text-blue-500">
+                    • {t('part_safety_more_constraints', { count: safetyConstraints.length - 2 })}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </div>
