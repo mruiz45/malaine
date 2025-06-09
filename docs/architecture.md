@@ -136,10 +136,20 @@ Base de données (FR) → garmentTranslations.ts → Clés i18n → Traductions 
 | SectionToggle | /components/patterns/SectionToggle.tsx | Toggle pour basculer entre sections "Layette & Bébé" et "Enfant / Adulte" | selectedSection: 'baby' \| 'general', onSectionChange: (section) => void | `<SectionToggle selectedSection="general" onSectionChange={handleSectionChange} />` |
 | GarmentPartConfigurator | /components/patterns/GarmentPartConfigurator.tsx | Interface principale de configuration des parties avec gestion dépendances | selectedType: GarmentType, onContinue: () => void | `<GarmentPartConfigurator selectedType={type} onContinue={handleNext} />` |
 | GarmentPartCard | /components/patterns/GarmentPartCard.tsx | Card individuelle pour une partie avec toggle et statut | partKey: string, isObligatory: boolean, isSelected: boolean, onToggle?: (key) => void | `<GarmentPartCard partKey="manches" isObligatory={false} isSelected={true} onToggle={handleToggle} />` |
-| MeasurementForm | /components/patterns/MeasurementForm.tsx | Formulaire principal de saisie des 15 mesures avec validation démographique | initialData?: Partial<MeasurementFormData>, onSubmit: (data) => Promise<void>, onSave?: (data) => Promise<void> | `<MeasurementForm onSubmit={handleSubmit} onSave={handleAutoSave} />` |
+| MeasurementForm | /components/patterns/MeasurementForm.tsx | Formulaire principal de saisie des 15 mesures avec validation démographique ET tailles standards | initialData?: Partial<MeasurementFormData>, onSubmit: (data) => Promise<void>, onSave?: (data) => Promise<void> | `<MeasurementForm onSubmit={handleSubmit} onSave={handleAutoSave} />` |
 | MeasurementField | /components/patterns/MeasurementField.tsx | Champ individuel avec validation, conversion d'unités et aide contextuelle | id: string, label: string, value: number \| string, unit: 'cm' \| 'inches', onChange: (value) => void | `<MeasurementField id="chest_bust_cm" label="Tour de Poitrine" unit="cm" onChange={handleChange} />` |
 | UnitToggle | /components/patterns/UnitToggle.tsx | Sélecteur cm/pouces avec conversion automatique | selectedUnit: 'cm' \| 'inches', onUnitChange: (unit) => void | `<UnitToggle selectedUnit="cm" onUnitChange={handleUnitChange} />` |
 | DemographicSelector | /components/patterns/DemographicSelector.tsx | Sélecteur de catégorie démographique et genre | selectedCategory: 'baby' \| 'child' \| 'adult', onCategoryChange: (cat) => void | `<DemographicSelector selectedCategory="adult" onCategoryChange={handleCategoryChange} />` |
+
+### Composants Tailles Standards (US_006)
+| Composant | Localisation | Description | Props | Exemple d'usage |
+|-----------|--------------|-------------|-------|-----------------|
+| SizeStandardSelector | /components/patterns/SizeStandardSelector.tsx | Interface principale de sélection région → démographie → taille | onSizeSelected: (size) => void, selectedGarmentType?: GarmentType | `<SizeStandardSelector onSizeSelected={handleStandardSize} />` |
+| RegionSelector | /components/patterns/RegionSelector.tsx | Sélecteur de région avec drapeaux et descriptions | selectedRegion?: string, onRegionChange: (region) => void | `<RegionSelector selectedRegion="europe" onRegionChange={setRegion} />` |
+| SizeGrid | /components/patterns/SizeGrid.tsx | Grille des tailles disponibles avec équivalences entre systèmes | region: string, demographic: string, onSizeSelect: (size) => void | `<SizeGrid region="europe" demographic="adult_female" onSizeSelect={handleSizeClick} />` |
+| SizeEquivalenceDisplay | /components/patterns/SizeEquivalenceDisplay.tsx | Affichage des correspondances entre systèmes (EU/US/UK/Asia) | equivalences: SizeEquivalences, selectedRegion: string | `<SizeEquivalenceDisplay equivalences={sizeData.equivalences} selectedRegion="europe" />` |
+| SizeStandardModal | /components/patterns/SizeStandardModal.tsx | Modal avec tableaux complets de tous les standards par région | isOpen: boolean, onClose: () => void | `<SizeStandardModal isOpen={showChart} onClose={() => setShowChart(false)} />` |
+| StandardSizeToggle | /components/patterns/StandardSizeToggle.tsx | Toggle entre saisie manuelle et sélection de standards | useStandards: boolean, onToggle: (useStandards) => void | `<StandardSizeToggle useStandards={false} onToggle={setUseStandards} />` |
 
 ## 🔌 Configuration et Providers
 
@@ -234,6 +244,9 @@ part_manches_desc → "Arm coverage" (EN) / "Couverture des bras" (FR)
 | `/api/garment-parts/configuration` | GET | Configuration des parties par type de vêtement | Oui | app/api/garment-parts/configuration/route.ts |
 | `/api/measurements/save` | POST | Sauvegarde des mensurations utilisateur avec validation démographique | Oui | app/api/measurements/save/route.ts |
 | `/api/measurements/[user_id]` | GET | Récupération des mensurations d'un utilisateur | Oui | app/api/measurements/[user_id]/route.ts |
+| `/api/size-standards/regions` | GET | Liste des régions et démographies disponibles pour tailles standards | Oui | app/api/size-standards/regions/route.ts |
+| `/api/size-standards/sizes` | GET | Tailles et mesures standards par région/démographie (?region=X&demographic=Y) | Oui | app/api/size-standards/sizes/route.ts |
+| `/api/size-standards/chart` | GET | Tableaux complets de correspondance entre toutes les régions/tailles | Oui | app/api/size-standards/chart/route.ts |
 
 ### Server Actions
 | Action | Fichier | Description | Usage |
@@ -248,11 +261,13 @@ part_manches_desc → "Arm coverage" (EN) / "Couverture des bras" (FR)
 | `profiles` | Profils utilisateurs étendus | id, role, language_preference | Liée à auth.users |
 | `gauge_profiles` | Profils d'échantillons tricot | user_id, stitch_count, row_count | → profiles |
 | `measurement_sets` | Jeux de mesures corporelles | user_id, set_name, mesures... | → profiles |
+| `user_measurements` | Mensurations individuelles avec support tailles standards | user_id, 15 mesures corporelles, is_standard_size, standard_region, standard_size, modified_measurements | → profiles |
 | `yarn_profiles` | Profils de fils à tricoter | user_id, yarn_name, properties | → profiles |
 | `pattern_definition_sessions` | Sessions de définition de patrons | user_id, parameters, status | → profiles |
 | `garment_types` | Types de vêtements disponibles | type_key, display_name, description_short, category | Base référentielle |
 | `garment_part_configurations` | Configuration des parties par type | garment_type_key, part_key, is_obligatory, display_order | → garment_types |
 | `garment_part_dependencies` | Dépendances entre parties de vêtements | garment_type_key, parent_part_key, dependent_part_key | → garment_types |
+| `size_standards` | Standards de tailles internationaux | region, demographic, size_key, équivalences (eu/us/uk/asia), 15 mesures en cm | Base référentielle tricot |
 | `stitch_patterns` | Bibliothèque de motifs de points | stitch_name, craft_type, difficulty | Base référentielle |
 
 ### Conventions de Schéma
@@ -307,10 +322,11 @@ export type TablesUpdate<T> = Database['public']['Tables'][T]['Update']
 - **Wizard Création** : Sélection de type de vêtement avec traductions complètes et filtrage par section (Layette & Bébé / Enfant & Adulte)
 - **Configuration Parties** : Étape 2 du wizard avec gestion dépendances et parties obligatoires/optionnelles
 - **Saisie Mensurations** : Étape 3 du wizard avec 15 mesures corporelles, validation démographique, conversion d'unités et sauvegarde progressive
+- **Tailles Standards** : US_006 - Sélection cascadée région→démographie→taille avec 104 standards internationaux (EU/US/UK/Asia) couvrant toutes les démographies
 - **Support Vêtements Bébé** : Extension US_004 avec contraintes de sécurité et traductions spécialisées pour la layette
-- **Internationalisation** : Support complet EN/FR avec traductions dynamiques et 60+ nouvelles clés pour mensurations
+- **Internationalisation** : Support complet EN/FR avec traductions dynamiques et 80+ nouvelles clés incluant tailles standards
 - **Navigation** : Routing complet avec protection auth
-- **Base de données** : Schéma complet avec types TypeScript, support des sections et table user_measurements
+- **Base de données** : Schéma complet avec types TypeScript, tables user_measurements et size_standards avec données Craft Yarn Council
 
 ### 🚧 En Développement  
 - Étape 4 du wizard (finalisation et génération)

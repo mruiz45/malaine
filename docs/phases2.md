@@ -12,7 +12,7 @@ Voici une révision du plan avec des US **complètes** à chaque phase :
 **User Stories COMPLÈTES :**
 [X] 1. **US1.1** : Sélection type vêtement ✅
 [X] 2. **US1.2** : Configuration dynamique des parties ✅
-[ ] 3. **US2.3** : Saisie manuelle des mensurations ✅
+[X] 3. **US2.3** : Saisie manuelle des mensurations ✅
 [ ] 4. **US3.3** : Calculateur mailles/cm ✅
 [ ] 5. **US5.1a** : Algorithme raglan top-down ✅
 [ ] 6. **US6.1** : Affichage 2D fil de fer ✅
@@ -38,7 +38,7 @@ Voici une révision du plan avec des US **complètes** à chaque phase :
 [ ] 1. **US5.1b** : Algorithme raglan bottom-up ✅
 [ ] 2. **US5.2** : Algorithmes yoke circulaire ✅
 [ ] 3. **US5.4** : Calcul augmentations/diminutions ✅
-[ ] 4. **US2.2** : Tailles standards par région ✅
+[X] 4. **US2.2** : Tailles standards par région ✅
 [ ] 5. **US6.4** : Grille maille par maille ✅
 [ ] 6. **US6.5** : Légende interactive ✅
 

@@ -676,6 +676,93 @@ export type Database = {
         }
         Relationships: []
       }
+      size_standards: {
+        Row: {
+          arm_length_to_underarm_cm: number | null
+          armhole_depth_cm: number | null
+          asia_equivalent: string | null
+          back_neck_to_wrist_cm: number | null
+          back_waist_length_cm: number | null
+          chest_bust_cm: number
+          created_at: string | null
+          cross_back_cm: number | null
+          demographic: string
+          eu_equivalent: string | null
+          head_circumference_cm: number | null
+          hip_cm: number | null
+          id: string
+          leg_length_cm: number | null
+          overall_garment_length_cm: number | null
+          region: string
+          shoe_size_reference: string | null
+          shoulder_width_cm: number | null
+          size_key: string
+          source_reference: string | null
+          uk_equivalent: string | null
+          updated_at: string | null
+          upper_arm_cm: number | null
+          us_equivalent: string | null
+          waist_cm: number | null
+          wrist_circumference_cm: number | null
+        }
+        Insert: {
+          arm_length_to_underarm_cm?: number | null
+          armhole_depth_cm?: number | null
+          asia_equivalent?: string | null
+          back_neck_to_wrist_cm?: number | null
+          back_waist_length_cm?: number | null
+          chest_bust_cm: number
+          created_at?: string | null
+          cross_back_cm?: number | null
+          demographic: string
+          eu_equivalent?: string | null
+          head_circumference_cm?: number | null
+          hip_cm?: number | null
+          id?: string
+          leg_length_cm?: number | null
+          overall_garment_length_cm?: number | null
+          region: string
+          shoe_size_reference?: string | null
+          shoulder_width_cm?: number | null
+          size_key: string
+          source_reference?: string | null
+          uk_equivalent?: string | null
+          updated_at?: string | null
+          upper_arm_cm?: number | null
+          us_equivalent?: string | null
+          waist_cm?: number | null
+          wrist_circumference_cm?: number | null
+        }
+        Update: {
+          arm_length_to_underarm_cm?: number | null
+          armhole_depth_cm?: number | null
+          asia_equivalent?: string | null
+          back_neck_to_wrist_cm?: number | null
+          back_waist_length_cm?: number | null
+          chest_bust_cm?: number
+          created_at?: string | null
+          cross_back_cm?: number | null
+          demographic?: string
+          eu_equivalent?: string | null
+          head_circumference_cm?: number | null
+          hip_cm?: number | null
+          id?: string
+          leg_length_cm?: number | null
+          overall_garment_length_cm?: number | null
+          region?: string
+          shoe_size_reference?: string | null
+          shoulder_width_cm?: number | null
+          size_key?: string
+          source_reference?: string | null
+          uk_equivalent?: string | null
+          updated_at?: string | null
+          upper_arm_cm?: number | null
+          us_equivalent?: string | null
+          waist_cm?: number | null
+          wrist_circumference_cm?: number | null
+        }
+        Relationships: []
+      }
       stitch_patterns: {
         Row: {
           category: string | null
@@ -748,12 +835,17 @@ export type Database = {
           head_circumference_cm: number | null
           hip_cm: number | null
           id: string
+          is_standard_size: boolean | null
           leg_length_cm: number | null
+          modified_measurements: Json | null
           overall_garment_length_cm: number | null
           preferred_unit: string | null
           project_id: string | null
           shoe_size: string | null
           shoulder_width_cm: number | null
+          standard_demographic: string | null
+          standard_region: string | null
+          standard_size: string | null
           updated_at: string | null
           upper_arm_cm: number | null
           user_id: string
@@ -774,12 +866,17 @@ export type Database = {
           head_circumference_cm?: number | null
           hip_cm?: number | null
           id?: string
+          is_standard_size?: boolean | null
           leg_length_cm?: number | null
+          modified_measurements?: Json | null
           overall_garment_length_cm?: number | null
           preferred_unit?: string | null
           project_id?: string | null
           shoe_size?: string | null
           shoulder_width_cm?: number | null
+          standard_demographic?: string | null
+          standard_region?: string | null
+          standard_size?: string | null
           updated_at?: string | null
           upper_arm_cm?: number | null
           user_id: string
@@ -800,12 +897,17 @@ export type Database = {
           head_circumference_cm?: number | null
           hip_cm?: number | null
           id?: string
+          is_standard_size?: boolean | null
           leg_length_cm?: number | null
+          modified_measurements?: Json | null
           overall_garment_length_cm?: number | null
           preferred_unit?: string | null
           project_id?: string | null
           shoe_size?: string | null
           shoulder_width_cm?: number | null
+          standard_demographic?: string | null
+          standard_region?: string | null
+          standard_size?: string | null
           updated_at?: string | null
           upper_arm_cm?: number | null
           user_id?: string

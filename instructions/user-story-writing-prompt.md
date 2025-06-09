@@ -256,37 +256,39 @@ Fournis la User Story complète en suivant exactement le template, avec:
 **Requirements à transformer en User Story:**
 Voici une partie des réquirements qui doivent être complémentés et enrichis, sur base de la compréhension du document `./docs/requirements_all.md`.
 
-### **US2.3 : Saisie manuelle des mensurations corporelles complètes**
+### **US_006 : Tailles standards par région et démographie**
+**Référence**: suit l'implémentation de la US_005
 **En tant qu'** utilisateur  
-**Je veux** saisir manuellement toutes les mensurations nécessaires  
-**Pour** obtenir un patron parfaitement ajusté à la morphologie et la démographie
+**Je veux** sélectionner des tailles standards selon la région et la démographie  
+**Pour** partir d'une base cohérente sans tout mesurer manuellement
 
 **Détail fonctionnel :**
-**13 mesures standards selon le PDF + 2 nouvelles :**
-1. **Tour de Poitrine** (Chest/Bust)
-2. **Longueur Dos du Col au Poignet** (Center Back Neck-to-Wrist)
-3. **Longueur Taille Dos** (Back Waist Length)
-4. **Carrure Dos** (Cross Back)
-5. **Longueur de Manche** (Arm Length to Underarm)
-6. **Tour de Bras** (Upper Arm)
-7. **Profondeur d'Emmanchure** (Armhole Depth)
-8. **Tour de Taille** (Waist)
-9. **Tour de Hanches** (Hip)
-10. **Tour de Tête** (Head Circumference)
-11. **Hauteur Totale du Pull** (Overall Garment Length)
-12. **Largeur d'Épaule** (Shoulder Width)
-13. **Tour de Poignet** (Wrist Circumference)
-14. **Longueur de Jambe** (Leg Length) -- A n'utiliser que dans la partie "babé / layette"
-15. **Pointure** (Shoe Size)
+- **Régions** : Europe (EU), États-Unis (US), Royaume-Uni (UK), Asie
+- **Démographies** : Adulte Femme, Adulte Homme, Enfant (2-16 ans), Bébé (0-24 mois)
+- **Tailles** : XS, S, M, L, XL, XXL + tailles numériques enfants
+- Tableaux de correspondance basés sur les standards Craft Yarn Council
+- Adaptation automatique selon le type de vêtement
+- Affichage des équivalences entre systèmes
 
-- Saisie en cm et pouces avec conversion automatique (sauf pour la pointure des pieds)
-- Validation des valeurs (cohérence anatomique et démographique (enfants, adultes, bébé, homme/femme, garçon/fille))
-- Champs conditionnels selon le type de vêtement
-- Sauvegarde progressive (pas de perte de données)
+**Structure des données :**
+```javascript
+{
+  "EU": {
+    "adulte_femme": {
+      "M": {
+        "tour_poitrine": "91.5-96.5cm",
+        "tour_taille": "71-76cm",
+        "longueur_dos": "43.5cm",
+        // ... toutes les 15 mesures
+      }
+    }
+  }
+}
+```
 
 **Critères d'acceptation :**
-- ✅ Interface de saisie claire avec unités sélectionnables
-- ✅ Validation en temps réel des valeurs saisies
-- ✅ Masquage des mesures non nécessaires selon le type
-- ✅ Calculs automatiques de mesures dérivées quand possible
-- ✅ Indicateurs visuels des champs obligatoires/optionnels
+- ✅ Sélecteurs cascadés : Région → Démographie → Taille
+- ✅ Affichage des équivalences entre systèmes
+- ✅ Tableaux complets pour toutes les combinaisons
+- ✅ Possibilité de surcharger les valeurs standards
+- ✅ Avertissement sur l'approximation des tailles standards
