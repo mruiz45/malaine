@@ -256,21 +256,90 @@ Fournis la User Story complète en suivant exactement le template, avec:
 **Requirements à transformer en User Story:**
 Voici une partie des réquirements qui doivent être complémentés et enrichis, sur base de la compréhension du document `./docs/requirements_all.md`.
 
-### **US1.2 : Configuration dynamique des parties obligatoires/optionnelles**
-**En tant que** système  
-**Je veux** configurer automatiquement les éléments du vêtement selon le type sélectionné  
-**Pour** ne proposer que les options pertinentes à l'utilisateur
+### **US1.3 : Section spécifique pour les bébés**
+**En tant qu'** utilisateur  
+**Je veux** sélectionner un type de vêtement parmi une liste définie, spécifiquement réservée aux bébés  
+**Pour** démarrer la création d'un patron adapté
 
 **Détail fonctionnel :**
-- **Pull** → Parties obligatoires : dos, devant, encolure, bordure / Optionnelles : manches, torsades, motifs
-- **Écharpe** → Parties obligatoires : corps principal, bordures / Optionnelles : franges, motifs
-- **Bonnet** → Parties obligatoires : calotte, bordure / Optionnelles : pompon, rabats d'oreilles
-- **Chaussettes** → Parties obligatoires : jambe, talon, pied / Optionnelles : motifs sur jambe
-- Configuration en JSON pour faciliter l'ajout de nouveaux types
+Je veux complémenter l'écran de sélection du type de vêtement à réaliser selon que l'on choisisse la partie "bébé" ou pas.
+
+La partie "bébé" ou "layette", désigne l’ensemble des vêtements et accessoires pour bébés, souvent tricotés à la main. Voici les principaux types de vêtements et accessoires en tricot que l’on peut associer à une layette :
+
+---
+
+### 🧥 **Vêtements tricotés**
+
+1. **Brassière**
+
+   * Petit gilet ou haut à manches longues, souvent le tout premier vêtement tricoté pour un bébé.
+
+2. **Pull / Gilet / Cardigan**
+
+   * À enfiler ou à boutonner, selon la préférence (privilégier l’ouverture devant pour les nouveau-nés).
+
+3. **Combinaison / Salopette**
+
+   * Avec ou sans pieds, pour couvrir le corps entier du bébé.
+
+4. **Pantalon / Legging**
+
+   * Souple, confortable, souvent avec taille élastiquée.
+
+5. **Robe / Tunique**
+
+   * Pour les petites filles, avec ou sans manches.
+
+---
+
+### 🧢 **Accessoires tricotés**
+
+1. **Bonnet / Béguin**
+
+   * Pour garder la tête du bébé bien au chaud.
+
+2. **Chaussons / Bottines**
+
+   * Indispensables dans toute layette, souvent assortis au bonnet ou à la brassière.
+
+3. **Moufles**
+
+   * Sans pouce pour les nouveau-nés, utiles en hiver.
+
+4. **Chaussettes**
+
+   * Plus ajustées que des chaussons, pour les bébés un peu plus grands.
+
+5. **Écharpe / Tour de cou / Col**
+
+   * Doux et ajustés pour éviter les courants d’air.
+
+---
+
+### 🛏️ **Articles de literie et de confort**
+
+1. **Couverture / Plaid / Nid d’ange**
+
+   * Pour envelopper bébé à la maison ou dans la poussette.
+
+2. **Gigoteuse / Turbulette**
+
+   * Alternative aux couvertures pour dormir en sécurité.
+
+3. **Cape de bain**
+
+   * Parfois tricotée ou crochetée en partie, doublée de tissu éponge.
+
+4. **Doudou / Peluche tricotée**
+
+   * Petit compagnon souvent fait main.
+
+
+
 
 **Critères d'acceptation :**
-- ✅ Affichage dynamique des sections selon le type
-- ✅ Masquage automatique des éléments non applicables
-- ✅ Marquage visuel obligatoire/optionnel
-- ✅ Logique de dépendances entre éléments
-- ✅ Cohérence des choix proposés
+- ✅ Liste complète des types disponibles affichée
+- ✅ Sélection unique obligatoire pour continuer
+- ✅ Interface responsive (desktop/mobile)
+- ✅ Transition fluide vers l'étape suivante
+- ✅ Possibilité de revenir et changer le type à tout moment
