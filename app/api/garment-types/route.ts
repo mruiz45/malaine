@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = createClient();
     
@@ -15,12 +15,23 @@ export async function GET() {
       );
     }
 
-    // Récupération des types de vêtements actifs
-    const { data: garmentTypes, error } = await supabase
+    // Récupération du paramètre de section depuis l'URL
+    const { searchParams } = new URL(request.url);
+    const section = searchParams.get('section') as 'baby' | 'general' | null;
+
+    // Construction de la query de base
+    let query = supabase
       .from('garment_types')
-      .select('id, type_key, category, is_active, image_url, created_at, updated_at, metadata')
-      .eq('is_active', true)
-      .order('category, type_key');
+      .select('id, type_key, category, section, is_active, image_url, created_at, updated_at, metadata')
+      .eq('is_active', true);
+
+    // Ajout du filtre par section si spécifié
+    if (section && (section === 'baby' || section === 'general')) {
+      query = query.eq('section', section);
+    }
+
+    // Exécution de la query avec ordre
+    const { data: garmentTypes, error } = await query.order('category, type_key');
 
     if (error) {
       console.error('Error fetching garment types:', error);

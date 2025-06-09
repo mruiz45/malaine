@@ -216,6 +216,7 @@ export type Database = {
           image_url: string | null
           is_active: boolean | null
           metadata: Json | null
+          section: string | null
           type_key: string
           updated_at: string | null
         }
@@ -226,6 +227,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           metadata?: Json | null
+          section?: string | null
           type_key: string
           updated_at?: string | null
         }
@@ -236,6 +238,7 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           metadata?: Json | null
+          section?: string | null
           type_key?: string
           updated_at?: string | null
         }

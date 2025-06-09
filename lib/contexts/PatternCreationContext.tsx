@@ -8,6 +8,7 @@ type GarmentType = Database['public']['Tables']['garment_types']['Row'];
 interface PatternCreationState {
   selectedGarmentType: GarmentType | null;
   selectedParts: string[]; // Ajout pour US_002 - liste des part_key sélectionnées
+  selectedSection: 'baby' | 'general'; // Ajout pour US_003 - section sélectionnée
   // Futures étapes du wizard seront ajoutées ici
   // selectedMeasurements: MeasurementSet | null;
   // selectedGaugeProfile: GaugeProfile | null;
@@ -18,6 +19,7 @@ interface PatternCreationContextType {
   state: PatternCreationState;
   setSelectedGarmentType: (type: GarmentType | null) => void;
   setSelectedParts: (parts: string[]) => void; // Ajout pour US_002
+  setSelectedSection: (section: 'baby' | 'general') => void; // Ajout pour US_003
   resetWizard: () => void;
 }
 
@@ -26,6 +28,7 @@ const PatternCreationContext = createContext<PatternCreationContextType | undefi
 const initialState: PatternCreationState = {
   selectedGarmentType: null,
   selectedParts: [], // Initialisation pour US_002
+  selectedSection: 'general', // Défaut sur "Enfant / Adulte" selon US_003
 };
 
 export function PatternCreationProvider({ children }: { children: ReactNode }) {
@@ -45,6 +48,15 @@ export function PatternCreationProvider({ children }: { children: ReactNode }) {
     }));
   }, []);
 
+  const setSelectedSection = useCallback((section: 'baby' | 'general') => {
+    setState(prev => ({
+      ...prev,
+      selectedSection: section,
+      // Reset du type sélectionné car les types changent selon la section
+      selectedGarmentType: null
+    }));
+  }, []);
+
   const resetWizard = useCallback(() => {
     setState(initialState);
   }, []);
@@ -54,6 +66,7 @@ export function PatternCreationProvider({ children }: { children: ReactNode }) {
       state,
       setSelectedGarmentType,
       setSelectedParts,
+      setSelectedSection,
       resetWizard
     }}>
       {children}

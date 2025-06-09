@@ -4,12 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface CategoryFilterProps {
-  selectedCategory: 'all' | 'clothing' | 'accessories';
-  onCategoryChange: (category: 'all' | 'clothing' | 'accessories') => void;
+  selectedCategory: 'all' | 'clothing' | 'accessories' | 'bedding';
+  onCategoryChange: (category: 'all' | 'clothing' | 'accessories' | 'bedding') => void;
   itemCounts: {
     all: number;
     clothing: number;
     accessories: number;
+    bedding?: number;
   };
 }
 
@@ -21,11 +22,24 @@ export default function CategoryFilter({ selectedCategory, onCategoryChange, ite
     setIsClient(true);
   }, []);
 
-  const categories = [
+  const categories: Array<{
+    key: 'all' | 'clothing' | 'accessories' | 'bedding';
+    label: string;
+    count: number;
+  }> = [
     { key: 'all' as const, label: isClient ? t('pattern_wizard_all') : 'All', count: itemCounts.all },
     { key: 'clothing' as const, label: isClient ? t('pattern_wizard_clothing') : 'Clothing', count: itemCounts.clothing },
     { key: 'accessories' as const, label: isClient ? t('pattern_wizard_accessories') : 'Accessories', count: itemCounts.accessories },
   ];
+
+  // Ajouter la catégorie "bedding" seulement si elle existe dans itemCounts
+  if (itemCounts.bedding && itemCounts.bedding > 0) {
+    categories.push({
+      key: 'bedding' as const,
+      label: isClient ? t('pattern_wizard_bedding') : 'Bedding',
+      count: itemCounts.bedding
+    });
+  }
 
   return (
     <div className="mb-6">

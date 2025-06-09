@@ -15,7 +15,7 @@ export default async function NewPatternPage() {
   // Récupération des types de vêtements actifs
   const { data: garmentTypes, error: typesError } = await supabase
     .from('garment_types')
-    .select('id, type_key, category, is_active, image_url, created_at, updated_at, metadata')
+    .select('id, type_key, category, section, is_active, image_url, created_at, updated_at, metadata')
     .eq('is_active', true)
     .order('category, type_key');
 

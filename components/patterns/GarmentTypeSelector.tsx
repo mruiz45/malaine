@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Database } from '@/lib/database.types';
 import GarmentTypeCard from './GarmentTypeCard';
 import CategoryFilter from './CategoryFilter';
+import SectionToggle from './SectionToggle';
 import { usePatternCreation } from '@/lib/contexts/PatternCreationContext';
 import { getTranslatedGarmentName, getTranslatedGarmentDesc } from '@/lib/garmentTranslations';
 
@@ -18,31 +19,60 @@ interface GarmentTypeSelectorProps {
 export default function GarmentTypeSelector({ types, onContinue }: GarmentTypeSelectorProps) {
   const { t } = useTranslation();
   const [isClient, setIsClient] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<'all' | 'clothing' | 'accessories'>('all');
-  const { state, setSelectedGarmentType } = usePatternCreation();
+  const [selectedCategory, setSelectedCategory] = useState<'all' | 'clothing' | 'accessories' | 'bedding'>('all');
+  const { state, setSelectedGarmentType, setSelectedSection } = usePatternCreation();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Filtrage des types selon la section sélectionnée dans le contexte
+  const sectionFilteredTypes = useMemo(() => {
+    console.log('🔍 GarmentTypeSelector DEBUG:', {
+      selectedSection: state.selectedSection,
+      totalTypes: types.length,
+      typesHaveSection: types.length > 0 ? !!types[0].section : false,
+      sectionCounts: types.reduce((acc, type) => {
+        acc[type.section || 'undefined'] = (acc[type.section || 'undefined'] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
+    });
+    
+    const filtered = types.filter(type => type.section === state.selectedSection);
+    console.log('🎯 Filtered result:', {
+      filteredCount: filtered.length,
+      filteredKeys: filtered.map(t => t.type_key)
+    });
+    
+    return filtered;
+  }, [types, state.selectedSection]);
+
   // Filtrage des types selon la catégorie sélectionnée
   const filteredTypes = useMemo(() => {
     if (selectedCategory === 'all') {
-      return types;
+      return sectionFilteredTypes;
     }
-    return types.filter(type => type.category === selectedCategory);
-  }, [types, selectedCategory]);
+    return sectionFilteredTypes.filter(type => type.category === selectedCategory);
+  }, [sectionFilteredTypes, selectedCategory]);
 
-  // Compteurs pour les filtres
+  // Compteurs pour les filtres - basés sur les types de la section sélectionnée
   const itemCounts = useMemo(() => {
-    const clothing = types.filter(type => type.category === 'clothing').length;
-    const accessories = types.filter(type => type.category === 'accessories').length;
+    const clothing = sectionFilteredTypes.filter(type => type.category === 'clothing').length;
+    const accessories = sectionFilteredTypes.filter(type => type.category === 'accessories').length;
+    const bedding = sectionFilteredTypes.filter(type => type.category === 'bedding').length;
     return {
-      all: types.length,
+      all: sectionFilteredTypes.length,
       clothing,
-      accessories
+      accessories,
+      bedding: bedding > 0 ? bedding : undefined
     };
-  }, [types]);
+  }, [sectionFilteredTypes]);
+
+  const handleSectionChange = (section: 'baby' | 'general') => {
+    setSelectedSection(section);
+    // Reset du filtre de catégorie quand on change de section
+    setSelectedCategory('all');
+  };
 
   const handleTypeSelect = (type: GarmentType) => {
     setSelectedGarmentType(type);
@@ -93,6 +123,12 @@ export default function GarmentTypeSelector({ types, onContinue }: GarmentTypeSe
       <h2 className="text-2xl font-bold text-gray-900 mb-6">
         {t('pattern_wizard_title')}
       </h2>
+
+      {/* Toggle de section */}
+      <SectionToggle
+        selectedSection={state.selectedSection}
+        onSectionChange={handleSectionChange}
+      />
 
       {/* Filtres de catégorie */}
       <CategoryFilter
